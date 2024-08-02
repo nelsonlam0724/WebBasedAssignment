@@ -1,0 +1,91 @@
+header{
+    padding:15px 0px;
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
+    border-bottom:1px solid gainsboro;
+    position: fixed;
+    z-index:2;
+    background-color:white;
+ }
+
+ header ,header .first-row ,header .second-row{
+    width:100%;
+ }
+ 
+ header .second-row ul{
+       display:flex;
+       justify-content:center;
+       gap:70px;
+ }
+
+ 
+ header .first-row {
+      display:flex;
+       justify-content:space-around;
+     
+ }
+ 
+ header .second-row ul li{
+           padding:20px 0px;
+           cursor:pointer;
+
+ }
+
+ .search-bar{
+     border:1px solid gainsboro;
+     display: grid;
+     grid-template-columns:  auto auto;
+     height: 30px;
+ }
+
+ #search-button{
+     background-color: gainsboro;
+     border:none;
+     cursor:pointer;
+     padding:5px 15px;
+ }
+
+ #search{
+     border:none;
+     outline:none;
+     padding: 0px 5px;
+     text-transform:lowercase;
+ }
+
+ .user-icon{
+     border-radius: 50%;
+     height:40px;
+     width: 40px;
+     overflow: hidden;
+     display: grid;
+     place-items: center;
+ }
+ .userAcc-block{
+     display:flex;
+     border:1px solid gainsboro;
+     padding: 10px;
+ }
+
+ .text{
+     display: grid;
+     place-items: center;
+ }
+
+ .text .text-first{
+     padding:0px  20px;
+ }
+ 
+ .first-row p span{
+     position:relative;
+ }
+
+ .first-row p span::after{
+     content: "5";
+     padding:0px 5px;
+     background-color: red;
+     color:white;
+     font-size:10px;
+     text-align: center;
+     border-radius: 50%;           
+     position: absolute;
+     top:1px;
+ }
