@@ -31,4 +31,8 @@ function req($key, $value = null) {
     return is_array($value) ? array_map('trim', $value) : trim($value);
 }
 
+$_db = new PDO('mysql:dbname=mydatabase','root','',[ PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_OBJ,]);
+
+
+
 ?>
