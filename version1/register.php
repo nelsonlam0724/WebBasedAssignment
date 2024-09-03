@@ -1,6 +1,6 @@
 <?php
-include '../_base.php';
-include '../_head.php';
+include '_base.php';
+include '_head.php';
 
 // Initialize error array
 $_err = [];
@@ -104,7 +104,7 @@ $_title = 'Register Admin';
         <br>
         <button type="submit">Register</button>
     </form>
-    <p>Back to Menu<a href="admin.php">Back</a></p>
+    <p>Already Register? Login Here <a href="login.php">Back</a> !!</p>
 </body>
 
 </html>

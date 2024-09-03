@@ -33,8 +33,9 @@ if (is_post()) {
             if ($u->role == 'Admin') {
                 $redirectUrl = 'admin/admin.php';
             } elseif ($u->role == 'Member') {
-                $redirectUrl = 'customerPage/product.php';
+                $redirectUrl = 'customer/customer.php';
             }
+
             login($u, $redirectUrl);
             exit();
         } else {
@@ -79,7 +80,7 @@ $_title = "Login";
                 </div>
                 <button type="submit">Log in</button>
                 <div class="register">
-                    <p>Don't have an account? <a href="#">Register</a></p>
+                    <p>Don't have an account? <a href="register.php">Register</a></p>
                 </div>
             </div>
         </div>
