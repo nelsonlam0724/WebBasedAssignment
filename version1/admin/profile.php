@@ -15,26 +15,26 @@ $user = $_SESSION['user'];
 
 if (is_post()) {
     $new_email = req('new_email');
-    $new_username = req('new_username');
+    $new_name = req('new_name');
     $new_password = req('new_password');
 
     if ($new_email) {
         // Update email
-        $stm = $_db->prepare('UPDATE admin SET email = ? WHERE id = ?');
+        $stm = $_db->prepare('UPDATE user SET email = ? WHERE id = ?');
         $stm->execute([$new_email, $user->id]);
         $_SESSION['user']->email = $new_email; // Update session user
     }
 
     if ($new_username) {
         //Update Username
-        $stm = $_db->prepare('UPDATE admin SET username = ? WHERE username = ?');
-        $stm->execute([$new_username, $user->username]);
+        $stm = $_db->prepare('UPDATE user SET name = ? WHERE name = ?');
+        $stm->execute([$new_name, $user->name]);
     }
 
     if ($new_password) {
         // Update password
         $hashed_password = password_hash($new_password, PASSWORD_DEFAULT);
-        $stm = $_db->prepare('UPDATE admin SET password = ? WHERE id = ?');
+        $stm = $_db->prepare('UPDATE user SET password = ? WHERE id = ?');
         $stm->execute([$hashed_password, $user->id]);
     }
 
@@ -63,9 +63,9 @@ $_title = 'Admin Profile';
         <br>
         <?= html_text('new_email', 'maxlength="100" required type="email"') ?>
         <br>
-        <label for="new_username">New UserName:</label>
+        <label for="new_name">New UserName:</label>
         <br>
-        <?= html_text('new_username', 'maxlength="100"') ?>
+        <?= html_text('new_name', 'maxlength="100"') ?>
         <br>
         <label for="new_password">New Password:</label>
         <br>
