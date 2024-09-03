@@ -228,10 +228,6 @@ function err($key)
 // Global user object
 $_user = $_SESSION['user'] ?? null;
 
-// Check if user is logged in
-function is_logged_in() {
-    return isset($_SESSION['user']);
-}
 
 // Login user
 function login($user, $url = '/')

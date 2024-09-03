@@ -1,5 +1,6 @@
 <?php
 include '../_base.php';
+include '../_head.php';
 
 // Initialize error array
 $_err = [];

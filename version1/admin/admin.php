@@ -1,5 +1,7 @@
 <?php
 include '../_base.php';
+include '../_head.php';
+
 if (is_get()) {
     $stm = $_db->prepare('SELECT * FROM user WHERE id = ?');
     $stm->execute([$_user->id]);
@@ -25,7 +27,8 @@ $_title = 'Admin Dashboard - ' . htmlspecialchars($user->name);
     <h1>Welcome, <?= htmlspecialchars($user->name) ?> to the Admin Dashboard</h1>
     <nav>
         <ul>
-            <li><a href="profile.php">Profile</a></li>
+            <li><a href="profile.php">Admin Profile</a></li>
+            <li><a href="memberList.php">Member List</a></li>
             <li><a href="register.php">Register New Member</a></li>
             <li><a href="logout.php">Logout</a></li>
         </ul>

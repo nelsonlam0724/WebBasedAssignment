@@ -1,8 +1,6 @@
-<!DOCTYPE html>
-<html lang="en">
 <?php
 include '_base.php';
-
+include '_head.php';
 // ----------------------------------------------------------------------------
 
 if (is_post()) {
@@ -44,9 +42,16 @@ if (is_post()) {
         }
     }
 }
-include 'head.php';
-?>
 
+$_title = "Login";
+?>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="./css/login.css">
+</head>
 <body>
     <form method="post" action="" class="form">
         <div class="form-box">
@@ -82,7 +87,7 @@ include 'head.php';
 
     <!-- Footer -->
     <?php
-    include 'footer.php';
+    include '_foot.php';
     ?>
 
     <script src="https://unpkg.com/ionicons@5.5.2/dist/ionicons/ionicons.js"></script>

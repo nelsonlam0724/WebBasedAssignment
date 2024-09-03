@@ -1,5 +1,6 @@
 <?php
 include '../_base.php';
+include '../_head.php';
 // ----------------------------------------------------------------------------
 
 temp('info', 'Logout successfully');
