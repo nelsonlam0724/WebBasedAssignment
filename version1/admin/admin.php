@@ -1,19 +1,18 @@
 <?php
 include '../_base.php';
+if (is_get()) {
+    $stm = $_db->prepare('SELECT * FROM user WHERE id = ?');
+    $stm->execute([$_user->id]);
+    $u = $stm->fetch();
 
-if (!is_logged_in()) {
-    echo 'Not logged in';
-    // Optionally, you can also check the session variables
-    echo '<pre>';
-    print_r($_SESSION);
-    echo '</pre>';
-    redirect('../loginAdmin.php');
+    if (!$u) {
+        redirect('../loginAdmin.php');
+    }
 }
-
 // Fetch user profile information
 $user = $_SESSION['user'];
 
-$_title = 'Admin Dashboard - ' . htmlspecialchars($user->username);
+$_title = 'Admin Dashboard - ' . htmlspecialchars($user->name);
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -23,7 +22,7 @@ $_title = 'Admin Dashboard - ' . htmlspecialchars($user->username);
     <title><?= $_title ?></title>
 </head>
 <body>
-    <h1>Welcome, <?= htmlspecialchars($user->username) ?> to the Admin Dashboard</h1>
+    <h1>Welcome, <?= htmlspecialchars($user->name) ?> to the Admin Dashboard</h1>
     <nav>
         <ul>
             <li><a href="profile.php">Profile</a></li>

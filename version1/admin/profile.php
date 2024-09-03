@@ -1,10 +1,15 @@
 <?php
 include '../_base.php';
 
-if (!is_logged_in()) {
-    redirect('loginAdmin.php');
-}
+if (is_get()) {
+    $stm = $_db->prepare('SELECT * FROM user WHERE id = ?');
+    $stm->execute([$_user->id]);
+    $u = $stm->fetch();
 
+    if (!$u) {
+        redirect('../loginAdmin.php');
+    }
+}
 // Fetch user profile information
 $user = $_SESSION['user'];
 

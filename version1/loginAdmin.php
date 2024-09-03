@@ -10,8 +10,7 @@ if (is_post()) {
     // Validate: email
     if ($email == '') {
         $_err['email'] = 'Required';
-    }
-    else if (!is_email($email)) {
+    } else if (!is_email($email)) {
         $_err['email'] = 'Invalid email';
     }
 
@@ -31,9 +30,16 @@ if (is_post()) {
 
         if ($u) {
             temp('info', 'Login successfully');
-            login($u);
-        }
-        else {
+
+            // Redirect based on role
+            if ($u->role == 'Admin') {
+                $redirectUrl = 'admin/admin.php';
+            } elseif ($u->role == 'Member') {
+                $redirectUrl = 'customerPage/product.php';
+            }
+            login($u,$redirectUrl);
+            exit();
+        } else {
             $_err['password'] = 'Not matched';
         }
     }
@@ -42,20 +48,30 @@ if (is_post()) {
 // ----------------------------------------------------------------------------
 
 $_title = 'Login';
-include '_head.php';
 ?>
 
-<form method="post" class="form">
-    <label for="email">Email</label>
-    <?= html_text('email', 'maxlength="100"') ?>
-    <?= err('email') ?>
+<!DOCTYPE html>
+<html lang="en">
 
-    <label for="password">Password</label>
-    <?= html_password('password', 'maxlength="100"') ?>
-    <?= err('password') ?>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title><?= $_title ?></title>
+</head>
 
-    <section>
-        <button>Login</button>
+<body>
+    <form method="post" class="form">
+        <label for="email">Email:</label>
+        <?= html_text('email', 'maxlength="100" required type="email"') ?>
+        <?= err('email') ?>
+        <br>
+        <label for="password">Password:</label>
+        <?= html_password('password', 'maxlength="100" required') ?>
+        <?= err('password') ?>
+        <br>
+        <button type="submit">Login</button>
         <button type="reset">Reset</button>
-    </section>
-</form>
+    </form>
+</body>
+
+</html>
