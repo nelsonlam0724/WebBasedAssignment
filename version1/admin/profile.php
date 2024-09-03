@@ -7,10 +7,10 @@ if (is_get()) {
     $u = $stm->fetch();
 
     if (!$u) {
-        redirect('../loginAdmin.php');
+        redirect('../login.php');
     }
 }
-// Fetch user profile information
+
 $user = $_SESSION['user'];
 
 if (is_post()) {

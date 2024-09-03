@@ -1,6 +1,5 @@
 <?php
 require '../_base.php';
-include 'db.php';
 
 if (is_post()) {
 
@@ -27,7 +26,6 @@ if (is_post()) {
     }
 }
 
-$_db = null;
 ?>
 
 

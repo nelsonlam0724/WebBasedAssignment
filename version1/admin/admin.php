@@ -6,7 +6,7 @@ if (is_get()) {
     $u = $stm->fetch();
 
     if (!$u) {
-        redirect('../loginAdmin.php');
+        redirect('../login.php');
     }
 }
 // Fetch user profile information
@@ -26,7 +26,7 @@ $_title = 'Admin Dashboard - ' . htmlspecialchars($user->name);
     <nav>
         <ul>
             <li><a href="profile.php">Profile</a></li>
-            <li><a href="register.php">Register New Admin</a></li>
+            <li><a href="register.php">Register New Member</a></li>
             <li><a href="logout.php">Logout</a></li>
         </ul>
     </nav>

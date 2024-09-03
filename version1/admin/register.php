@@ -9,7 +9,7 @@ if (is_get()) {
     $u = $stm->fetch();
 
     if (!$u) {
-        redirect('../loginAdmin.php');
+        redirect('../login.php');
     }
 }
 // Handle form submission
@@ -60,10 +60,10 @@ if (is_post()) {
             INSERT INTO user ( email,password,name,  photo, role)
             VALUES (?, SHA1(?), ?, "",  "Member")
         ');
-        $stm->execute([$name, $email, $password]);
+        $stm->execute([$email, $password, $name]);
 
         temp('info', 'Record inserted');
-        redirect('../loginAdmin.php');
+        redirect();
     }
 }
 
@@ -79,7 +79,7 @@ $_title = 'Register Admin';
 </head>
 
 <body>
-    <h1>Register Admin</h1>
+    <h1>Register New Member</h1>
     <?php if (isset($_err['general'])): ?>
         <p style="color: red;"><?= htmlspecialchars($_err['general']) ?></p>
     <?php endif; ?>
@@ -103,7 +103,7 @@ $_title = 'Register Admin';
         <br>
         <button type="submit">Register</button>
     </form>
-    <p>Already registered? <a href="../loginAdmin.php">Login</a></p>
+    <p>Back to Menu<a href="admin.php">Back</a></p>
 </body>
 
 </html>

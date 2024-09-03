@@ -1,9 +1,52 @@
 <!DOCTYPE html>
 <html lang="en">
 <?php
-// Head
+include '_base.php';
+
+// ----------------------------------------------------------------------------
+
+if (is_post()) {
+    $email = req('email');
+    $password = req('password');
+
+    // Validate: email
+    if ($email == '') {
+        $_err['email'] = 'Required';
+    } else if (!is_email($email)) {
+        $_err['email'] = 'Invalid email';
+    }
+
+    // Validate: password
+    if ($password == '') {
+        $_err['password'] = 'Required';
+    }
+
+    // Login user
+    if (!$_err) {
+        $stm = $_db->prepare('
+            SELECT * FROM user
+            WHERE email = ? AND password = SHA1(?)
+        ');
+        $stm->execute([$email, $password]);
+        $u = $stm->fetch();
+
+        if ($u) {
+            temp('info', 'Login successfully');
+            if ($u->role == 'Admin') {
+                $redirectUrl = 'admin/admin.php';
+            } elseif ($u->role == 'Member') {
+                $redirectUrl = 'customerPage/product.php';
+            }
+            login($u, $redirectUrl);
+            exit();
+        } else {
+            $_err['password'] = 'Not matched';
+        }
+    }
+}
 include 'head.php';
 ?>
+
 <body>
     <form method="post" action="" class="form">
         <div class="form-box">
@@ -11,12 +54,14 @@ include 'head.php';
                 <h2>Login</h2>
                 <div class="inputbox">
                     <ion-icon name="mail-outline"></ion-icon>
-                    <input type="email" name="email" required>
+                    <?= html_text('email', 'maxlength="100" required type="email"') ?>
+                    <?= err('email') ?>
                     <label for="email">Email</label>
                 </div>
                 <div class="inputbox">
                     <ion-icon name="lock-closed-outline"></ion-icon>
-                    <input type="password" name="password" required>
+                    <?= html_password('password', 'maxlength="100" required') ?>
+                    <?= err('password') ?>
                     <label for="password">Password</label>
                 </div>
                 <div class="forget">
@@ -35,12 +80,13 @@ include 'head.php';
         </div>
     </form>
 
-<!-- Footer -->
-<?php
-include 'footer.php';
-?>
+    <!-- Footer -->
+    <?php
+    include 'footer.php';
+    ?>
 
-<script src="https://unpkg.com/ionicons@5.5.2/dist/ionicons/ionicons.js"></script>
-<script src="https://unpkg.com/ionicons@5.5.2/dist/ionicons/ionicons.esm.js"></script>
+    <script src="https://unpkg.com/ionicons@5.5.2/dist/ionicons/ionicons.js"></script>
+    <script src="https://unpkg.com/ionicons@5.5.2/dist/ionicons/ionicons.esm.js"></script>
 </body>
+
 </html>
