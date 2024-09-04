@@ -278,7 +278,7 @@ $_title = 'Admin Profile';
                 <input type="hidden" name="update_part" value="true">
                 <input type="hidden" name="field" value="role">
                 <label for="role_value">New Role:</label><br>
-                <?= html_select('value', ['Admin' => 'Admin', 'User' => 'User'], $user->role) ?>
+                <?= html_select('value', ['Admin' => 'Admin', 'Member' => 'Member'], $user->role) ?>
                 <button type="submit">Update</button>
                 <button type="button" onclick="hideEditForm('role')">Cancel</button>
             </form>
@@ -307,7 +307,7 @@ $_title = 'Admin Profile';
                 <input type="hidden" name="update_all" value="true">
                 <label for="email">Email:</label><br>
                 <input type="email" name="email" id="email" value="<?= htmlspecialchars($user->email) ?>"><br>
-
+                
                 <label for="name">Name:</label><br>
                 <input type="text" name="name" id="name" value="<?= htmlspecialchars($user->name) ?>"><br>
 
@@ -321,7 +321,7 @@ $_title = 'Admin Profile';
                 <?= html_select('gender', ['Male' => 'Male', 'Female' => 'Female'], $user->gender) ?><br>
 
                 <label for="role">Role:</label><br>
-                <?= html_select('role', ['Admin' => 'Admin', 'User' => 'User'], $user->role) ?><br>
+                <?= html_select('value', ['Admin' => 'Admin', 'Member' => 'Member'], $user->role) ?>
 
                 <label for="photo">Photo:</label><br>
                 <input type="file" name="photo" id="photo" accept="image/jpeg, image/png"><br>
