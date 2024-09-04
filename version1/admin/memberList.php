@@ -40,7 +40,7 @@ $_title = 'Member List';
                     <th>Username</th>
                     <th>Email</th>
                     <th>Role</th>
-                    <th colspan="2">Actions</th>
+                    <th colspan="3">Actions</th>
                 </tr>
             </thead>
             <tbody>
@@ -50,6 +50,9 @@ $_title = 'Member List';
                         <td><?= htmlspecialchars($member->name) ?></td>
                         <td><?= htmlspecialchars($member->email) ?></td>
                         <td><?= htmlspecialchars($member->role) ?></td>
+                        <td>
+                            <button><a href="memberDetails.php?user_id=<?= $member->user_id ?>">View Details</a></button>
+                        </td>
                         <td>
                             <button><a href="editMember.php?user_id=<?= $member->user_id ?>">Edit</a></button>
 
@@ -64,13 +67,14 @@ $_title = 'Member List';
                 <?php endforeach; ?>
             </tbody>
         </table>
-        <button>
-            <a href="registerMember.php">Register New Member</a>
-        </button>
-        
+
     <?php else: ?>
         <p>No members found.</p>
     <?php endif; ?>
+
+    <button>
+        <a href="registerMember.php">Register New Member</a>
+    </button>
 
     <br>
     <button><a href="admin.php">BACK TO MENU</a></button>
