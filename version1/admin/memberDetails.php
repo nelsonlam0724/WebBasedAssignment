@@ -15,6 +15,7 @@ if (is_get()) {
     $stm->execute([$user_id]);
     $member = $stm->fetch(PDO::FETCH_OBJ);
 
+
     if (!$member) {
         redirect('memberList.php'); // Redirect if member not found
     }
@@ -67,15 +68,13 @@ $_title = 'Member Details';
                 <th>Photo</th>
                 <td>
                     <?php if ($member->photo): ?>
-                    
-                     <img src="../uploads/<?= $_user->photo ?>" alt="Member Photo" style="max-width: 200px;">
- 
-                        <?php else: ?>
+                        <img src="../uploads/<?= htmlspecialchars($member->photo) ?>" alt="Member Photo" style="max-width: 200px;">
+                    <?php else: ?>
                         No photo available
                     <?php endif; ?>
                 </td>
             </tr>
-            <!-- Add more fields as necessary -->
+
         </table>
     <?php else: ?>
         <p>Member details not found.</p>
