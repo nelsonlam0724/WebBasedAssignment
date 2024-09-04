@@ -3,8 +3,8 @@ include '../_base.php';
 include '../_head.php';
 
 if (is_get()) {
-    $stm = $_db->prepare('SELECT * FROM user WHERE id = ?');
-    $stm->execute([$_user->id]);
+    $stm = $_db->prepare('SELECT * FROM user WHERE user_id = ?');
+    $stm->execute([$_user->user_id]);
     $u = $stm->fetch();
 
     if (!$u) {

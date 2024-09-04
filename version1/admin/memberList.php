@@ -3,8 +3,8 @@ include '../_base.php';
 include '../_head.php';
 
 if (is_get()) {
-    $stm = $_db->prepare('SELECT * FROM user WHERE id = ?');
-    $stm->execute([$_user->id]);
+    $stm = $_db->prepare('SELECT * FROM user WHERE user_id = ?');
+    $stm->execute([$_user->user_id]);
     $u = $stm->fetch();
 
     if (!$u) {
@@ -46,17 +46,17 @@ $_title = 'Member List';
             <tbody>
                 <?php foreach ($members as $member): ?>
                     <tr>
-                        <td><?= htmlspecialchars($member->id) ?></td>
+                        <td><?= htmlspecialchars($member->user_id) ?></td>
                         <td><?= htmlspecialchars($member->name) ?></td>
                         <td><?= htmlspecialchars($member->email) ?></td>
                         <td><?= htmlspecialchars($member->role) ?></td>
                         <td>
-                            <button><a href="editMember.php?id=<?= $member->id ?>">Edit</a></button>
+                            <button><a href="editMember.php?id=<?= $member->user_id ?>">Edit</a></button>
 
                         </td>
                         <td>
                             <form action="deleteMember.php" method="post" style="display:inline;">
-                                <input type="hidden" name="id" value="<?= $member->id ?>">
+                                <input type="hidden" name="id" value="<?= $member->user_id ?>">
                                 <button type="submit" onclick="return confirm('Are you sure you want to delete this member?');">Delete</button>
                             </form>
                         </td>

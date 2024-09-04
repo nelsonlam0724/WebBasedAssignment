@@ -2,9 +2,6 @@
 include '_base.php';
 include '_head.php';
 
-// Initialize error array
-$_err = [];
-
 // Handle form submission
 if (is_post()) {
     $name = req('name');

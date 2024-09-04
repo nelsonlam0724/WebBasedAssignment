@@ -4,8 +4,8 @@ include '../_head.php';
 
 // Fetch user data if GET request
 if (is_get()) {
-    $stm = $_db->prepare('SELECT * FROM user WHERE id = ?');
-    $stm->execute([$_user->id]);
+    $stm = $_db->prepare('SELECT * FROM user WHERE user_id = ?');
+    $stm->execute([$_user->user_id]);
     $u = $stm->fetch();
 
     if (!$u) {
@@ -59,23 +59,23 @@ if (is_post()) {
 
     // Update email
     if ($new_email) {
-        $stm = $_db->prepare('UPDATE user SET email = ? WHERE id = ?');
-        $stm->execute([$new_email, $user->id]);
+        $stm = $_db->prepare('UPDATE user SET email = ? WHERE user_id = ?');
+        $stm->execute([$new_email, $user->user_id]);
         $_SESSION['user']->email = $new_email;
     }
 
     // Update username
     if ($new_name) {
-        $stm = $_db->prepare('UPDATE user SET name = ? WHERE id = ?');
-        $stm->execute([$new_name, $user->id]);
+        $stm = $_db->prepare('UPDATE user SET name = ? WHERE user_id = ?');
+        $stm->execute([$new_name, $user->user_id]);
         $_SESSION['user']->name = $new_name;
     }
 
     // Update password
     if ($new_password) {
         $hashed_password = password_hash($new_password, PASSWORD_DEFAULT);
-        $stm = $_db->prepare('UPDATE user SET password = ? WHERE id = ?');
-        $stm->execute([$hashed_password, $user->id]);
+        $stm = $_db->prepare('UPDATE user SET password = ? WHERE user_id = ?');
+        $stm->execute([$hashed_password, $user->user_id]);
     }
     $_user->email = $email;
     $_user->name  = $name;

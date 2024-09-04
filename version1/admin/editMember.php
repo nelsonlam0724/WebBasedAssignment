@@ -3,8 +3,8 @@ include '../_base.php';
 include '../_head.php';
 
 if (is_get()) {
-    $stm = $_db->prepare('SELECT * FROM user WHERE id = ?');
-    $stm->execute([$_user->id]);
+    $stm = $_db->prepare('SELECT * FROM user WHERE user_id = ?');
+    $stm->execute([$_user->user_id]);
     $u = $stm->fetch();
 
     if (!$u) {
@@ -13,15 +13,15 @@ if (is_get()) {
 }
 
 // Check if ID is provided in the URL
-if (!isset($_GET['id'])) {
+if (!isset($_GET['user_id'])) {
     redirect('memberList.php');
 }
 
-$id = $_GET['id'];
+$user_id = $_GET['user_id'];
 
 // Fetch the member's details
-$stm = $_db->prepare('SELECT * FROM user WHERE id = ?');
-$stm->execute([$id]);
+$stm = $_db->prepare('SELECT * FROM user WHERE user_id = ?');
+$stm->execute([$user_id]);
 $member = $stm->fetch(PDO::FETCH_OBJ);
 
 if (!$member) {
@@ -36,7 +36,7 @@ if (is_post()) {
 
     // Update member's details
     $stm = $_db->prepare('UPDATE user SET email = ?, name = ?, role = ? WHERE id = ?');
-    $stm->execute([$new_email, $new_name, $new_role, $id]);
+    $stm->execute([$new_email, $new_name, $new_role, $user_id]);
 
     temp('info', 'Member updated successfully');
     redirect('memberList.php');
