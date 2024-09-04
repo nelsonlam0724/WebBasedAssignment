@@ -35,7 +35,7 @@ if (is_post()) {
     $new_role = req('role');
 
     // Update member's details
-    $stm = $_db->prepare('UPDATE user SET email = ?, name = ?, role = ? WHERE id = ?');
+    $stm = $_db->prepare('UPDATE user SET email = ?, name = ?, role = ? WHERE user_id = ?');
     $stm->execute([$new_email, $new_name, $new_role, $user_id]);
 
     temp('info', 'Member updated successfully');

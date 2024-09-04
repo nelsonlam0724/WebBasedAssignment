@@ -76,19 +76,18 @@ function get_file($key)
     return null;
 }
 
-// // Crop, resize and save photo
-// function save_photo($f, $folder, $width = 200, $height = 200) {
-//     $photo = uniqid() . '.jpg';
+// Crop, resize and save photo
+function save_photo($f, $folder, $width = 200, $height = 200) {
+    $photo = uniqid() . '.jpg';
+    
+    require_once 'lib/SimpleImage.php';
+    $img = new SimpleImage();
+    $img->fromFile($f->tmp_name)
+        ->thumbnail($width, $height)
+        ->toFile("$folder/$photo", 'image/jpeg');
 
-//     require_once 'lib/SimpleImage.php';
-//     $img = new SimpleImage();
-//     $img->fromFile($f->tmp_name)
-//         ->thumbnail($width, $height)
-//         ->toFile("$folder/$photo", 'image/jpeg');
-
-//     return $photo;
-// }
-
+    return $photo;
+}
 // Is money?
 function is_money($value)
 {
@@ -104,6 +103,14 @@ function is_username($value)
 function is_email($value)
 {
     return filter_var($value, FILTER_VALIDATE_EMAIL) !== false;
+}
+
+function is_birthday($value){
+    return preg_match('/^\d{4}-\d{2}-\d{2}$/', $value); 
+}
+
+function is_gender($value){
+    return in_array($value, ['Male', 'Female', 'Other']);
 }
 
 // ============================================================================

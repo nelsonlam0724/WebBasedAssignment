@@ -29,7 +29,6 @@ $_title = 'Admin Dashboard - ' . htmlspecialchars($user->name);
         <ul>
             <li><a href="profile.php">Admin Profile</a></li>
             <li><a href="memberList.php">Member List</a></li>
-            <li><a href="registerMember.php">Register New Member</a></li>
             <li><a href="../logout.php">Logout</a></li>
         </ul>
     </nav>

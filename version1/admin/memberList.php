@@ -51,7 +51,7 @@ $_title = 'Member List';
                         <td><?= htmlspecialchars($member->email) ?></td>
                         <td><?= htmlspecialchars($member->role) ?></td>
                         <td>
-                            <button><a href="editMember.php?id=<?= $member->user_id ?>">Edit</a></button>
+                            <button><a href="editMember.php?user_id=<?= $member->user_id ?>">Edit</a></button>
 
                         </td>
                         <td>
@@ -64,6 +64,10 @@ $_title = 'Member List';
                 <?php endforeach; ?>
             </tbody>
         </table>
+        <button>
+            <a href="registerMember.php">Register New Member</a>
+        </button>
+        
     <?php else: ?>
         <p>No members found.</p>
     <?php endif; ?>

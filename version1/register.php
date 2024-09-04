@@ -8,6 +8,9 @@ if (is_post()) {
     $email = req('email');
     $password = req('password');
     $confirm = req('confirm');
+    $f = get_file('photo');
+    $gender = req('gender');
+    $birthday = req('birthday');
 
     // Validate: email
     if (!$email) {
@@ -43,21 +46,52 @@ if (is_post()) {
         $_err['name'] = 'Maximum 100 characters';
     }
 
-    // Register user
+    // Validate: gender
+    if (!$gender) {
+        $_err['gender'] = 'Required';
+    } else if (!is_gender($gender)) {
+        $_err['gender'] = 'Invalid gender';
+    }
+
+    // Validate: birthday
+    if (!$birthday) {
+        $_err['birthday'] = 'Required';
+    } else if (!is_birthday($birthday)) {
+        $_err['birthday'] = 'Invalid date format';
+    } else {
+        $birthdate_parts = explode('-', $birthday);
+        if (!checkdate($birthdate_parts[1], $birthdate_parts[2], $birthdate_parts[0])) {
+            $_err['birthday'] = 'Invalid date';
+        }
+    }
+    // Validate: photo (file)
+    if (!$f) {
+        $_err['photo'] = 'Required';
+    }
+    else if (!str_starts_with($f->type, 'image/')) {
+        $_err['photo'] = 'Must be image';
+    }
+    else if ($f->size > 1 * 1024 * 1024) {
+        $_err['photo'] = 'Maximum 1MB';
+    }
+
+    // DB operation
     if (!$_err) {
+        $photo = save_photo($f, 'photo');
 
         $stm = $_db->prepare('
-            INSERT INTO user ( email,password,name,  photo, role)
-            VALUES (?, SHA1(?), ?, "",  "Member")
+            INSERT INTO user (email, password, name, gender, birthday, photo, role)
+            VALUES (?, SHA1(?), ?, ?, ?, ?, "Member")
         ');
-        $stm->execute([$email, $password, $name]);
+        $stm->execute([$email, $password, $name, $gender,$birthday,$photo]);
 
         temp('info', 'Record inserted');
         redirect();
     }
 }
 
-$_title = 'Register Admin';
+
+$_title = 'Register Member';
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -65,6 +99,8 @@ $_title = 'Register Admin';
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="./css/image.css">
+    <script src="./js/profile.js"></script>
     <title><?= $_title ?></title>
 </head>
 
@@ -74,26 +110,51 @@ $_title = 'Register Admin';
         <p style="color: red;"><?= htmlspecialchars($_err['general']) ?></p>
     <?php endif; ?>
     <form method="post" class="form">
-
         <label for="name">Name</label><br>
         <?= html_text('name', 'maxlength="100"') ?>
         <?= err('name') ?>
         <br>
+
         <label for="email">Email</label><br>
         <?= html_text('email', 'maxlength="100"') ?>
         <?= err('email') ?>
         <br>
+
         <label for="password">Password</label><br>
         <?= html_password('password', 'maxlength="100"') ?>
         <?= err('password') ?>
         <br>
+
         <label for="confirm">Confirm</label><br>
         <?= html_password('confirm', 'maxlength="100"') ?>
         <?= err('confirm') ?>
         <br>
+
+        <label for="gender">Gender</label><br>
+        <select name="gender">
+            <option value="">Select Gender</option>
+            <option value="Male">Male</option>
+            <option value="Female">Female</option>
+            <option value="Other">Other</option>
+        </select>
+        <?= err('gender') ?>
+        <br>
+
+        <label for="birthday">Birthday</label><br>
+        <?= html_text('birthday', 'placeholder="YYYY-MM-DD"') ?>
+        <?= err('birthday') ?>
+        <br>
+
+        <label for="photo">Photo</label>
+        <label class="upload">
+            <?= html_file('photo', 'image/*', 'hidden') ?>
+            <img src="images/photo.jpg">
+        </label>
+        <?= err('photo') ?>
         <button type="submit">Register</button>
     </form>
-    <p>Already Register? Login Here <a href="login.php">Back</a> !!</p>
+    <p>Already Registered? Login Here <a href="login.php">Back</a> !!</p>
+
 </body>
 
 </html>
