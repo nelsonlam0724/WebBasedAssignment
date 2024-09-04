@@ -1,5 +1,5 @@
 <?php
-require '../_base.php';
+include '../_base.php';
 
 if (is_post()) {
 

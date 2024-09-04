@@ -7,7 +7,6 @@
     user-select:none;
 }
 
-
 .items{
    padding:50px;
    top:150px;
@@ -26,7 +25,7 @@
 .items-lists{
     display:grid;
     place-items:center;
-    grid-template-columns:auto auto auto auto;
+    grid-template-columns:25% 25% 25% 25%;
     padding: 10px 50px;
     row-gap: 20px;
 }
@@ -129,5 +128,7 @@
 
 .wishlist p i{
         font-size:24px;
-        color:black;
+        color:transparent;
+        -webkit-text-stroke-width: 3px;
+            -webkit-text-stroke-color: white;
        }
