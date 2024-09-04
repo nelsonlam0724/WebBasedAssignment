@@ -58,7 +58,7 @@ $_title = 'Member List';
 
                         </td>
                         <td>
-                            <form action="deleteMember.php" method="post" style="display:inline;">
+                            <form action="deleteMember.php?user_id=<?= $member->user_id ?>" method="post" style="display:inline;">
                                 <input type="hidden" name="id" value="<?= $member->user_id ?>">
                                 <button type="submit" onclick="return confirm('Are you sure you want to delete this member?');">Delete</button>
                             </form>
