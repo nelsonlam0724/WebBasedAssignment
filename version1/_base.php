@@ -124,6 +124,9 @@ function save_photo_admin($file) {
     return $photo;
 }
 
+function save_photo_admin($file) {
+    if()
+}
 
 // Is money?
 function is_money($value)
@@ -223,6 +226,11 @@ function html_select($key, $items, $default = '- Select One -', $attr = '')
         echo "<option value='$id' $state>$text</option>";
     }
     echo '</select>';
+}
+
+function html_textarea($key, $attr = '') {
+    $value = encode($GLOBALS[$key] ?? '');
+    echo "<textarea id ='$key' name='$key' $attr>$value</textarea>";
 }
 
 // Generate <input type='file'>
