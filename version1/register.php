@@ -64,26 +64,25 @@ if (is_post()) {
             $_err['birthday'] = 'Invalid date';
         }
     }
+
     // Validate: photo (file)
     if (!$f) {
         $_err['photo'] = 'Required';
-    }
-    else if (!str_starts_with($f->type, 'image/')) {
-        $_err['photo'] = 'Must be image';
-    }
-    else if ($f->size > 1 * 1024 * 1024) {
+    } else if (!str_starts_with($f->type, 'image/')) {
+        $_err['photo'] = 'Must be an image';
+    } else if ($f->size > 1 * 1024 * 1024) {
         $_err['photo'] = 'Maximum 1MB';
     }
 
     // DB operation
     if (!$_err) {
-        $photo = save_photo($f, 'photo');
+        $photo = save_photo($f);
 
         $stm = $_db->prepare('
             INSERT INTO user (email, password, name, gender, birthday, photo, role)
             VALUES (?, SHA1(?), ?, ?, ?, ?, "Member")
         ');
-        $stm->execute([$email, $password, $name, $gender,$birthday,$photo]);
+        $stm->execute([$email, $password, $name, $gender, $birthday, $photo]);
 
         temp('info', 'Record inserted');
         redirect();
@@ -109,7 +108,7 @@ $_title = 'Register Member';
     <?php if (isset($_err['general'])): ?>
         <p style="color: red;"><?= htmlspecialchars($_err['general']) ?></p>
     <?php endif; ?>
-    <form method="post" class="form">
+    <form method="post" class="form" enctype="multipart/form-data">
         <label for="name">Name</label><br>
         <?= html_text('name', 'maxlength="100"') ?>
         <?= err('name') ?>
@@ -151,6 +150,8 @@ $_title = 'Register Member';
             <img src="images/photo.jpg">
         </label>
         <?= err('photo') ?>
+        <br>
+
         <button type="submit">Register</button>
     </form>
     <p>Already Registered? Login Here <a href="login.php">Back</a> !!</p>
