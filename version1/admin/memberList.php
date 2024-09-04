@@ -2,6 +2,7 @@
 include '../_base.php';
 include '../_head.php';
 
+// Handle user authentication
 if (is_get()) {
     $stm = $_db->prepare('SELECT * FROM user WHERE user_id = ?');
     $stm->execute([$_user->user_id]);
@@ -12,10 +13,32 @@ if (is_get()) {
     }
 }
 
-// Fetch all members
-$stm = $_db->prepare('SELECT * FROM user WHERE role = ?');
-$stm->execute(['Member']);
-$members = $stm->fetchAll(PDO::FETCH_OBJ); // Fetch all as objects
+// Get search query and page number
+$search_query = isset($_GET['search']) ? trim($_GET['search']) : '';
+$page = isset($_GET['page']) ? (int)$_GET['page'] : 1;
+$records_per_page = 4;
+$offset = ($page - 1) * $records_per_page;
+
+// Build SQL query with search filter
+$sql = 'SELECT * FROM user WHERE role = ?';
+$params = ['Member'];
+
+if ($search_query) {
+    $sql .= ' AND name LIKE ?';
+    $params[] = '%' . $search_query . '%';
+}
+
+// Count total records for pagination
+$count_stm = $_db->prepare($sql);
+$count_stm->execute($params);
+$total_records = $count_stm->rowCount();
+$total_pages = ceil($total_records / $records_per_page);
+
+// Fetch records for current page
+$sql .= ' LIMIT ' . $records_per_page . ' OFFSET ' . $offset;
+$stm = $_db->prepare($sql);
+$stm->execute($params);
+$members = $stm->fetchAll(PDO::FETCH_OBJ);
 
 $_title = 'Member List';
 ?>
@@ -31,6 +54,11 @@ $_title = 'Member List';
 
 <body>
     <h1>Member List</h1>
+
+    <form action="memberList.php" method="get">
+        <input type="text" name="search" placeholder="Search by name" value="<?= htmlspecialchars($search_query) ?>">
+        <button type="submit">Search</button>
+    </form>
 
     <?php if ($members): ?>
         <table border="1">
@@ -55,7 +83,6 @@ $_title = 'Member List';
                         </td>
                         <td>
                             <button><a href="editMember.php?user_id=<?= $member->user_id ?>">Edit</a></button>
-
                         </td>
                         <td>
                             <form action="deleteMember.php?user_id=<?= $member->user_id ?>" method="post" style="display:inline;">
@@ -68,10 +95,21 @@ $_title = 'Member List';
             </tbody>
         </table>
 
+        <!-- Pagination Controls -->
+        <div>
+            <?php if ($page > 1): ?>
+                <a href="?search=<?= urlencode($search_query) ?>&page=<?= $page - 1 ?>"> Previous</a>
+            <?php endif; ?>
+
+            <?php if ($page < $total_pages): ?>
+                <a href="?search=<?= urlencode($search_query) ?>&page=<?= $page + 1 ?>"> Next</a>
+            <?php endif; ?>
+        </div>
+
     <?php else: ?>
         <p>No members found.</p>
     <?php endif; ?>
-
+        <br>
     <button>
         <a href="registerMember.php">Register New Member</a>
     </button>
