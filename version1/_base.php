@@ -124,10 +124,6 @@ function save_photo_admin($file) {
     return $photo;
 }
 
-function save_photo_admin($file) {
-    if()
-}
-
 // Is money?
 function is_money($value)
 {
