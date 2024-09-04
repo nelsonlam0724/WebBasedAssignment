@@ -4,15 +4,7 @@ include '_head.php';
 
 // Initialize error array
 $_err = [];
-if (is_get()) {
-    $stm = $_db->prepare('SELECT * FROM user WHERE id = ?');
-    $stm->execute([$_user->id]);
-    $u = $stm->fetch();
 
-    if (!$u) {
-        redirect('../login.php');
-    }
-}
 // Handle form submission
 if (is_post()) {
     $name = req('name');

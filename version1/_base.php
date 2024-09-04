@@ -247,7 +247,7 @@ function logout($url = '/')
 // ============================================================================
 
 // Global PDO object
-$_db = new PDO('mysql:dbname=wb', 'root', '', [
+$_db = new PDO('mysql:dbname=web_ass', 'root', '', [
     PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_OBJ,
 ]);
 
