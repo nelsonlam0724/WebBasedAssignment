@@ -1,4 +1,8 @@
-<?php session_start();?>
+<?php 
+  $user=$_SESSION['user'] -> name ?? 'guest';
+  $userID=$_SESSION['user'] -> user_id  ?? '0';
+?>
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -27,23 +31,16 @@
 
     <div class="userAcc-block">
        <div class="user-icon">
-       </div>
-       <?php
-           
-       ?>
         <img style="  object-fit: cover;" src="https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_960_720.png" width="40" height="40">
        </div>
        <div class="text">
         <div class="text-first">
-            <?php
-                     $user=$_SESSION['user'];
-            ?>
-            <h6 data-user="<?= $user->user_id ?>">Hi,<?= $user->name ?></h6>
+            <h6 data-user="<?= $userID ?>">Hi,<?= $user?></h6>
         </div> 
        </div>
     </div>
 
-    <a href="../customer/cart.php"><p style="font-size: 30px;cursor:pointer;" class="cart-icon"><i class='bx bx-cart' ></i><span></span></P></a>
+    <a href="../customer/cart.php"><p style="font-size: 30px;cursor:pointer;color:black" class="cart-icon"><i class='bx bx-cart' ></i><span></span></P></a>
     
 </div>
 <div class="second-row">

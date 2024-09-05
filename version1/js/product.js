@@ -40,11 +40,47 @@ $(document).ready(function(){
             });
         });
     }
+
+
+    
+    $('.add_card').on("click", function() {     
+        let $this = $(this);  
+        let userID = parseInt($('.text-first h6').data('user'));
+        let productID = parseInt($this.data('addCart'));             
+        $.ajax({
+            url: '../function/add_to_cart.php',
+            type: 'POST',
+            data: {user: userID, product: productID},
+            success: function(response) {
+                let checkClick = JSON.parse(response);
+                if (checkClick.success) {
+                    alert(checkClick.message);
+                } else {
+                    alert('Error adding product to cart');
+                }
+            }
+        });
+    });
+    
+
+
+
+
+
+
+
 });
+
+
+
+
+
+
+
 
 $('.add-to-card').on('click',function(){
     var cart = $('.cart-icon');
-    var dragImage = $(this).closest('.items-card').find("img").eq(0);   
+    var dragImage = $(this).closest('.cards').find("img").eq(0);   
     if(dragImage){
      var imgclone = dragImage.clone().offset({
          top: dragImage.offset().top,

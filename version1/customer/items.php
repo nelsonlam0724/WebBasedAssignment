@@ -1,38 +1,38 @@
-<?php include '../include/header.php';?>
+<?php
+include '../_base.php';
+include '../include/header.php';
+$product_id =  get('id');
+$getProduct = $_db->prepare('SELECT * FROM product WHERE product_id = ?');
+$getProduct->execute([$product_id]);
+$product = $getProduct->fetch(PDO::FETCH_OBJ); 
+?>
     <title>Itens</title>
     <link rel="stylesheet" href="../css/items.css">
 
     <div class="container">
           <div class="item-board">
+            
                 <div class="items-card">
                   <img src="https://www.bing.com/th?id=OIP.CJUZPzHxXG_PeTDV4UuojQHaF0&w=200&h=150&c=8&rs=1&qlt=90&o=6&dpr=1.2&pid=3.1&rm=2" >
                </div>
       
           <div class="box2">
                  <div class="items-name">
-                     <h1>Tedy Bear</h1>
+                     <h1><?= $product ->name ?></h1>
                  </div>
 
       <div class="item-description">
-        <p>►Credits:
-            Directed by: Alexander Wessely
-            Producers: Joel Rostmark, Adam Holmström, Andrea Gyllenskiöld 
-            Production company: PINE
-            DOP: Erik Henriksson
-            Editor: Andreas Arvidsson 
-            Vfx supervisor: Kalle Lundberg
-            Post-producer: Sofia Misgena
-            Post-production company: WGT A+M / Rascal post
-          </p>
+        <p><?= $product->description ?></p>
       </div>
 
              <div class="btn-field">
                 <a href="#"><div class="btn-buy">Buy</div></a>
-                    <div class="add-to-card" data-items="1">add to card</div>
+                    <div class="add-to-card" data-items="<?= $product ->product_id ?>">add to card</div>
                </div>
 
        </div>
      </div>
+     
 
       <div class="review-field">
           <h3>Review</h3>
