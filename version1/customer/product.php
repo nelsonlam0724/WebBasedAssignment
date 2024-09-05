@@ -29,8 +29,8 @@ include '../include/header.php';
             <p><i class="fa fa-heart"></i></p>
           </div>
           <div class="selection-button">
-            <div class="add-to-card  add_card"  data-addCart="<?= $i->product_id ?>">
-              <p><i class='bx bx-cart' style="font-size:24px" ></i> Add To Card</p>
+            <div class="add-to-card  add_card"  data-add="<?= $i->product_id ?>">
+              <p><i class='bx bx-cart' style="font-size:24px" ></i>Add To Card</p>
             </div>
             <a href="#">
               <div class="view-product">

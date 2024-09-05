@@ -46,7 +46,7 @@ $(document).ready(function(){
     $('.add_card').on("click", function() {     
         let $this = $(this);  
         let userID = parseInt($('.text-first h6').data('user'));
-        let productID = parseInt($this.data('addCart'));             
+        let productID = parseInt($this.data('add'));             
         $.ajax({
             url: '../function/add_to_cart.php',
             type: 'POST',
