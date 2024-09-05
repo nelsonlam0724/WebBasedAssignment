@@ -20,136 +20,87 @@ $_err = [];
 
 // Handle form submission (POST request)
 if (is_post()) {
-    $update_part = req('update_part'); // Determine if the update is partial or full
-    $update_all = req('update_all');   // Determine if the update is for all fields
 
-    // Handle Partial Updates
-    if ($update_part) {
-        $field = req('field');
-        $value = req('value');
+    $field = req('field');
+    $value = req('value');
 
-        switch ($field) {
-            case 'email':
-                if (strlen($value) > 100) {
-                    $_err['email'] = 'Maximum 100 characters';
-                } else if (!is_email($value)) {
-                    $_err['email'] = 'Invalid email';
-                } else if (!is_unique($value, 'user', 'email')) {
-                    $_err['email'] = 'Duplicated';
-                } else {
-                    $stm = $_db->prepare('UPDATE user SET email = ? WHERE user_id = ?');
-                    $stm->execute([$value, $user->user_id]);
-                    $_SESSION['user']->email = $value;
-                }
-                break;
+    switch ($field) {
+        case 'email':
+            if (strlen($value) > 100) {
+                $_err['email'] = 'Maximum 100 characters';
+            } else if (!is_email($value)) {
+                $_err['email'] = 'Invalid email';
+            } else if (!is_unique($value, 'user', 'email')) {
+                $_err['email'] = 'Duplicated';
+            } else {
+                $stm = $_db->prepare('UPDATE user SET email = ? WHERE user_id = ?');
+                $stm->execute([$value, $user->user_id]);
+                $_SESSION['user']->email = $value;
+            }
+            break;
 
-            case 'name':
-                if (strlen($value) > 100) {
-                    $_err['name'] = 'Maximum 100 characters';
-                } else {
-                    $stm = $_db->prepare('UPDATE user SET name = ? WHERE user_id = ?');
-                    $stm->execute([$value, $user->user_id]);
-                    $_SESSION['user']->name = $value;
-                }
-                break;
+        case 'name':
+            if (strlen($value) > 100) {
+                $_err['name'] = 'Maximum 100 characters';
+            } else {
+                $stm = $_db->prepare('UPDATE user SET name = ? WHERE user_id = ?');
+                $stm->execute([$value, $user->user_id]);
+                $_SESSION['user']->name = $value;
+            }
+            break;
 
-            case 'password':
-                if (strlen($value) < 5 || strlen($value) > 100) {
-                    $_err['password'] = 'Between 5-100 characters';
-                } else {
-                    $hashed_password = password_hash($value, PASSWORD_DEFAULT);
-                    $stm = $_db->prepare('UPDATE user SET password = ? WHERE user_id = ?');
-                    $stm->execute([$hashed_password, $user->user_id]);
-                }
-                break;
+        case 'password':
+            if (strlen($value) < 5 || strlen($value) > 100) {
+                $_err['password'] = 'Between 5-100 characters';
+            } else {
+                $hashed_password = password_hash($value, PASSWORD_DEFAULT);
+                $stm = $_db->prepare('UPDATE user SET password = ? WHERE user_id = ?');
+                $stm->execute([$hashed_password, $user->user_id]);
+            }
+            break;
 
-            case 'birthday':
-                if (!is_birthday($value)) {
-                    $_err['birthday'] = 'Invalid date format';
-                } else {
-                    $stm = $_db->prepare('UPDATE user SET birthday = ? WHERE user_id = ?');
-                    $stm->execute([$value, $user->user_id]);
-                    $_SESSION['user']->birthday = $value;
-                }
-                break;
+        case 'birthday':
+            if (!is_birthday($value)) {
+                $_err['birthday'] = 'Invalid date format';
+            } else {
+                $stm = $_db->prepare('UPDATE user SET birthday = ? WHERE user_id = ?');
+                $stm->execute([$value, $user->user_id]);
+                $_SESSION['user']->birthday = $value;
+            }
+            break;
 
-            case 'gender':
-                if (!is_gender($value)) {
-                    $_err['gender'] = 'Invalid gender';
-                } else {
-                    $stm = $_db->prepare('UPDATE user SET gender = ? WHERE user_id = ?');
-                    $stm->execute([$value, $user->user_id]);
-                    $_SESSION['user']->gender = $value;
-                }
-                break;
+        case 'gender':
+            if (!is_gender($value)) {
+                $_err['gender'] = 'Invalid gender';
+            } else {
+                $stm = $_db->prepare('UPDATE user SET gender = ? WHERE user_id = ?');
+                $stm->execute([$value, $user->user_id]);
+                $_SESSION['user']->gender = $value;
+            }
+            break;
 
-            case 'photo':
-                $photo = $_FILES['value'];
-                $allowed_types = ['image/jpeg', 'image/png'];
-                if (!in_array($photo['type'], $allowed_types)) {
-                    $_err['photo'] = 'Invalid file type. Only JPEG and PNG are allowed.';
-                } else if ($photo['size'] > 2 * 1024 * 1024) { // 2MB max size
-                    $_err['photo'] = 'File size exceeds 2MB.';
-                } else {
-                    $photo_name = save_photo_admin($photo);
-                    $stm = $_db->prepare('UPDATE user SET photo = ? WHERE user_id = ?');
-                    $stm->execute([$photo_name, $user->user_id]);
-                    $_SESSION['user']->photo = $photo_name;
-                }
-                break;
-        }
-
-        if (empty($_err)) {
-            temp('info', 'Profile updated successfully');
-            redirect('admin.php');
-        }
+        case 'photo':
+            $photo = $_FILES['value'];
+            $allowed_types = ['image/jpeg', 'image/png'];
+            if (!in_array($photo['type'], $allowed_types)) {
+                $_err['photo'] = 'Invalid file type. Only JPEG and PNG are allowed.';
+            } else if ($photo['size'] > 2 * 1024 * 1024) { // 2MB max size
+                $_err['photo'] = 'File size exceeds 2MB.';
+            } else {
+                $photo_name = save_photo_admin($photo);
+                $stm = $_db->prepare('UPDATE user SET photo = ? WHERE user_id = ?');
+                $stm->execute([$photo_name, $user->user_id]);
+                $_SESSION['user']->photo = $photo_name;
+            }
+            break;
     }
 
-    // Handle Full Updates
-    if ($update_all) {
-        // Validate and collect data
-        $email = req('email');
-        $name = req('name');
-        $password = req('password');
-        $birthday = req('birthday');
-        $gender = req('gender');
-        $photo = $_FILES['photo'];
-
-
-        if (empty($_err)) {
-            // Prepare and execute update query
-            $update_query = 'UPDATE user SET email = ?, name = ?, password = ?, birthday = ?, gender = ? WHERE user_id = ?';
-            $update_params = [$email, $name, $hashed_password, $birthday, $gender, $user->user_id];
-
-            // Check if photo is uploaded
-            if ($photo['error'] === UPLOAD_ERR_OK) {
-                // Validate and save photo
-                // ... (your existing photo validation and saving code)
-                $photo_name = save_photo_admin($photo);
-                $update_query = 'UPDATE user SET email = ?, name = ?, password = ?, birthday = ?, gender = ?, photo = ? WHERE user_id = ?';
-                $update_params[] = $photo_name;
-            } else {
-                $photo_name = $user->photo; // Use existing photo if no new one
-            }
-
-            // Execute update query
-            $stm = $_db->prepare($update_query);
-            $stm->execute($update_params);
-
-            // Update session data
-            $_SESSION['user'] = (object) array_merge((array)$_SESSION['user'], [
-                'email' => $email,
-                'name' => $name,
-                'birthday' => $birthday,
-                'gender' => $gender,
-                'photo' => $photo_name,
-            ]);
-
-            temp('info', 'Profile updated successfully');
-            redirect('admin.php');
-        }
+    if (empty($_err)) {
+        temp('info', 'Profile updated successfully');
+        redirect('admin.php');
     }
 }
+
 
 $_title = 'Admin Profile';
 ?>
@@ -256,38 +207,12 @@ $_title = 'Admin Profile';
     </div>
     <br>
     <div>
-        <button onclick="toggleEditForm()">Edit All</button>
-        <div id="editForm" class="edit-form">
-            <form method="post" enctype="multipart/form-data">
-                <input type="hidden" name="update_all" value="true">
-                <label for="email">Email:</label><br>
-                <input type="email" name="email" id="email" value="<?= htmlspecialchars($user->email) ?>"><br>
-
-                <label for="name">Name:</label><br>
-                <input type="text" name="name" id="name" value="<?= htmlspecialchars($user->name) ?>"><br>
-
-                <label for="password">Password:</label><br>
-                <input type="password" name="password" id="password" placeholder="New password"><br>
-
-                <label for="birthday">Birthday:</label><br>
-                <input type="date" name="birthday" id="birthday" value="<?= htmlspecialchars($user->birthday) ?>"><br>
-
-                <select name="gender" id="gender">
-                    <option value="male" <?= $user->gender == 'male' ? 'selected' : '' ?>>Male</option>
-                    <option value="female" <?= $user->gender == 'female' ? 'selected' : '' ?>>Female</option>
-                </select><br>
-
-                <label for="photo">Photo:</label><br>
-                <input type="file" name="photo" id="photo" accept="image/jpeg, image/png"><br>
-
-                <button type="submit">Update All</button>
-                <button type="button" onclick="toggleEditForm('')">Cancel</button>
-            </form>
-        </div>
+        <a href="editProfile.php"><button>Edit All</button></a>
     </div>
 
-    <button><a href="admin.php">Back to Menu</a></button><br>
-    <button><a href="../logout.php">Logout</a></button>
+
+    <a href="admin.php"><button>Back to Menu</button></a><br>
+    <a href="../logout.php"><button>Logout</button></a>
 </body>
 
 </html>

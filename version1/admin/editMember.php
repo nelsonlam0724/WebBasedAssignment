@@ -18,6 +18,10 @@ if (!isset($_GET['user_id'])) {
 }
 
 $user_id = $_GET['user_id'];
+// Get the page and search query from the URL
+$page = isset($_GET['page']) ? (int)$_GET['page'] : 1;
+$search_query = isset($_GET['search']) ? trim($_GET['search']) : '';
+
 
 // Fetch the member's details, including gender, birthday, and picture
 $stm = $_db->prepare('SELECT * FROM user WHERE user_id = ?');
@@ -64,11 +68,15 @@ $_title = 'Edit Member';
 ?>
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="../js/profile.js"></script>
+    <link rel="stylesheet" href="../css/image.css">
     <title><?= $_title ?></title>
 </head>
+
 <body>
     <h1>Edit Member</h1>
     <form method="post" enctype="multipart/form-data" class="form">
@@ -93,15 +101,21 @@ $_title = 'Edit Member';
         <label for="birthday">Birthday:</label>
         <input type="date" name="birthday" value="<?= htmlspecialchars($member->birthday) ?>" required>
         <br>
-        <label for="photo">Photo:</label>
-        <input type="file" name="photo" accept="image/jpeg, image/png">
-        <br>
+
+
+        <label for="photo">Photo</label><br>
         <?php if ($member->photo): ?>
-            <img src="../uploads/<?= htmlspecialchars($member->photo) ?>" alt="Member photo" style="max-width: 150px;">
+            <label class="upload">
+                <?= html_file('photo', 'image/*', 'hidden') ?>
+                <img src="../uploads/<?= $member->photo ?>" width="170" height="170">
+            </label>
+            <?= err('photo') ?>
         <?php endif; ?>
-        <br>
         <button type="submit">Update Member</button>
-        <a href="memberList.php">Cancel</a>
     </form>
+    <a href="memberList.php?page=<?= $page ?>&search=<?= urlencode($search_query) ?>">
+            <button>Back to Member List</button>
+        </a>
 </body>
+
 </html>

@@ -98,8 +98,8 @@ $_title = 'Register Member';
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="./css/image.css">
-    <script src="./js/profile.js"></script>
+    <link rel="stylesheet" href="../css/image.css">
+    <script src="../js/profile.js"></script>
     <title><?= $_title ?></title>
 </head>
 

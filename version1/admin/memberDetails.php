@@ -22,6 +22,9 @@ if (is_get()) {
 } else {
     redirect('memberList.php'); // Redirect if not a GET request
 }
+// Get the page and search query from the URL
+$page = isset($_GET['page']) ? (int)$_GET['page'] : 1;
+$search_query = isset($_GET['search']) ? trim($_GET['search']) : '';
 
 $_title = 'Member Details';
 ?>
@@ -79,8 +82,9 @@ $_title = 'Member Details';
     <?php else: ?>
         <p>Member details not found.</p>
     <?php endif; ?>
-
-    <button><a href="memberList.php">Back to Member List</a></button>
+    <a href="memberList.php?page=<?= $page ?>&search=<?= urlencode($search_query) ?>">
+            <button>Back to Member List</button>
+        </a>
 </body>
 
 </html>
