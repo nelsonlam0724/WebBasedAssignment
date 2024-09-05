@@ -4,20 +4,19 @@ include '../_head.php';
 
 if (is_get()) {
     // Retrieve the member ID from the query string
-    $user_id = $_GET['user_id'] ?? null;
-
-    if (!$user_id) {
-        redirect('memberList.php'); // Redirect if no user ID is provided
-    }
-
     // Fetch the member details
     $stm = $_db->prepare('SELECT * FROM user WHERE user_id = ?');
     $stm->execute([$user_id]);
     $member = $stm->fetch(PDO::FETCH_OBJ);
 
+    if ($u->role != "Admin") {
+        redirect('../login.php');
+    }
+    
+    $user_id = $_GET['user_id'] ?? null;
 
-    if (!$member) {
-        redirect('memberList.php'); // Redirect if member not found
+    if (!$user_id) {
+        redirect('memberList.php'); // Redirect if no user ID is provided
     }
 } else {
     redirect('memberList.php'); // Redirect if not a GET request
@@ -86,8 +85,8 @@ $_title = 'Member Details';
         <p>Member details not found.</p>
     <?php endif; ?>
     <a href="memberList.php?page=<?= $page ?>&search=<?= urlencode($search_query) ?>">
-            <button>Back to Member List</button>
-        </a>
+        <button>Back to Member List</button>
+    </a>
 </body>
 
 </html>

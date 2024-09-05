@@ -2,17 +2,16 @@
 include '../_base.php';
 include '../_head.php';
 
-// Handle user authentication
 if (is_get()) {
     $stm = $_db->prepare('SELECT * FROM user WHERE user_id = ?');
     $stm->execute([$_user->user_id]);
     $u = $stm->fetch();
 
-    if (!$u) {
+    if ($u->role !="Admin") {
         redirect('../login.php');
     }
+    
 }
-
 // Get search query and page number
 $search_query = isset($_GET['search']) ? trim($_GET['search']) : '';
 $page = isset($_GET['page']) ? (int)$_GET['page'] : 1;

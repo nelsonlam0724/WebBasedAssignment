@@ -2,17 +2,16 @@
 include '../_base.php';
 include '../_head.php';
 
-// Fetch user data if GET request
 if (is_get()) {
     $stm = $_db->prepare('SELECT * FROM user WHERE user_id = ?');
     $stm->execute([$_user->user_id]);
     $u = $stm->fetch();
 
-    if (!$u) {
+    if ($u->role !="Admin") {
         redirect('../login.php');
     }
+    
 }
-
 $user = $_SESSION['user'];
 
 // Initialize error array

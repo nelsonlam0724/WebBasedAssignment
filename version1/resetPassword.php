@@ -1,79 +1,60 @@
 <?php
-include '../_base.php';
+include '_base.php';
 
-// ----------------------------------------------------------------------------
-
-// TODO: (1) Delete expired tokens
-$_db->query('SELECT FROM token WHERE expire < NOW()');
-
-$id = req('id');
-
-// TODO: (2) Is token id valid?
-if (!is_exists($id, 'token', 'id')) {
-    temp('info', 'Invalid token. Try again');
-    redirect('/');
-}
-
+// Handle POST request for password reset
 if (is_post()) {
     $password = req('password');
     $confirm  = req('confirm');
+    $email = req('email');
 
-    // Validate: password
-    if ($password == '') {
-        $_err['password'] = 'Required';
-    }
-    else if (strlen($password) < 5 || strlen($password) > 100) {
-        $_err['password'] = 'Between 5-100 characters';
+    // Validate password
+    if ($password == '' || strlen($password) < 5 || strlen($password) > 100) {
+        $_err['password'] = 'Password must be between 5 and 100 characters.';
     }
 
-    // Validate: confirm
-    if ($confirm == '') {
-        $_err['confirm'] = 'Required';
-    }
-    else if (strlen($confirm) < 5 || strlen($confirm) > 100) {
-        $_err['confirm'] = 'Between 5-100 characters';
-    }
-    else if ($confirm != $password) {
-        $_err['confirm'] = 'Not matched';
+    // Validate confirmation
+    if ($confirm == '' || strlen($confirm) < 5 || strlen($confirm) > 100 || $confirm != $password) {
+        $_err['confirm'] = 'Passwords do not match.';
     }
 
     // DB operation
     if (!$_err) {
-        // TODO: Update user (password) based on token id + delete token
-        $stm = $_db->prepare('
+        // Update user password and delete token
+        $stmt = $_db->prepare('
             UPDATE user
             SET password = SHA(?)
-            WHERE id = (SELECT user_id FROM token WHERE id = ?);
+            WHERE email = ?;
 
-            DELETE FROM token WHERE id = ?;
+            DELETE FROM token WHERE email = ?;
         ');
-        $stm->execute([$password, $id, $id]);
+        $stmt->execute([$password, $email, $email]);
 
-        temp('info', 'Record updated');
-        redirect('/login.php');
+        temp('info', 'Password updated successfully.');
+        redirect('login.php');
     }
 }
 
-// ----------------------------------------------------------------------------
-
-$_title = 'User | Reset Password';
-include '../_head.php';
+$_title = 'Reset Password';
+include '_head.php';
 ?>
 
 <form method="post" class="form">
-    <label for="password">Password</label>
+    <label for="password">New Password</label>
     <?= html_password('password', 'maxlength="100"') ?>
     <?= err('password') ?>
 
-    <label for="confirm">Confirm</label>
+    <label for="confirm">Confirm Password</label>
     <?= html_password('confirm', 'maxlength="100"') ?>
     <?= err('confirm') ?>
 
+    <input type="hidden" name="email" value="<?= htmlspecialchars(req('email')) ?>">
+
     <section>
-        <button>Submit</button>
+        <button>Reset Password</button>
         <button type="reset">Reset</button>
     </section>
 </form>
 
 <?php
-include '../_foot.php';
+include '_foot.php';
+?>
