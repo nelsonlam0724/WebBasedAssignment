@@ -31,9 +31,8 @@ if (is_post()) {
         if ($u) {
             // Check if the user is banned
             if ($u->status == 'Banned') {
-                // Show a banned message
                 temp('info', 'Your account has been banned.');
-                $_err['banned'] = 'Your account has been banned.';
+                redirect();
             } else {
                 // Successful login for Admin or Active Member
                 temp('info', 'Login successfully');
@@ -86,11 +85,6 @@ $_title = "Login";
                         <a href="#">Forgot password?</a>
                     </label>
                 </div>
-                <?php if (isset($_err['Banned'])): ?>
-                    <div class="error-message">
-                        <?= $_err['banned'] ?>
-                    </div>
-                <?php endif; ?>
                 <button type="submit">Log in</button>
                 <div class="register">
                     <p>Don't have an account? <a href="register.php">Register</a></p>
