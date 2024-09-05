@@ -2,17 +2,16 @@
 include '../_base.php';
 include '../_head.php';
 
-// Handle user authentication
 if (is_get()) {
     $stm = $_db->prepare('SELECT * FROM user WHERE user_id = ?');
     $stm->execute([$_user->user_id]);
     $u = $stm->fetch();
 
-    if (!$u) {
+    if ($u->role !="Admin") {
         redirect('../login.php');
     }
+    
 }
-
 // Get search query and page number
 $search_query = isset($_GET['search']) ? trim($_GET['search']) : '';
 $page = isset($_GET['page']) ? (int)$_GET['page'] : 1;
@@ -79,16 +78,20 @@ $_title = 'Member List';
                         <td><?= htmlspecialchars($member->email) ?></td>
                         <td><?= htmlspecialchars($member->role) ?></td>
                         <td>
-                            <button><a href="memberDetails.php?user_id=<?= $member->user_id ?>">View Details</a></button>
+                            <a href="memberDetails.php?user_id=<?= $member->user_id ?>&page=<?= $page ?>&search=<?= urlencode($search_query) ?>">
+                                <button>View Details</button>
+                            </a>
                         </td>
                         <td>
-                            <button><a href="editMember.php?user_id=<?= $member->user_id ?>">Edit</a></button>
+                            <a href="editMember.php?user_id=<?= $member->user_id ?>&page=<?= $page ?>&search=<?= urlencode($search_query) ?>">
+                                <button>Edit</button>
+                            </a>
                         </td>
                         <td>
-                            <form action="deleteMember.php?user_id=<?= $member->user_id ?>" method="post" style="display:inline;">
-                                <input type="hidden" name="id" value="<?= $member->user_id ?>">
-                                <button type="submit" onclick="return confirm('Are you sure you want to delete this member?');">Delete</button>
-                            </form>
+                        <form action="deleteMember.php?user_id=<?= $member->user_id ?>" method="post" style="display:inline;">
+                            <input type="hidden" name="id" value="<?= $member->user_id ?>">
+                            <button type="submit" onclick="return confirm('Are you sure you want to delete this member?');">Delete</button>
+                        </form>
                         </td>
                     </tr>
                 <?php endforeach; ?>
@@ -98,24 +101,21 @@ $_title = 'Member List';
         <!-- Pagination Controls -->
         <div>
             <?php if ($page > 1): ?>
-                <a href="?search=<?= urlencode($search_query) ?>&page=<?= $page - 1 ?>"> Previous</a>
+                <a href="?search=<?= urlencode($search_query) ?>&page=<?= $page - 1 ?>"><button>Previous</button></a>
             <?php endif; ?>
-
             <?php if ($page < $total_pages): ?>
-                <a href="?search=<?= urlencode($search_query) ?>&page=<?= $page + 1 ?>"> Next</a>
+                <a href="?search=<?= urlencode($search_query) ?>&page=<?= $page + 1 ?>"><button>Next</button></a>
             <?php endif; ?>
         </div>
 
     <?php else: ?>
         <p>No members found.</p>
     <?php endif; ?>
-        <br>
-    <button>
-        <a href="registerMember.php">Register New Member</a>
-    </button>
+    <br>
+    <a href="registerMember.php"><button>Register New Member</button></a>
 
     <br>
-    <button><a href="admin.php">BACK TO MENU</a></button>
+    <a href="admin.php"><button>Back To Menu</button></a>
 </body>
 
 </html>

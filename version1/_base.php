@@ -76,8 +76,26 @@ function get_file($key)
     return null;
 }
 
+function get_mail() {
+    require_once 'lib/PHPMailer.php';
+    require_once 'lib/SMTP.php';
+
+    $m = new PHPMailer(true);
+    $m->isSMTP();
+    $m->SMTPAuth = true;
+    $m->Host = 'smtp.gmail.com';
+    $m->Port = 587;
+    $m->Username = 'AACS3173@gmail.com';
+    $m->Password = 'npsg gzfd pnio aylm';
+    $m->CharSet = 'utf-8';
+    $m->setFrom($m->Username, '😺 Admin');
+
+    return $m;
+}
+
 // Crop, resize and save photo
-function save_photo($file) {
+function save_photo($file)
+{
     // Check if $file is an object or array
     if (is_object($file)) {
         $file_tmp_name = $file->tmp_name;
@@ -90,17 +108,19 @@ function save_photo($file) {
     } else {
         throw new InvalidArgumentException('Invalid file input');
     }
-    
+
     $photo = uniqid() . '.jpg';
     require_once 'lib/SimpleImage.php';
     $img = new SimpleImage();
     $img->fromFile($file_tmp_name)
         ->thumbnail(200, 200)
         ->toFile("uploads/$photo", 'image/jpeg');
-    
+
     return $photo;
 }
-function save_photo_admin($file) {
+
+function save_photo_admin($file)
+{
     // Check if $file is an object or array
     if (is_object($file)) {
         $file_tmp_name = $file->tmp_name;
@@ -113,14 +133,14 @@ function save_photo_admin($file) {
     } else {
         throw new InvalidArgumentException('Invalid file input');
     }
-    
+
     $photo = uniqid() . '.jpg';
     require_once '../lib/SimpleImage.php';
     $img = new SimpleImage();
     $img->fromFile($file_tmp_name)
         ->thumbnail(200, 200)
         ->toFile("../uploads/$photo", 'image/jpeg');
-    
+
     return $photo;
 }
 
@@ -141,13 +161,16 @@ function is_email($value)
     return filter_var($value, FILTER_VALIDATE_EMAIL) !== false;
 }
 
-function is_birthday($value){
-    return preg_match('/^\d{4}-\d{2}-\d{2}$/', $value); 
+function is_birthday($value)
+{
+    return preg_match('/^\d{4}-\d{2}-\d{2}$/', $value);
 }
 
-function is_gender($value){
+function is_gender($value)
+{
     return in_array($value, ['Male', 'Female', 'Other']);
 }
+
 
 // ============================================================================
 // HTML Helpers
@@ -224,7 +247,8 @@ function html_select($key, $items, $default = '- Select One -', $attr = '')
     echo '</select>';
 }
 
-function html_textarea($key, $attr = '') {
+function html_textarea($key, $attr = '')
+{
     $value = encode($GLOBALS[$key] ?? '');
     echo "<textarea id ='$key' name='$key' $attr>$value</textarea>";
 }
@@ -276,6 +300,22 @@ function err($key)
 // Global user object
 $_user = $_SESSION['user'] ?? null;
 
+// Authorization
+function auth(...$roles) {
+    global $_user;
+    if ($_user) {
+        if ($roles) {
+            if (in_array($_user->role, $roles)) {
+                return; // OK
+            }
+        }
+        else {
+            return; // OK
+        }
+    }
+    
+    redirect('/login.php');
+}
 
 // Login user
 function login($user, $url = '/')
@@ -299,7 +339,8 @@ $_db = new PDO('mysql:dbname=web_ass', 'root', '', [
     PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_OBJ,
 ]);
 
-function is_unique($value, $table, $field) {
+function is_unique($value, $table, $field)
+{
     global $_db;
     $stm = $_db->prepare("SELECT COUNT(*) FROM $table WHERE $field = ?");
     $stm->execute([$value]);
@@ -307,7 +348,8 @@ function is_unique($value, $table, $field) {
 }
 
 // Is exists?
-function is_exists($value, $table, $field) {
+function is_exists($value, $table, $field)
+{
     global $_db;
     $stm = $_db->prepare("SELECT COUNT(*) FROM $table WHERE $field = ?");
     $stm->execute([$value]);

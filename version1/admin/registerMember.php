@@ -1,7 +1,16 @@
 <?php
 include '../_base.php';
 include '../_head.php';
+if (is_get()) {
+    $stm = $_db->prepare('SELECT * FROM user WHERE user_id = ?');
+    $stm->execute([$_user->user_id]);
+    $u = $stm->fetch();
 
+    if ($u->role !="Admin") {
+        redirect('../login.php');
+    }
+    
+}
 // Handle form submission
 if (is_post()) {
     $name = req('name');
@@ -79,8 +88,8 @@ if (is_post()) {
         $photo = save_photo_admin($f);
 
         $stm = $_db->prepare('
-            INSERT INTO user (email, password, name, gender, birthday, photo, role)
-            VALUES (?, SHA1(?), ?, ?, ?, ?, "Member")
+            INSERT INTO user (email, password, name, gender, birthday, photo, role, status)
+            VALUES (?, SHA1(?), ?, ?, ?, ?, "Member", "Active")
         ');
         $stm->execute([$email, $password, $name, $gender, $birthday, $photo]);
 

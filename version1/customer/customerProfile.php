@@ -2,17 +2,16 @@
 include '../_base.php';
 include '../_head.php';
 
-// Fetch user data if GET request
 if (is_get()) {
     $stm = $_db->prepare('SELECT * FROM user WHERE user_id = ?');
     $stm->execute([$_user->user_id]);
     $u = $stm->fetch();
 
-    if (!$u) {
+    if ($u->role !="Member" && $u->role !="Admin") {
         redirect('../login.php');
     }
+    
 }
-
 $user = $_SESSION['user'];
 
 // Initialize error array
@@ -20,11 +19,6 @@ $_err = [];
 
 // Handle form submission (POST request)
 if (is_post()) {
-    $update_part = req('update_part'); // Determine if the update is partial or full
-    $update_all = req('update_all');   // Determine if the update is for all fields
-
-    // Handle Partial Updates
-    if ($update_part) {
         $field = req('field');
         $value = req('value');
 
@@ -105,52 +99,7 @@ if (is_post()) {
         }
     }
 
-    // Handle Full Updates
-    if ($update_all) {
-        // Validate and collect data
-        $email = req('email');
-        $name = req('name');
-        $password = req('password');
-        $birthday = req('birthday');
-        $gender = req('gender');
-        $photo = $_FILES['photo'];
 
-    
-        if (empty($_err)) {
-            // Prepare and execute update query
-            $update_query = 'UPDATE user SET email = ?, name = ?, password = ?, birthday = ?, gender = ? WHERE user_id = ?';
-            $update_params = [$email, $name, $hashed_password, $birthday, $gender, $user->user_id];
-    
-            // Check if photo is uploaded
-            if ($photo['error'] === UPLOAD_ERR_OK) {
-                // Validate and save photo
-                // ... (your existing photo validation and saving code)
-                $photo_name = save_photo_admin($photo);
-                $update_query = 'UPDATE user SET email = ?, name = ?, password = ?, birthday = ?, gender = ?, photo = ? WHERE user_id = ?';
-                $update_params[] = $photo_name;
-            } else {
-                $photo_name = $user->photo; // Use existing photo if no new one
-            }
-    
-            // Execute update query
-            $stm = $_db->prepare($update_query);
-            $stm->execute($update_params);
-    
-            // Update session data
-            $_SESSION['user'] = (object) array_merge((array)$_SESSION['user'], [
-                'email' => $email,
-                'name' => $name,
-                'birthday' => $birthday,
-                'gender' => $gender,
-                'photo' => $photo_name,
-            ]);
-    
-            temp('info', 'Profile updated successfully');
-            redirect('customer.php');
-        }
-    }
-    
-}
 
 $_title = 'Member Profile';
 ?>
@@ -257,36 +206,12 @@ $_title = 'Member Profile';
     </div>
     <br>
     <div>
-        <button onclick="toggleEditForm()">Edit All</button>
-        <div id="editForm" class="edit-form">
-            <form method="post" enctype="multipart/form-data">
-                <input type="hidden" name="update_all" value="true">
-                <label for="email">Email:</label><br>
-                <input type="email" name="email" id="email" value="<?= htmlspecialchars($user->email) ?>"><br>
-
-                <label for="name">Name:</label><br>
-                <input type="text" name="name" id="name" value="<?= htmlspecialchars($user->name) ?>"><br>
-
-                <label for="password">Password:</label><br>
-                <input type="password" name="password" id="password" placeholder="New password"><br>
-
-                <label for="birthday">Birthday:</label><br>
-                <input type="date" name="birthday" id="birthday" value="<?= htmlspecialchars($user->birthday) ?>"><br>
-
-                <label for="gender">Gender:</label><br>
-                <?= html_select('gender', ['Male' => 'Male', 'Female' => 'Female'], $user->gender) ?><br>
-
-                <label for="photo">Photo:</label><br>
-                <input type="file" name="photo" id="photo" accept="image/jpeg, image/png"><br>
-
-                <button type="submit">Update All</button>
-                <button type="button" onclick="toggleEditForm('')">Cancel</button>
-            </form>
-        </div>
+        <a href="customerEditProfile.php"><button>Edit All</button></a>
     </div>
 
-    <button><a href="customer.php">Back to Menu</a></button><br>
-    <button><a href="../logout.php">Logout</a></button>
+
+    <a href="customer.php"><button>Back to Menu</button></a><br>
+    <a href="../logout.php"><button>Logout</button></a>
 </body>
 
 </html>

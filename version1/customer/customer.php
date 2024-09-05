@@ -7,9 +7,10 @@ if (is_get()) {
     $stm->execute([$_user->user_id]);
     $u = $stm->fetch();
 
-    if (!$u) {
+    if ($u->role !="Member" && $u->role !="Admin") {
         redirect('../login.php');
     }
+    
 }
 // Fetch user profile information
 $user = $_SESSION['user'];
@@ -28,6 +29,7 @@ $_title = 'Customer Dashboard - ' . htmlspecialchars($user->name);
     <nav>
         <ul>
             <li><a href="customerProfile.php">Member Profile</a></li>
+            <li><a href="product.php">Product Page</a></li>
             <li><a href="../logout.php">Logout</a></li>
         </ul>
 </nav>

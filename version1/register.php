@@ -79,8 +79,8 @@ if (is_post()) {
         $photo = save_photo($f);
 
         $stm = $_db->prepare('
-            INSERT INTO user (email, password, name, gender, birthday, photo, role)
-            VALUES (?, SHA1(?), ?, ?, ?, ?, "Member")
+            INSERT INTO user (email, password, name, gender, birthday, photo, role, status)
+            VALUES (?, SHA1(?), ?, ?, ?, ?, "Member", "Active")
         ');
         $stm->execute([$email, $password, $name, $gender, $birthday, $photo]);
 
@@ -98,8 +98,8 @@ $_title = 'Register Member';
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="./css/image.css">
-    <script src="./js/profile.js"></script>
+    <link rel="stylesheet" href="../css/image.css">
+    <script src="../js/profile.js"></script>
     <title><?= $_title ?></title>
 </head>
 

@@ -7,9 +7,10 @@ if (is_get()) {
     $stm->execute([$_user->user_id]);
     $u = $stm->fetch();
 
-    if (!$u) {
+    if ($u->role !="Admin") {
         redirect('../login.php');
     }
+    
 }
 
 // Check if ID is provided in the URL
@@ -18,6 +19,10 @@ if (!isset($_GET['user_id'])) {
 }
 
 $user_id = $_GET['user_id'];
+// Get the page and search query from the URL
+$page = isset($_GET['page']) ? (int)$_GET['page'] : 1;
+$search_query = isset($_GET['search']) ? trim($_GET['search']) : '';
+
 
 // Fetch the member's details, including gender, birthday, and picture
 $stm = $_db->prepare('SELECT * FROM user WHERE user_id = ?');
@@ -36,10 +41,11 @@ if (is_post()) {
     $new_gender = req('gender');
     $new_birthday = req('birthday');
     $new_photo = $_FILES['photo'];
+    $new_status = req('status');
 
     // Update member's details
-    $stm = $_db->prepare('UPDATE user SET email = ?, name = ?, role = ?, gender = ?, birthday = ? WHERE user_id = ?');
-    $stm->execute([$new_email, $new_name, $new_role, $new_gender, $new_birthday, $user_id]);
+    $stm = $_db->prepare('UPDATE user SET email = ?, name = ?, role = ?, gender = ?, birthday = ? , status = ? WHERE user_id = ?');
+    $stm->execute([$new_email, $new_name, $new_role, $new_gender, $new_birthday, $new_status, $user_id]);
 
     // Handle picture upload
     if ($new_photo['error'] === UPLOAD_ERR_OK) {
@@ -64,11 +70,15 @@ $_title = 'Edit Member';
 ?>
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="../js/profile.js"></script>
+    <link rel="stylesheet" href="../css/image.css">
     <title><?= $_title ?></title>
 </head>
+
 <body>
     <h1>Edit Member</h1>
     <form method="post" enctype="multipart/form-data" class="form">
@@ -93,15 +103,30 @@ $_title = 'Edit Member';
         <label for="birthday">Birthday:</label>
         <input type="date" name="birthday" value="<?= htmlspecialchars($member->birthday) ?>" required>
         <br>
-        <label for="photo">Photo:</label>
-        <input type="file" name="photo" accept="image/jpeg, image/png">
+
+        <label for="status">Status:</label>
+        <select name="status">
+            <option value="Active" <?= $member->role == 'Active' ? 'selected' : '' ?>>Active</option>
+            <option value="Banned" <?= $member->role == 'Banned' ? 'selected' : '' ?>>Banned</option>
+        </select>
         <br>
+
+        <label for="photo">Photo</label><br>
         <?php if ($member->photo): ?>
-            <img src="../uploads/<?= htmlspecialchars($member->photo) ?>" alt="Member photo" style="max-width: 150px;">
+            <label class="upload">
+                <?= html_file('photo', 'image/*', 'hidden') ?>
+                <img src="../uploads/<?= $member->photo ?>" width="170" height="170">
+            </label>
+            <?= err('photo') ?>
         <?php endif; ?>
         <br>
+
         <button type="submit">Update Member</button>
-        <a href="memberList.php">Cancel</a>
     </form>
+
+    <a href="memberList.php?page=<?= $page ?>&search=<?= urlencode($search_query) ?>">
+        <button>Back to Member List</button>
+    </a>
 </body>
+
 </html>
