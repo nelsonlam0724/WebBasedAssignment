@@ -28,6 +28,7 @@ $_title = 'Customer Dashboard - ' . htmlspecialchars($user->name);
     <nav>
         <ul>
             <li><a href="customerProfile.php">Member Profile</a></li>
+            <li><a href="product.php">Product Page</a></li>
             <li><a href="../logout.php">Logout</a></li>
         </ul>
 </nav>
