@@ -23,34 +23,93 @@ if (is_post()) {
     if (!$_err) {
         $stm = $_db->prepare('
             SELECT * FROM user
-            WHERE email = ? AND password = SHA1(?)
+            WHERE email = ?
         ');
-        $stm->execute([$email, $password]);
-        $u = $stm->fetch();
+        $stm->execute([$email]);
+        $u = $stm->fetch(PDO::FETCH_OBJ);
+
+        $current_time = new DateTime();
 
         if ($u) {
             // Check if the user is banned
             if ($u->status == 'Banned') {
-                temp('info', 'Your account has been banned.');
+                temp('info', 'Your account is banned.');
+                redirect();
+            } else if ($u->banned_until && $current_time < new DateTime($u->banned_until)) {
+                // User is banned and the ban period is not over
+                $remaining_ban_time = (new DateTime($u->banned_until))->diff($current_time);
+                temp('info', 'Your account is banned. Try again after ' . $remaining_ban_time->i . ' minutes.');
                 redirect();
             } else {
-                // Successful login for Admin or Active Member
+                // Ban period is over, reset status
+                $stm = $_db->prepare('
+                    UPDATE user
+                    SET status = "Active", banned_until = NULL
+                    WHERE email = ?
+                ');
+                $stm->execute([$email]);
+            }
+
+            // Check frequent login/logouts
+            if ($u->last_login_event_time) {
+                $last_event_time = new DateTime($u->last_login_event_time);
+                $diff_minutes = $current_time->diff($last_event_time)->i;
+
+                if ($diff_minutes < 2 && $u->login_count >= 3) {
+                    temp('info', 'Frequent login attempts detected. Please wait 2 minutes before trying again.');
+                    redirect();
+                } else if ($diff_minutes >= 2) {
+                    $stm = $_db->prepare('
+                        UPDATE user
+                        SET login_count = 0
+                        WHERE email = ?
+                    ');
+                    $stm->execute([$email]);
+                }
+            }
+
+            // Check if password matches
+            if (sha1($password) === $u->password) {
+                // Successful login
+                $stm = $_db->prepare('
+                    UPDATE user
+                    SET failed_attempts = 0, banned_until = NULL, last_login_time = ?, login_count = login_count + 1, last_login_event_time = ?
+                    WHERE email = ?
+                ');
+                $stm->execute([$current_time->format('Y-m-d H:i:s'), $current_time->format('Y-m-d H:i:s'), $email]);
+
                 temp('info', 'Login successfully');
                 if ($u->role == 'Admin') {
                     $redirectUrl = 'admin/admin.php';
                 } elseif ($u->role == 'Member' && $u->status == 'Active') {
                     $redirectUrl = 'customer/customer.php';
+                } else {
+                    $redirectUrl = 'index.php'; // Default redirect
                 }
 
                 login($u, $redirectUrl);
                 exit();
+            } else {
+                // Incorrect password
+                $failed_attempts = $u->failed_attempts + 1;
+                $ban_duration = new DateInterval('PT2M'); // Ban for 3 minutes
+                $banned_until = ($failed_attempts >= 3) ? $current_time->add($ban_duration)->format('Y-m-d H:i:s') : $u->banned_until;
+
+                // Update user info with failed attempts and ban time
+                $stm = $_db->prepare('
+                    UPDATE user
+                    SET failed_attempts = ?, banned_until = ?, last_failed_attempt = ?
+                    WHERE email = ?
+                ');
+                $stm->execute([$failed_attempts, $banned_until, $current_time->format('Y-m-d H:i:s'), $email]);
+
+                temp('error', ($failed_attempts >= 3) ? 'Too many failed attempts. Account banned for 1 minutes.' : 'Incorrect password');
             }
         } else {
-            $_err['password'] = 'Not matched';
+            temp('error', 'No such user');
         }
     }
 }
-
 $_title = "Login";
 ?>
 <!DOCTYPE html>
@@ -93,13 +152,11 @@ $_title = "Login";
         </div>
     </form>
 
+    <script src="https://unpkg.com/ionicons@5.5.2/dist/ionicons/ionicons.js"></script>
+    <script src="https://unpkg.com/ionicons@5.5.2/dist/ionicons/ionicons.esm.js"></script>
+</body>
+</html>
     <!-- Footer -->
     <?php
     include '_foot.php';
     ?>
-
-    <script src="https://unpkg.com/ionicons@5.5.2/dist/ionicons/ionicons.js"></script>
-    <script src="https://unpkg.com/ionicons@5.5.2/dist/ionicons/ionicons.esm.js"></script>
-</body>
-
-</html>
