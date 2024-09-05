@@ -82,7 +82,7 @@ $_title = "Login";
                         <input type="checkbox" name="remember"> Remember me
                     </label>
                     <label>
-                        <a href="#">Forgot password?</a>
+                        <a href="forgot.php">Forgot password?</a>
                     </label>
                 </div>
                 <button type="submit">Log in</button>
