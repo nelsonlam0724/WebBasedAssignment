@@ -13,7 +13,7 @@ $(document).ready(function(){
                 if(checkClick > 0){
                     $this.find('p i').css("color", "red");
                 }else{
-                    $this.find('p i').css("color", "black");
+                    $this.find('p i').css("color", "transparent");
                 }
             }
         });
