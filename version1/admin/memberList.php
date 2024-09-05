@@ -102,11 +102,10 @@ $_title = 'Member List';
         <!-- Pagination Controls -->
         <div>
             <?php if ($page > 1): ?>
-                <a href="?search=<?= urlencode($search_query) ?>&page=<?= $page - 1 ?>"><button>Previous</button> </a>
+                <a href="?search=<?= urlencode($search_query) ?>&page=<?= $page - 1 ?>"><button>Previous</button></a>
             <?php endif; ?>
-
             <?php if ($page < $total_pages): ?>
-                <a href="?search=<?= urlencode($search_query) ?>&page=<?= $page + 1 ?>"> <button>Next</button></a>
+                <a href="?search=<?= urlencode($search_query) ?>&page=<?= $page + 1 ?>"><button>Next</button></a>
             <?php endif; ?>
         </div>
 

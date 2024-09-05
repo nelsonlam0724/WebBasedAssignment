@@ -79,8 +79,8 @@ if (is_post()) {
         $photo = save_photo($f);
 
         $stm = $_db->prepare('
-            INSERT INTO user (email, password, name, gender, birthday, photo, role)
-            VALUES (?, SHA1(?), ?, ?, ?, ?, "Member")
+            INSERT INTO user (email, password, name, gender, birthday, photo, role, status)
+            VALUES (?, SHA1(?), ?, ?, ?, ?, "Member", "Active")
         ');
         $stm->execute([$email, $password, $name, $gender, $birthday, $photo]);
 

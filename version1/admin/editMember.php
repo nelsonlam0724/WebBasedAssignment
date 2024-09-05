@@ -40,10 +40,11 @@ if (is_post()) {
     $new_gender = req('gender');
     $new_birthday = req('birthday');
     $new_photo = $_FILES['photo'];
+    $new_status = req('status');
 
     // Update member's details
-    $stm = $_db->prepare('UPDATE user SET email = ?, name = ?, role = ?, gender = ?, birthday = ? WHERE user_id = ?');
-    $stm->execute([$new_email, $new_name, $new_role, $new_gender, $new_birthday, $user_id]);
+    $stm = $_db->prepare('UPDATE user SET email = ?, name = ?, role = ?, gender = ?, birthday = ? , status = ? WHERE user_id = ?');
+    $stm->execute([$new_email, $new_name, $new_role, $new_gender, $new_birthday, $new_status, $user_id]);
 
     // Handle picture upload
     if ($new_photo['error'] === UPLOAD_ERR_OK) {
@@ -102,6 +103,12 @@ $_title = 'Edit Member';
         <input type="date" name="birthday" value="<?= htmlspecialchars($member->birthday) ?>" required>
         <br>
 
+        <label for="status">Status:</label>
+        <select name="status">
+            <option value="Active" <?= $member->role == 'Active' ? 'selected' : '' ?>>Active</option>
+            <option value="Banned" <?= $member->role == 'Banned' ? 'selected' : '' ?>>Banned</option>
+        </select>
+        <br>
 
         <label for="photo">Photo</label><br>
         <?php if ($member->photo): ?>
@@ -111,11 +118,14 @@ $_title = 'Edit Member';
             </label>
             <?= err('photo') ?>
         <?php endif; ?>
+        <br>
+
         <button type="submit">Update Member</button>
     </form>
+
     <a href="memberList.php?page=<?= $page ?>&search=<?= urlencode($search_query) ?>">
-            <button>Back to Member List</button>
-        </a>
+        <button>Back to Member List</button>
+    </a>
 </body>
 
 </html>

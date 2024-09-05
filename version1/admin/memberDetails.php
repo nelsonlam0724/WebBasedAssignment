@@ -68,6 +68,10 @@ $_title = 'Member Details';
                 <td><?= htmlspecialchars($member->birthday) ?></td>
             </tr>
             <tr>
+                <th>Status</th>
+                <td><?= htmlspecialchars($member->status) ?></td>
+            </tr>
+            <tr>
                 <th>Photo</th>
                 <td>
                     <?php if ($member->photo): ?>
@@ -77,7 +81,6 @@ $_title = 'Member Details';
                     <?php endif; ?>
                 </td>
             </tr>
-
         </table>
     <?php else: ?>
         <p>Member details not found.</p>
