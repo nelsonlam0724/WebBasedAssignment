@@ -30,10 +30,12 @@ if (is_post()) {
 
     if (!$p) {
         $_err['photo'] = 'Required';
-    } else if (!str_starts_with($p->type, 'image/')) {
+    }
+    else if (!str_starts_with($p->type, 'image/')) {
         $_err['photo'] = 'Must be image';
-    } else if ($p->size > 1 * 1024 * 1024) {
-        $_err['photo'] = "Maximum 1MB";
+    }
+    else if ($p->size > 1 * 1024 * 1024) {
+        $_err['photo'] = 'Maximum 1MB';
     }
 
     if (!$desc) {
@@ -49,15 +51,18 @@ if (is_post()) {
     }
 
     if (!$_err) {
-        $photo = save_photo($p);
+        $photo = save_photo($f, '../photo');
+
+        echo 
     
     $stm = $_db->prepare('
-    INSERT INTO product (
-    name, price, quantity, photo, description, weight)
+    INSERT INTO product (name, price, quantity, photo, description, weight)
     VALUES (?, ?, ?, ?, ?, ?)
     ');
 
     $stm->execute([$name, $price, $quantity, $photo, $desc, $weight]);
+
+        die();
 
     temp('info', 'Record inserted');
 }
@@ -69,7 +74,7 @@ include '../_head.php';
 
 <form method="post" class="form">
 
-<label for="name">Product</label><br>
+<label for="name">Product Name</label><br>
 <?= html_text('name', 'maxlength="100"') ?>
 <?= err('name') ?>
 <br>
