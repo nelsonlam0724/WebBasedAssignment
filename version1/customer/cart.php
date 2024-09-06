@@ -2,7 +2,7 @@
 include '../_base.php';
 include '../include/header.php'; 
 
-// Fetch the cart items for the logged-in user
+
 $getUserID = $_db->prepare('
     SELECT c.id, c.unit, p.name, p.product_photo, p.price, p.product_id  
     FROM carts AS c
@@ -10,11 +10,7 @@ $getUserID = $_db->prepare('
     WHERE c.user_id = ? 
 ');
 $getUserID->execute([$userID]);
-
-// Fetch all results
 $results = $getUserID->fetchAll(PDO::FETCH_ASSOC);
-
-// Initialize cart
 $cart = [];
 foreach ($results as $c) {
     $cart[$c['product_id']] = $c['unit'];
@@ -25,16 +21,32 @@ if(is_post()) {
     $unit = post('qty');
     $cartSelected = [];
 
-    // Loop through the cart items and find the selected ones
+    
+
     for($i = 0; $i < count($items); $i++) {
         if(isset($cart[$items[$i]])) {
             $cartSelected[$items[$i]] = $unit[$i];
         }
     }
+    // echo '<pre>';
+    // print_r($unit);
+    // echo '</pre>';
 
-    // Save selected items in session and redirect to payment page
+    // echo '<pre>';
+    // print_r($items);
+    // echo '</pre>';
+
+
+    // echo '<pre>';
+    // print_r($cart);
+    // echo '</pre>';
+    // echo '<pre>';
+    // print_r($cartSelected);
+    // echo '</pre>';
+    
+
     $_SESSION['cartSelection'] = $cartSelected;
-    header('Location: payment.php');
+    header('Location: checkout.php');
     exit();
 }
 
@@ -77,8 +89,8 @@ if(is_post()) {
 
                             <img src="<?=$c['product_photo']?>" width="90" height="90">
 
-                            <div class="product-name">
-                                <h4><?= $c['name'] ?></h4>
+                            <div class="product-name" style="width:20px;">
+                                <h4 ><?= $c['name'] ?></h4>
                             </div>
                         </div>
 
@@ -137,60 +149,6 @@ if(is_post()) {
 </body>
 
 <script src="../js/product.js"></script>
-<script>
-    const checkboxes = document.querySelectorAll('input[name="selectItems[]"]');
-    const quantityInputs = document.querySelectorAll('.qty');
-    const subtotalElement = document.getElementById('subtotal');
-    const taxElement = document.getElementById('tax');
-    const totalElement = document.getElementById('total');
-    const checkoutButton = document.getElementById('checkout-btn');
-
-    function calculateTotalPrice() {
-        let subtotal = 0;
-
-        checkboxes.forEach((checkbox, index) => {
-            if (checkbox.checked) {
-                const quantity = parseFloat(quantityInputs[index].value);
-                const price = parseFloat(quantityInputs[index].getAttribute('data-price'));
-                subtotal += quantity * price;
-            }
-        });
-
-        const tax = subtotal * 0.10;
-        const total = subtotal + tax;
-
-        subtotalElement.textContent = 'RM ' + subtotal.toFixed(2);
-        taxElement.textContent = 'RM ' + tax.toFixed(2);
-        totalElement.textContent = 'RM ' + total.toFixed(2);
-
-        // Enable checkout button if at least one item is selected
-        checkoutButton.disabled = subtotal === 0;
-    }
-
-    // Add event listeners to checkboxes and quantity inputs
-    checkboxes.forEach(checkbox => {
-        checkbox.addEventListener('change', calculateTotalPrice);
-    });
-
-    quantityInputs.forEach(input => {
-        input.addEventListener('input', calculateTotalPrice);
-    });
-
-    function increaseValue(inputId) {
-        const input = document.getElementById(inputId);
-        let value = parseInt(input.value, 10);
-        value = isNaN(value) ? 1 : value + 1;
-        input.value = Math.max(value, 1);
-        calculateTotalPrice();
-    }
-
-    function decreaseValue(inputId) {
-        const input = document.getElementById(inputId);
-        let value = parseInt(input.value, 10);
-        value = isNaN(value) ? 1 : value - 1;
-        input.value = Math.max(value, 1);
-        calculateTotalPrice();
-    }
-</script>
+<script src="../js/cart.js"></script>
 
 </html>
