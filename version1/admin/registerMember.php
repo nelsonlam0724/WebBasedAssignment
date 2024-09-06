@@ -76,7 +76,7 @@ if (is_post()) {
 
     // DB operation
     if (!$_err) {
-        $photo = save_photo_admin($f);
+        $photo = save_photo($f);
 
         $stm = $_db->prepare('
             INSERT INTO user (email, password, name, gender, birthday, photo, role)
@@ -87,29 +87,6 @@ if (is_post()) {
         temp('info', 'Record inserted');
         redirect();
     }
-}
-function save_photo_admin($file) {
-    // Check if $file is an object or array
-    if (is_object($file)) {
-        $file_tmp_name = $file->tmp_name;
-        $file_type = $file->type;
-        $file_size = $file->size;
-    } elseif (is_array($file)) {
-        $file_tmp_name = $file['tmp_name'];
-        $file_type = $file['type'];
-        $file_size = $file['size'];
-    } else {
-        throw new InvalidArgumentException('Invalid file input');
-    }
-    
-    $photo = uniqid() . '.jpg';
-    require_once '../lib/SimpleImage.php';
-    $img = new SimpleImage();
-    $img->fromFile($file_tmp_name)
-        ->thumbnail(200, 200)
-        ->toFile("../uploads/$photo", 'image/jpeg');
-    
-    return $photo;
 }
 
 $_title = 'Register Member';

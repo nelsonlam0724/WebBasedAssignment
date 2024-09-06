@@ -77,7 +77,19 @@ function get_file($key)
 }
 
 // Crop, resize and save photo
-function save_photo($file) {
+function save_photo($f, $folder, $width = 200, $height = 200) {
+    $photo = uniqid() . '.jpg';
+    
+    require_once 'lib/SimpleImage.php';
+    $img = new SimpleImage();
+    $img->fromFile($f->tmp_name)
+        ->thumbnail($width, $height)
+        ->toFile("$folder/$photo", 'image/jpeg');
+
+    return $photo;
+}
+
+function save_photo_admin($file) {
     // Check if $file is an object or array
     if (is_object($file)) {
         $file_tmp_name = $file->tmp_name;
@@ -92,19 +104,14 @@ function save_photo($file) {
     }
     
     $photo = uniqid() . '.jpg';
-    require_once 'lib/SimpleImage.php';
+    require_once '../lib/SimpleImage.php';
     $img = new SimpleImage();
     $img->fromFile($file_tmp_name)
         ->thumbnail(200, 200)
-        ->toFile("uploads/$photo", 'image/jpeg');
+        ->toFile("../uploads/$photo", 'image/jpeg');
     
     return $photo;
 }
-
-function save_photo_admin($file) {
-    if()
-}
-
 // Is money?
 function is_money($value)
 {
