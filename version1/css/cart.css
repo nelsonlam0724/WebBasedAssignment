@@ -166,7 +166,7 @@
     cursor: pointer;
 }
 
-#check {
+.check {
     width: 30px;
     height: 30px;
     border-radius: 50%;
@@ -177,12 +177,12 @@
 }
 
 
-#check:checked {
+.check:checked {
     background-color: #4CAF50;
     border: 2px solid white;
 }
 
-#check:checked::before {
+.check:checked::before {
     content: "✔";
     color: white;
     display: block;
