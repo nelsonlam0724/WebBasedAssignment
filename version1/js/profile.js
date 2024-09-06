@@ -6,6 +6,14 @@ function toggleEditForm() {
         form.style.display = "none";
     }
 }
+function showEditForm(field) {
+    document.getElementById('edit_' + field + '_form').style.display = 'block';
+}
+
+function hideEditForm(field) {
+    document.getElementById('edit_' + field + '_form').style.display = 'none';
+}
+
 
 $(document).ready(function() {
     $('label.upload input[type=file]').on('change', e => {
@@ -23,5 +31,7 @@ $(document).ready(function() {
             e.target.value = '';
         }
     });
+    photo_value
+    
 });
 

@@ -1,3 +1,8 @@
+<?php 
+  $user=$_SESSION['user'] -> name ?? 'guest';
+  $userID=$_SESSION['user'] -> user_id  ?? '0';
+?>
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -30,12 +35,12 @@
        </div>
        <div class="text">
         <div class="text-first">
-            <h6 data-user="3">Hi,Chong Shao Qian</h6>
+            <h6 data-user="<?= $userID ?>">Hi,<?= $user?></h6>
         </div> 
        </div>
     </div>
 
-    <p style="font-size: 30px;cursor:pointer;" class="cart-icon"><i class='bx bx-cart' ></i><span></span></P>
+    <a href="../customer/cart.php"><p style="font-size: 30px;cursor:pointer;color:black" class="cart-icon"><i class='bx bx-cart' ></i><span></span></P></a>
     
 </div>
 <div class="second-row">

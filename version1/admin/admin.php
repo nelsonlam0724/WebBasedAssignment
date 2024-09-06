@@ -7,9 +7,10 @@ if (is_get()) {
     $stm->execute([$_user->user_id]);
     $u = $stm->fetch();
 
-    if (!$u) {
+    if ($u->role !="Admin") {
         redirect('../login.php');
     }
+    
 }
 // Fetch user profile information
 $user = $_SESSION['user'];

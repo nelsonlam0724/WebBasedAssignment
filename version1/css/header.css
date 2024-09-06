@@ -5,6 +5,7 @@ header{
     position: fixed;
     z-index:2;
     background-color:white;
+    top:0;
  }
 
  header ,header .first-row ,header .second-row{
