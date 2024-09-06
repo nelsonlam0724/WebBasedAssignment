@@ -300,23 +300,6 @@ function err($key)
 // Global user object
 $_user = $_SESSION['user'] ?? null;
 
-// Authorization
-function auth(...$roles) {
-    global $_user;
-    if ($_user) {
-        if ($roles) {
-            if (in_array($_user->role, $roles)) {
-                return; // OK
-            }
-        }
-        else {
-            return; // OK
-        }
-    }
-    
-    redirect('/login.php');
-}
-
 // Login user
 function login($user, $url = '/')
 {
