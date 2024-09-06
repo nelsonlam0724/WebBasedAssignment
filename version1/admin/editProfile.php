@@ -7,11 +7,11 @@ if (is_get()) {
     $stm->execute([$_user->user_id]);
     $u = $stm->fetch();
 
-    if ($u->role !="Admin") {
+    if ($u->role != "Admin") {
         redirect('../login.php');
     }
-    
 }
+
 $user = $_SESSION['user'];
 
 // Initialize error array
@@ -34,8 +34,6 @@ if (is_post()) {
         $_err['email'] = 'Maximum 100 characters';
     } else if (!is_email($email)) {
         $_err['email'] = 'Invalid email';
-    } else if (!is_unique($email, 'user', 'email')) {
-        $_err['email'] = 'Duplicated';
     }
 
     // Validation: password and confirm
@@ -117,60 +115,78 @@ $_title = 'Edit Admin Profile';
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="../css/profile.css">
     <script src="../js/profile.js"></script>
-    <link rel="stylesheet" href="../css/image.css">
     <title><?= htmlspecialchars($_title) ?></title>
 </head>
 
 <body>
-
     <h1><?= htmlspecialchars($_title) ?></h1>
 
-    <form method="post" class="form" enctype="multipart/form-data">
-        <label for="email">Email:</label><br>
-        <?= html_text('email', 'maxlength="100" required') ?>
-        <?= err('email') ?>
-        <br>
+    <div class="form">
+        <form method="post" enctype="multipart/form-data">
+            <div class="form-container">
+                <div class="form-left">
+                    <div class="form-group">
+                        <label for="email">Email:</label>
+                        <input type="email" name="email" id="email" maxlength="100" value="<?= htmlspecialchars($user->email) ?>" required>
+                        <?= isset($_err['email']) ? "<span class='error'>{$_err['email']}</span>" : '' ?>
+                    </div>
 
-        <label for="name">Name:</label><br>
-        <?= html_text('name', 'maxlength="100" required') ?>
-        <?= err('name') ?>
-        <br>
+                    <div class="form-group">
+                        <label for="name">Name:</label>
+                        <input type="text" name="name" id="name" maxlength="100" value="<?= htmlspecialchars($user->name) ?>" required>
+                        <?= isset($_err['name']) ? "<span class='error'>{$_err['name']}</span>" : '' ?>
+                    </div>
 
-        <label for="password">Password</label><br>
-        <?= html_password('password', 'maxlength="100" required') ?>
-        <?= err('password') ?>
-        <br>
+                    <div class="form-group">
+                        <label for="password">Password:</label>
+                        <input type="password" name="password" id="password" maxlength="100" required>
+                        <?= isset($_err['password']) ? "<span class='error'>{$_err['password']}</span>" : '' ?>
+                    </div>
 
-        <label for="confirm">Confirm</label><br>
-        <?= html_password('confirm', 'maxlength="100" required') ?>
-        <?= err('confirm') ?>
-        <br>
-        <label for="gender">Gender</label><br>
-        <select name="gender">
-            <option value="">Select Gender</option>
-            <option value="Male">Male</option>
-            <option value="Female">Female</option>
-            <option value="Other">Other</option>
-        </select>
-        <?= err('gender') ?>
-        <br>
+                    <div class="form-group">
+                        <label for="confirm">Confirm Password:</label>
+                        <input type="password" name="confirm" id="confirm" maxlength="100" required>
+                        <?= isset($_err['confirm']) ? "<span class='error'>{$_err['confirm']}</span>" : '' ?>
+                    </div>
 
-        <label for="birthday">Birthday</label><br>
-        <input type="date" name="birthday" required>
-        <?= err('birthday') ?>
-        <br>
+                    <div class="form-group">
+                        <label for="gender">Gender:</label>
+                        <select name="gender" id="gender" required>
+                            <option value="">Select Gender</option>
+                            <option value="Male" <?= $user->gender == 'Male' ? 'selected' : '' ?>>Male</option>
+                            <option value="Female" <?= $user->gender == 'Female' ? 'selected' : '' ?>>Female</option>
+                            <option value="Other" <?= $user->gender == 'Other' ? 'selected' : '' ?>>Other</option>
+                        </select>
+                        <?= isset($_err['gender']) ? "<span class='error'>{$_err['gender']}</span>" : '' ?>
+                    </div>
+                </div>
 
-        <label for="photo">Photo</label><br>
-        <label class="upload">
-            <?= html_file('photo', 'image/*', 'hidden') ?>
-            <img src="../uploads/<?= $_user->photo ?>" width="170" height="170">
-        </label>
-        <?= err('photo') ?>
-        <br>
-        <button type="submit">Save Changes</button>
-    </form>
-    <a href="profile.php"><button>Back to Profile</button></a>
+                <div class="form-right">
+                    <div class="form-group">
+                        <label for="birthday">Birthday:</label>
+                        <input type="date" name="birthday" id="birthday" value="<?= htmlspecialchars($user->birthday) ?>" required>
+                        <?= isset($_err['birthday']) ? "<span class='error'>{$_err['birthday']}</span>" : '' ?>
+                    </div>
+
+                    <label for="photo">Photo:</label>
+                    <div class="form-group upload">
+                        <label class="upload">
+                            <?= html_file('photo', 'image/*', 'hidden') ?>
+                            <img src="../uploads/<?= htmlspecialchars($user->photo) ?>" alt="Profile Photo">
+                        </label>
+                        <?= isset($_err['photo']) ? "<span class='error'>{$_err['photo']}</span>" : '' ?>
+                    </div>
+                </div>
+            </div>
+
+            <button type="submit">Save Changes</button>
+        </form>
+    </div>
+    <div class="action-buttons">
+        <a href="profile.php"><button type="button">Back to Profile</button></a>
+    </div>
 </body>
 
 </html>

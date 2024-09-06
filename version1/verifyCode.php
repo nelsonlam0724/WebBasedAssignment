@@ -32,13 +32,20 @@ if (is_post()) {
 $_title = 'Verify Code';
 include '_head.php';
 ?>
+<link rel="stylesheet" href="css/simpleDesign.css">
 
+<h1><?= $_title ?></h1>
 <form method="post" class="form">
     <label for="code">Enter the 6-digit verification code:</label>
     <?= html_text('code', 'maxlength="6"') ?>
+    <?= err('code') ?>
+    
     <section>
-        <button>Verify</button>
+        <button type="submit">Verify</button>
         <button type="reset">Reset</button>
     </section>
 </form>
-<a href="login.php"><button>Back to Login</button></a>
+
+<div class="action-buttons">
+            <a href="login.php"><button>Back to Login</button></a>
+        </div>

@@ -97,6 +97,8 @@ $_title = 'Register Member';
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="../css/register.css">
+    <link rel="stylesheet" href="../css/profile.css">
     <link rel="stylesheet" href="../css/image.css">
     <script src="../js/profile.js"></script>
     <title><?= $_title ?></title>
@@ -105,55 +107,60 @@ $_title = 'Register Member';
 <body>
     <h1>Register New Member</h1>
     <?php if (isset($_err['general'])): ?>
-        <p style="color: red;"><?= htmlspecialchars($_err['general']) ?></p>
+        <p class="error"><?= htmlspecialchars($_err['general']) ?></p>
     <?php endif; ?>
     <form method="post" class="form" enctype="multipart/form-data">
-        <label for="name">Name</label><br>
-        <?= html_text('name', 'maxlength="100"') ?>
-        <?= err('name') ?>
-        <br>
+        <div class="form-container">
+            <div class="form-left">
+                <label for="name">Name:</label>
+                <input type="text" name="name" maxlength="100">
+                <?= err('name') ?>
 
-        <label for="email">Email</label><br>
-        <?= html_text('email', 'maxlength="100"') ?>
-        <?= err('email') ?>
-        <br>
+                <label for="email">Email</label>
+                <?= html_text('email', 'maxlength="100"') ?>
+                <?= err('email') ?>
+                <br>
 
-        <label for="password">Password</label><br>
-        <?= html_password('password', 'maxlength="100"') ?>
-        <?= err('password') ?>
-        <br>
+                <label for="password">Password:</label>
+                <input type="password" name="password" maxlength="100">
+                <?= err('password') ?>
 
-        <label for="confirm">Confirm</label><br>
-        <?= html_password('confirm', 'maxlength="100"') ?>
-        <?= err('confirm') ?>
-        <br>
+                <label for="confirm">Confirm Password:</label>
+                <input type="password" name="confirm" maxlength="100">
+                <?= err('confirm') ?>
 
-        <label for="gender">Gender</label><br>
-        <select name="gender">
-            <option value="">Select Gender</option>
-            <option value="Male">Male</option>
-            <option value="Female">Female</option>
-            <option value="Other">Other</option>
-        </select>
-        <?= err('gender') ?>
-        <br>
+                <label for="gender">Gender:</label>
+                <select name="gender">
+                    <option value="">Select Gender</option>
+                    <option value="Male">Male</option>
+                    <option value="Female">Female</option>
+                    <option value="Other">Other</option>
+                </select>
+                <?= err('gender') ?>
 
-        <label for="birthday">Birthday</label><br>
-        <input type="date" name="birthday" required>
-        <?= err('birthday') ?>
-        <br>
+            </div>
+            <div class="form-right">
+                <label for="birthday">Birthday:</label>
+                <input type="date" name="birthday" required>
+                <?= err('birthday') ?>
 
-        <label for="photo">Photo</label>
-        <label class="upload">
-            <?= html_file('photo', 'image/*', 'hidden') ?>
-            <img src="../images/photo.jpg">
-        </label>
-        <?= err('photo') ?>
-        <br>
-
-        <button type="submit">Register</button>
+                <label for="photo">Photo:</label>
+                <label class="upload">
+                    <?= html_file('photo', 'image/*', 'hidden') ?>
+                    <img src="../images/photo.jpg" alt="Profile Photo">
+                </label>
+                <?= err('photo') ?>
+            </div>
+        </div>
+        <section class="form-actions">
+            <button type="submit">Register</button>
+            <button type="reset">Reset</button>
+        </section>
     </form>
-    <p>Back to Menu <a href="admin.php">Back</a></p>
+    <div class="action-buttons">
+        <a href="memberList.php"><button>Back to Member List</button></a>
+        </a>
+    </div>
 </body>
 
 </html>
