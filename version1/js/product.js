@@ -40,8 +40,6 @@ $(document).ready(function(){
             });
         });
     }
-
-
     
     $('.add_card').on("click", function() {     
         let $this = $(this);  
@@ -61,21 +59,23 @@ $(document).ready(function(){
             }
         });
     });
+
+
+    $('.delete').on("click", function() {     
+        let $this = $(this);  
+        let userID = parseInt($('.text-first h6').data('user'));
+        let cartID = parseInt($this.data('del'));             
+        $.ajax({
+            url: '../function/delete_cart.php',
+            type: 'POST',
+            data: {user: userID, cart: cartID},
+            success: function(response) {
+              window.location.reload();
+            }
+        });
+    });
     
-
-
-
-
-
-
-
 });
-
-
-
-
-
-
 
 
 $('.add-to-card').on('click',function(){

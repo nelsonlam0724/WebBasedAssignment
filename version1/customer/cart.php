@@ -1,4 +1,18 @@
-<?php include '../include/header.php'; ?>
+<?php 
+include '../_base.php';
+include '../include/header.php'; 
+
+$getUserID = $_db->prepare('
+    SELECT c.id, c.unit , p.name, p.product_photo, p.price  
+    FROM carts AS c, product AS p 
+    WHERE c.product_id = p.product_id AND c.user_id = ? 
+');
+
+$getUserID->execute([$userID]);
+
+$results = $getUserID->fetchAll(PDO::FETCH_ASSOC);
+
+?>
 <title>Items</title>
 
 <link rel="stylesheet" href="../css/cart.css">
@@ -24,30 +38,33 @@
                <div></div>
             </div>
                 <div class="cart-box-list">
-                    <div class="cart-box">
+                <?php 
+                $count = 0;
+                foreach ($results  as $c): ?>
+                <div class="cart-box">
 
                         <div class="product-info">
                             <div class="delete-cart">
-                                <span style="font-size:25px">&times;</span>
+                                <span style="font-size:25px" class="delete" data-del="<?=$c['id'] ?>">&times;</span>
                             </div>
 
 
                             <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSSXUXld8NDEu716OSZ_8o7bvFgRi07Cs2ajw&s" width="90" height="90">
 
                             <div class="product-name">
-                                <h4>The Pen</h4>
+                                <h4><?= $c['name'] ?></h4>
                             </div>
                         </div>
 
                         <div class="btn-qty">
-                            <button class="qty-btn" onclick="decreaseValue('qtyInput<%= o %>')">-</button>
-                            <input type="text" name="qty" class="qty" value="1" id="qtyInput<%= o %>" readonly>
-                            <button class="qty-btn" onclick="increaseValue('qtyInput<%= o %>')">+</button>
+                            <button class="qty-btn" onclick="decreaseValue('<?= $c['unit'] ?>')">-</button>
+                            <input type="text" name="qty" class="qty" value="<?= $c['unit'] ?>" id="<?= $c['unit'] ?>" readonly>
+                            <button class="qty-btn" onclick="increaseValue('<?= $c['unit'] ?>')">+</button>
                             <span class="qty-multiplier"></span>
                         </div>
 
                         <div style="display:grid;place-items:center;padding:5px;">
-                            <h4>RM12.00</h4>
+                            <h4>RM<?= $c['price'] ?></h4>
                         </div>
 
                         <div class="custom-checkbox">
@@ -56,122 +73,15 @@
                         </div>
 
                     </div>
-
-
-                    <div class="cart-box">
-
-                        <div class="product-info">
-                            <div class="delete-cart">
-                                <span style="font-size:25px">&times;</span>
-                            </div>
-
-
-                            <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSSXUXld8NDEu716OSZ_8o7bvFgRi07Cs2ajw&s" width="90" height="90">
-
-                            <div class="product-name">
-                                <h4>The Pen</h4>
-                            </div>
-                        </div>
-
-                        <div class="btn-qty">
-                            <button class="qty-btn" onclick="decreaseValue('qtyInput<%= 1 %>')">-</button>
-                            <input type="text" name="qty" class="qty" value="1" id="qtyInput<%= 1 %>" readonly>
-                            <button class="qty-btn" onclick="increaseValue('qtyInput<%= 1 %>')">+</button>
-                            <span class="qty-multiplier"></span>
-                        </div>
-
-                        <div style="display:grid;place-items:center;padding:5px;">
-                            <h4>RM12.00</h4>
-                        </div>
-
-                        <div class="custom-checkbox">
-                            <input id="check" type="checkbox" name="selectedRows" value="<%= row[0] %>" />
-
-                        </div>
-
-                    </div>
-
-
-
-                    <div class="cart-box">
-
-                        <div class="product-info">
-                            <div class="delete-cart">
-                                <span style="font-size:25px">&times;</span>
-                            </div>
-
-
-                            <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSSXUXld8NDEu716OSZ_8o7bvFgRi07Cs2ajw&s" width="90" height="90">
-
-                            <div class="product-name">
-                                <h4>The Pen</h4>
-                            </div>
-                        </div>
-
-                        <div class="btn-qty">
-                            <button class="qty-btn" onclick="decreaseValue('qtyInput<%= 2 %>')">-</button>
-                            <input type="text" name="qty" class="qty" value="1" id="qtyInput<%= 2 %>" readonly>
-                            <button class="qty-btn" onclick="increaseValue('qtyInput<%= 2 %>')">+</button>
-                            <span class="qty-multiplier"></span>
-                        </div>
-
-                        <div style="display:grid;place-items:center;padding:5px;">
-                            <h4>RM12.00</h4>
-                        </div>
-
-                        <div class="custom-checkbox">
-                            <input id="check" type="checkbox" name="selectedRows" value="<%= row[0] %>" />
-
-                        </div>
-
-                    </div>
-
-
-
-                    <div class="cart-box">
-
-                        <div class="product-info">
-                            <div class="delete-cart">
-                                <span style="font-size:25px">&times;</span>
-                            </div>
-
-
-                            <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSSXUXld8NDEu716OSZ_8o7bvFgRi07Cs2ajw&s" width="90" height="90">
-
-                            <div class="product-name">
-                                <h4>The Pen</h4>
-                            </div>
-                        </div>
-
-                        <div class="btn-qty">
-                            <button class="qty-btn" onclick="decreaseValue('qtyInput<%= 3 %>')">-</button>
-                            <input type="text" name="qty" class="qty" value="1" id="qtyInput<%= 3 %>" readonly>
-                            <button class="qty-btn" onclick="increaseValue('qtyInput<%= 3 %>')">+</button>
-                            <span class="qty-multiplier"></span>
-                        </div>
-
-                        <div style="display:grid;place-items:center;padding:5px;">
-                            <h4>RM12.00</h4>
-                        </div>
-
-                        <div class="custom-checkbox">
-                            <input id="check" type="checkbox" name="selectedRows" value="<%= row[0] %>" />
-
-                        </div>
-
-                    </div>
-
+                    <?php 
+                    $count++;
+                    endforeach ?>
+                    <?php if($count==0){
+                        echo"<p style='padding:50px;font-size:30px;'>Your Cart Is Empty</p>";
+                    }?>
                 </div>
 
             </div>
-
-
-
-
-
-
-
-
 
             <div class="summary-price">
                 <h4>Summary</h4>
@@ -199,6 +109,7 @@
     </div>
 
 </body>
+<script src="../js/product.js"></script>
 <script>
     const checkboxes = document.querySelectorAll('input[name="selectedRows"]');
     const quantityInputs = document.querySelectorAll('.qty');
