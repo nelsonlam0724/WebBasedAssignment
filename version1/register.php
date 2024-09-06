@@ -72,7 +72,7 @@ if (is_post()) {
     }
 
     if (!$_err) {
-        $photo = save_photo($f);
+        $photo = save_photo_admin($f);
 
         $stm = $_db->prepare('
             INSERT INTO user (email, password, name, gender, birthday, photo, role, status)
