@@ -9,6 +9,7 @@ $getUserID = $_db->prepare('
     JOIN product AS p ON c.product_id = p.product_id 
     WHERE c.user_id = ? 
 ');
+
 $getUserID->execute([$userID]);
 $results = $getUserID->fetchAll(PDO::FETCH_ASSOC);
 $cart = [];
@@ -17,33 +18,22 @@ foreach ($results as $c) {
 }
 
 if(is_post()) {
+    $totalItems = post('product');
     $items = post('selectItems');
     $unit = post('qty');
     $cartSelected = [];
 
-    
-
-    for($i = 0; $i < count($items); $i++) {
-        if(isset($cart[$items[$i]])) {
-            $cartSelected[$items[$i]] = $unit[$i];
+    for ($i = 0; $i < count($totalItems); $i++) {
+        if (isset($totalItems[$i]) && isset($unit[$i])) {
+            $cart[$totalItems[$i]] = $unit[$i];
         }
     }
-    // echo '<pre>';
-    // print_r($unit);
-    // echo '</pre>';
-
-    // echo '<pre>';
-    // print_r($items);
-    // echo '</pre>';
-
-
-    // echo '<pre>';
-    // print_r($cart);
-    // echo '</pre>';
-    // echo '<pre>';
-    // print_r($cartSelected);
-    // echo '</pre>';
     
+    for($i =0; $i < count($items); $i++) {
+        if(isset($cart[$items[$i]])) {           
+            $cartSelected[$items[$i]] = $cart[$items[$i]];
+        }
+    }
 
     $_SESSION['cartSelection'] = $cartSelected;
     header('Location: checkout.php');
@@ -81,7 +71,7 @@ if(is_post()) {
                     $count = 0;
                     foreach ($results as $c): ?>
                     <div class="cart-box">
-
+                       <input type="hidden" name="product[]" value="<?=$c['product_id']?>">
                         <div class="product-info">
                             <div class="delete-cart">
                                 <span style="font-size:25px" class="delete" data-del="<?=$c['id']?>">&times;</span>
