@@ -128,8 +128,8 @@ $_title = 'Edit Member';
                 <div class="form-group upload">
                     <?php if ($member->photo): ?>
                         <label class="upload">
-                        <?= html_file('photo', 'image/*', 'hidden') ?>
-                        <img src="../uploads/<?= htmlspecialchars($member->photo) ?>" alt="Profile Photo">
+                            <?= html_file('photo', 'image/*', 'hidden') ?>
+                            <img src="../uploads/<?= htmlspecialchars($member->photo) ?>" alt="Profile Photo">
                         </label>
                         <?= isset($_err['photo']) ? "<span class='error'>{$_err['photo']}</span>" : '' ?>
                     <?php else: ?>
@@ -141,10 +141,12 @@ $_title = 'Edit Member';
 
         <button type="submit">Update Member</button>
     </form>
+    <div class="action-buttons">
+        <a href="memberList.php?page=<?= htmlspecialchars($page) ?>&search=<?= urlencode($search_query) ?>">
+            <button>Back to Member List</button>
+        </a>
+    </div>
 
-    <a href="memberList.php?page=<?= htmlspecialchars($page) ?>&search=<?= urlencode($search_query) ?>">
-        <button>Back to Member List</button>
-    </a>
 </body>
 
 </html>

@@ -183,11 +183,11 @@ $_title = 'Edit Customer Profile';
                 </div>
             </div>
         </div>
-
         <button type="submit">Save Changes</button>
-        <a href="customerProfile.php"><button type="button">Back to Profile</button></a>
     </form>
-
+    <div class="action-buttons">
+        <a href="customerProfile.php"><button type="button">Back to Profile</button></a>
+        </div>
 </body>
 
 </html>

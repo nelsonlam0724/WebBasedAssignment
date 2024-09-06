@@ -110,15 +110,14 @@ a button {
 
 /* Additional styling for file upload */
 .upload {
-    display: block;
     text-align: center;
     margin-bottom: 15px;
 }
 
 .upload img {
-    width: 100px;
-    height: 100px;
-    border-radius: 25%;
+    width: 150px;
+    height: 150px;
+    border-radius: 50%;
     object-fit: cover;
     margin-top: 10px;
     cursor: pointer;
@@ -128,4 +127,40 @@ a button {
 .error {
     color: red;
     font-size: 0.875rem;
+}
+
+
+button {
+    background-color: #007bff;
+    color: white;
+    border: none;
+    padding: 10px;
+    text-align: center;
+    display: inline-block;
+    font-size: 14px;
+    margin: 2px 1px;
+    cursor: pointer;
+    border-radius: 4px;
+}
+
+button:hover {
+    background-color: #0056b3;
+}
+.actions button {
+    background-color: #28a745;
+}
+
+.actions button:hover {
+    background-color: #218838;
+}
+
+
+.action-buttons {
+    text-align: center;
+    margin: 20px 0;
+}
+
+.action-buttons a button {
+    width: 200px;
+    margin: 5px;
 }

@@ -38,23 +38,24 @@ $_title = 'Reset Password';
 include '_head.php';
 ?>
 <link rel="stylesheet" href="css/resetPassword.css">
+<link rel="stylesheet" href="css/simpleDesign.css">
 <title><?= htmlspecialchars($_title) ?></title>
 </head>
 
 <body>
-<div class="form">
+    <div class="form">
         <h1>Reset Password</h1>
- 
+
         <?php if (isset($_err['general'])): ?>
             <p class="error"><?= htmlspecialchars($_err['general']) ?></p>
         <?php endif; ?>
-        
+
         <form method="post">
 
             <label for="password">New Password</label>
             <?= html_password('password', 'maxlength="100"') ?>
             <?= err('password') ?>
-  
+
             <label for="confirm">Confirm Password</label>
             <?= html_password('confirm', 'maxlength="100"') ?>
             <?= err('confirm') ?>
@@ -66,8 +67,10 @@ include '_head.php';
                 <button type="reset">Reset</button>
             </section>
         </form>
-
-        <a href="login.php"><button>Back to Login</button></a>
     </div>
+    <div class="action-buttons">
+            <a href="login.php"><button>Back to Login</button></a>
+        </div>
 </body>
+
 </html>

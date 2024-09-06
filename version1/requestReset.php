@@ -54,4 +54,6 @@ include '_head.php';
         <button type="reset" class="reset-btn">Reset</button>
     </section>
 </form>
-<a href="login.php"><button>Back to Login</button></a>
+<div class="action-buttons">
+    <a href="login.php"><button>Back to Login</button></a>
+</div>

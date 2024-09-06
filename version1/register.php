@@ -99,6 +99,7 @@ include '_head.php';
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="css/image.css">
     <link rel="stylesheet" href="css/register.css">
+    <link rel="stylesheet" href="css/simpleDesign.css">
     <script src="js/profile.js"></script>
     <title><?= htmlspecialchars($_title) ?></title>
 </head>
@@ -154,7 +155,9 @@ include '_head.php';
             <button type="reset">Reset</button>
         </section>
     </form>
-    <a href="login.php"><button>Back to Login</button></a>
+    <div class="action-buttons">
+            <a href="login.php"><button>Back to Login</button></a>
+        </div>
 </body>
 
 </html>

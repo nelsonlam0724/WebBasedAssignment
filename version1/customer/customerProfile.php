@@ -7,10 +7,9 @@ if (is_get()) {
     $stm->execute([$_user->user_id]);
     $u = $stm->fetch();
 
-    if ($u->role !="Member" && $u->role !="Admin") {
+    if ($u->role != "Member" && $u->role != "Admin") {
         redirect('../login.php');
     }
-    
 }
 $user = $_SESSION['user'];
 
@@ -19,85 +18,85 @@ $_err = [];
 
 // Handle form submission (POST request)
 if (is_post()) {
-        $field = req('field');
-        $value = req('value');
+    $field = req('field');
+    $value = req('value');
 
-        switch ($field) {
-            case 'email':
-                if (strlen($value) > 100) {
-                    $_err['email'] = 'Maximum 100 characters';
-                } else if (!is_email($value)) {
-                    $_err['email'] = 'Invalid email';
-                } else if (!is_unique($value, 'user', 'email')) {
-                    $_err['email'] = 'Duplicated';
-                } else {
-                    $stm = $_db->prepare('UPDATE user SET email = ? WHERE user_id = ?');
-                    $stm->execute([$value, $user->user_id]);
-                    $_SESSION['user']->email = $value;
-                }
-                break;
+    switch ($field) {
+        case 'email':
+            if (strlen($value) > 100) {
+                $_err['email'] = 'Maximum 100 characters';
+            } else if (!is_email($value)) {
+                $_err['email'] = 'Invalid email';
+            } else if (!is_unique($value, 'user', 'email')) {
+                $_err['email'] = 'Duplicated';
+            } else {
+                $stm = $_db->prepare('UPDATE user SET email = ? WHERE user_id = ?');
+                $stm->execute([$value, $user->user_id]);
+                $_SESSION['user']->email = $value;
+            }
+            break;
 
-            case 'name':
-                if (strlen($value) > 100) {
-                    $_err['name'] = 'Maximum 100 characters';
-                } else {
-                    $stm = $_db->prepare('UPDATE user SET name = ? WHERE user_id = ?');
-                    $stm->execute([$value, $user->user_id]);
-                    $_SESSION['user']->name = $value;
-                }
-                break;
+        case 'name':
+            if (strlen($value) > 100) {
+                $_err['name'] = 'Maximum 100 characters';
+            } else {
+                $stm = $_db->prepare('UPDATE user SET name = ? WHERE user_id = ?');
+                $stm->execute([$value, $user->user_id]);
+                $_SESSION['user']->name = $value;
+            }
+            break;
 
-            case 'password':
-                if (strlen($value) < 5 || strlen($value) > 100) {
-                    $_err['password'] = 'Between 5-100 characters';
-                } else {
-                    $hashed_password = password_hash($value, PASSWORD_DEFAULT);
-                    $stm = $_db->prepare('UPDATE user SET password = ? WHERE user_id = ?');
-                    $stm->execute([$hashed_password, $user->user_id]);
-                }
-                break;
+        case 'password':
+            if (strlen($value) < 5 || strlen($value) > 100) {
+                $_err['password'] = 'Between 5-100 characters';
+            } else {
+                $hashed_password = password_hash($value, PASSWORD_DEFAULT);
+                $stm = $_db->prepare('UPDATE user SET password = ? WHERE user_id = ?');
+                $stm->execute([$hashed_password, $user->user_id]);
+            }
+            break;
 
-            case 'birthday':
-                if (!is_birthday($value)) {
-                    $_err['birthday'] = 'Invalid date format';
-                } else {
-                    $stm = $_db->prepare('UPDATE user SET birthday = ? WHERE user_id = ?');
-                    $stm->execute([$value, $user->user_id]);
-                    $_SESSION['user']->birthday = $value;
-                }
-                break;
+        case 'birthday':
+            if (!is_birthday($value)) {
+                $_err['birthday'] = 'Invalid date format';
+            } else {
+                $stm = $_db->prepare('UPDATE user SET birthday = ? WHERE user_id = ?');
+                $stm->execute([$value, $user->user_id]);
+                $_SESSION['user']->birthday = $value;
+            }
+            break;
 
-            case 'gender':
-                if (!is_gender($value)) {
-                    $_err['gender'] = 'Invalid gender';
-                } else {
-                    $stm = $_db->prepare('UPDATE user SET gender = ? WHERE user_id = ?');
-                    $stm->execute([$value, $user->user_id]);
-                    $_SESSION['user']->gender = $value;
-                }
-                break;
+        case 'gender':
+            if (!is_gender($value)) {
+                $_err['gender'] = 'Invalid gender';
+            } else {
+                $stm = $_db->prepare('UPDATE user SET gender = ? WHERE user_id = ?');
+                $stm->execute([$value, $user->user_id]);
+                $_SESSION['user']->gender = $value;
+            }
+            break;
 
-            case 'photo':
-                $photo = $_FILES['value'];
-                $allowed_types = ['image/jpeg', 'image/png'];
-                if (!in_array($photo['type'], $allowed_types)) {
-                    $_err['photo'] = 'Invalid file type. Only JPEG and PNG are allowed.';
-                } else if ($photo['size'] > 2 * 1024 * 1024) { // 2MB max size
-                    $_err['photo'] = 'File size exceeds 2MB.';
-                } else {
-                    $photo_name = save_photo_admin($photo);
-                    $stm = $_db->prepare('UPDATE user SET photo = ? WHERE user_id = ?');
-                    $stm->execute([$photo_name, $user->user_id]);
-                    $_SESSION['user']->photo = $photo_name;
-                }
-                break;
-        }
-
-        if (empty($_err)) {
-            temp('info', 'Profile updated successfully');
-            redirect('customer.php');
-        }
+        case 'photo':
+            $photo = $_FILES['value'];
+            $allowed_types = ['image/jpeg', 'image/png'];
+            if (!in_array($photo['type'], $allowed_types)) {
+                $_err['photo'] = 'Invalid file type. Only JPEG and PNG are allowed.';
+            } else if ($photo['size'] > 2 * 1024 * 1024) { // 2MB max size
+                $_err['photo'] = 'File size exceeds 2MB.';
+            } else {
+                $photo_name = save_photo_admin($photo);
+                $stm = $_db->prepare('UPDATE user SET photo = ? WHERE user_id = ?');
+                $stm->execute([$photo_name, $user->user_id]);
+                $_SESSION['user']->photo = $photo_name;
+            }
+            break;
     }
+
+    if (empty($_err)) {
+        temp('info', 'Profile updated successfully');
+        redirect('customerProfile.php');
+    }
+}
 
 
 
@@ -108,13 +107,14 @@ $_title = 'Member Profile';
 <html lang="en">
 
 <head>
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <script src="../js/profile.js"></script>
-    <title><?= htmlspecialchars($_title) ?></title>
-    <link rel="stylesheet" href="../css/adminProfile.css">
-</head>
+
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <script src="../js/profile.js"></script>
+        <title><?= htmlspecialchars($_title) ?></title>
+        <link rel="stylesheet" href="../css/adminProfile.css">
+    </head>
 
 <body>
     <div class="container">
@@ -220,8 +220,9 @@ $_title = 'Member Profile';
         </div>
 
         <div class="action-buttons">
-        <a href="customer.php"><button>Back to Menu</button></a><br>
-        <a href="../logout.php"><button>Logout</button></a>
+            <a href="customerEditProfile.php"><button>Edit All</button></a><br>
+            <a href="customer.php"><button>Back to Menu</button></a><br>
+            <a href="../logout.php"><button>Logout</button></a>
         </div>
     </div>
 </body>

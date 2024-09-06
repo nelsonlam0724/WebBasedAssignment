@@ -95,7 +95,7 @@ if (is_post()) {
 
     if (empty($_err)) {
         temp('info', 'Profile updated successfully');
-        redirect('admin.php');
+        redirect('profile.php');
     }
 }
 

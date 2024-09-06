@@ -182,8 +182,10 @@ $_title = 'Edit Admin Profile';
             </div>
 
             <button type="submit">Save Changes</button>
-            <a href="profile.php"><button type="button">Back to Profile</button></a>
         </form>
+    </div>
+    <div class="action-buttons">
+        <a href="profile.php"><button type="button">Back to Profile</button></a>
     </div>
 </body>
 

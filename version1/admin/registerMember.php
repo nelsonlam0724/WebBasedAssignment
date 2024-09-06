@@ -98,6 +98,7 @@ $_title = 'Register Member';
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="../css/register.css">
+    <link rel="stylesheet" href="../css/profile.css">
     <link rel="stylesheet" href="../css/image.css">
     <script src="../js/profile.js"></script>
     <title><?= $_title ?></title>
@@ -156,7 +157,10 @@ $_title = 'Register Member';
             <button type="reset">Reset</button>
         </section>
     </form>
-    <a href="memberList.php"><button>Back to Member List</button></a>
+    <div class="action-buttons">
+        <a href="memberList.php"><button>Back to Member List</button></a>
+        </a>
+    </div>
 </body>
 
 </html>
