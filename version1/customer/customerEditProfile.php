@@ -7,11 +7,11 @@ if (is_get()) {
     $stm->execute([$_user->user_id]);
     $u = $stm->fetch();
 
-    if ($u->role !="Member" && $u->role !="Admin") {
+    if ($u->role != "Member" && $u->role != "Admin") {
         redirect('../login.php');
     }
-    
 }
+
 $user = $_SESSION['user'];
 
 // Initialize error array
@@ -118,7 +118,7 @@ $_title = 'Edit Customer Profile';
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <script src="../js/profile.js"></script>
-    <link rel="stylesheet" href="../css/image.css">
+    <link rel="stylesheet" href="../css/profile.css">
     <title><?= htmlspecialchars($_title) ?></title>
 </head>
 
@@ -127,50 +127,67 @@ $_title = 'Edit Customer Profile';
     <h1><?= htmlspecialchars($_title) ?></h1>
 
     <form method="post" class="form" enctype="multipart/form-data">
-        <label for="email">Email:</label><br>
-        <?= html_text('email', 'maxlength="100" required') ?>
-        <?= err('email') ?>
-        <br>
+        <div class="form-container">
+            <div class="form-left">
+                <div class="form-group">
+                    <label for="email">Email:</label>
+                    <input type="email" name="email" maxlength="100" required value="<?= htmlspecialchars($user->email) ?>">
+                    <?= err('email') ?>
+                </div>
 
-        <label for="name">Name:</label><br>
-        <?= html_text('name', 'maxlength="100" required') ?>
-        <?= err('name') ?>
-        <br>
+                <div class="form-group">
+                    <label for="name">Name:</label>
+                    <input type="text" name="name" maxlength="100" required value="<?= htmlspecialchars($user->name) ?>">
+                    <?= err('name') ?>
+                </div>
 
-        <label for="password">Password</label><br>
-        <?= html_password('password', 'maxlength="100" required') ?>
-        <?= err('password') ?>
-        <br>
+                <div class="form-group">
+                    <label for="password">Password:</label>
+                    <input type="password" name="password" maxlength="100" required>
+                    <?= err('password') ?>
+                </div>
 
-        <label for="confirm">Confirm</label><br>
-        <?= html_password('confirm', 'maxlength="100" required') ?>
-        <?= err('confirm') ?>
-        <br>
-        <label for="gender">Gender</label><br>
-        <select name="gender">
-            <option value="">Select Gender</option>
-            <option value="Male">Male</option>
-            <option value="Female">Female</option>
-            <option value="Other">Other</option>
-        </select>
-        <?= err('gender') ?>
-        <br>
+                <div class="form-group">
+                    <label for="confirm">Confirm Password:</label>
+                    <input type="password" name="confirm" maxlength="100" required>
+                    <?= err('confirm') ?>
+                </div>
 
-        <label for="birthday">Birthday</label><br>
-        <input type="date" name="birthday" required>
-        <?= err('birthday') ?>
-        <br>
+                <div class="form-group">
+                    <label for="gender">Gender:</label>
+                    <select name="gender">
+                        <option value="">Select Gender</option>
+                        <option value="Male" <?= $user->gender == 'Male' ? 'selected' : '' ?>>Male</option>
+                        <option value="Female" <?= $user->gender == 'Female' ? 'selected' : '' ?>>Female</option>
+                        <option value="Other" <?= $user->gender == 'Other' ? 'selected' : '' ?>>Other</option>
+                    </select>
+                    <?= err('gender') ?>
+                </div>
+            </div>
 
-        <label for="photo">Photo</label><br>
-        <label class="upload">
-            <?= html_file('photo', 'image/*', 'hidden') ?>
-            <img src="../uploads/<?= $_user->photo ?>" width="170" height="170">
-        </label>
-        <?= err('photo') ?>
-        <br>
+            <div class="form-right">
+                <div class="form-group">
+                    <label for="birthday">Birthday:</label>
+                    <input type="date" name="birthday" required value="<?= htmlspecialchars($user->birthday) ?>">
+                    <?= err('birthday') ?>
+                </div>
+
+                <label for="photo">Photo:</label>
+                <div class="form-group upload">
+                    <label class="upload">
+                        <?= html_file('photo', 'image/*', 'hidden') ?>
+                        <img src="../uploads/<?= htmlspecialchars($user->photo) ?>" alt="Profile Photo">
+                    </label>
+
+                    <?= err('photo') ?>
+                </div>
+            </div>
+        </div>
+
         <button type="submit">Save Changes</button>
+        <a href="customerProfile.php"><button type="button">Back to Profile</button></a>
     </form>
-    <a href="customerProfile.php"><button>Back to Profile</button></a>
+
 </body>
 
 </html>

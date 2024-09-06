@@ -42,15 +42,16 @@ if (is_post()) {
 $_title = 'Request Password Reset';
 include '_head.php';
 ?>
-
+<link rel="stylesheet" href="css/simpleDesign.css">
+<h1><?= $_title?></h1>
 <form method="post" class="form">
     <label for="email">Email</label>
     <?= html_text('email', 'maxlength="100"') ?>
     <?= err('email') ?>
 
-    <section>
-        <button>Submit</button>
-        <button type="reset">Reset</button>
+    <section class="form-buttons">
+        <button type="submit" class="submit-btn">Submit</button>
+        <button type="reset" class="reset-btn">Reset</button>
     </section>
 </form>
 <a href="login.php"><button>Back to Login</button></a>

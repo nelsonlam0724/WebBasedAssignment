@@ -93,68 +93,68 @@ include '_head.php';
 
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="css/image.css">
+    <link rel="stylesheet" href="css/register.css">
     <script src="js/profile.js"></script>
     <title><?= htmlspecialchars($_title) ?></title>
 </head>
+
 <body>
     <h1>Register New Member</h1>
     <?php if (isset($_err['general'])): ?>
-        <p style="color: red;"><?= htmlspecialchars($_err['general']) ?></p>
+        <p class="error"><?= htmlspecialchars($_err['general']) ?></p>
     <?php endif; ?>
     <form method="post" class="form" enctype="multipart/form-data">
+        <div class="form-container">
+            <div class="form-left">
+                <label for="email">Email:</label>
+                <p style="color: blue;"><?= htmlspecialchars($email) ?></p>
 
-    <label for="email">Email:</label>
-        <label for="email"><?= htmlspecialchars($email) ?></label>
-        <?= err('email') ?>
-        <br>
+                <label for="name">Name:</label>
+                <input type="text" name="name" maxlength="100">
+                <?= err('name') ?>
 
-        <label for="name">Name</label><br>
-        <?= html_text('name', 'maxlength="100"') ?>
-        <?= err('name') ?>
-        <br>
+                <label for="password">Password:</label>
+                <input type="password" name="password" maxlength="100">
+                <?= err('password') ?>
 
-        <label for="password">Password</label><br>
-        <?= html_password('password', 'maxlength="100"') ?>
-        <?= err('password') ?>
-        <br>
+                <label for="confirm">Confirm Password:</label>
+                <input type="password" name="confirm" maxlength="100">
+                <?= err('confirm') ?>
 
-        <label for="confirm">Confirm Password</label><br>
-        <?= html_password('confirm', 'maxlength="100"') ?>
-        <?= err('confirm') ?>
-        <br>
+                <label for="gender">Gender:</label>
+                <select name="gender">
+                    <option value="">Select Gender</option>
+                    <option value="Male">Male</option>
+                    <option value="Female">Female</option>
+                    <option value="Other">Other</option>
+                </select>
+                <?= err('gender') ?>
 
-        <label for="gender">Gender</label><br>
-        <select name="gender">
-            <option value="">Select Gender</option>
-            <option value="Male">Male</option>
-            <option value="Female">Female</option>
-            <option value="Other">Other</option>
-        </select>
-        <?= err('gender') ?>
-        <br>
+            </div>
+            <div class="form-right">
+                <label for="birthday">Birthday:</label>
+                <input type="date" name="birthday" required>
+                <?= err('birthday') ?>
 
-        <label for="birthday">Birthday</label><br>
-        <input type="date" name="birthday" required>
-        <?= err('birthday') ?>
-        <br>
-
-        <label for="photo">Photo</label>
-        <label class="upload">
-            <?= html_file('photo', 'image/*', 'hidden') ?>
-            <img src="images/photo.jpg">
-        </label>
-        <?= err('photo') ?>
-        <br>
-
-        <section>
+                <label for="photo">Photo:</label>
+                <label class="upload">
+                    <?= html_file('photo', 'image/*', 'hidden') ?>
+                    <img src="images/photo.jpg" alt="Profile Photo">
+                </label>
+                <?= err('photo') ?>
+            </div>
+        </div>
+        <section class="form-actions">
             <button type="submit">Register</button>
             <button type="reset">Reset</button>
         </section>
     </form>
     <a href="login.php"><button>Back to Login</button></a>
 </body>
+
 </html>

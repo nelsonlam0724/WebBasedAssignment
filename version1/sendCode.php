@@ -3,6 +3,7 @@ include '_base.php';
 
 if (is_post()) {
     $email = req('email');
+    
     // Generate a random 6-digit verification code
     $verification_code = rand(100000, 999999);
 
@@ -41,15 +42,16 @@ if (is_post()) {
 $_title = 'Request Email Verification';
 include '_head.php';
 ?>
+<link rel="stylesheet" href="css/simpleDesign.css">
 <h1><?= $_title?></h1>
 <form method="post" class="form">
     <label for="email">Email</label>
     <?= html_text('email', 'maxlength="100"') ?>
     <?= err('email') ?>
 
-    <section>
-        <button type="submit">Submit</button>
-        <button type="reset">Reset</button>
+    <section class="form-buttons">
+        <button type="submit" class="submit-btn">Submit</button>
+        <button type="reset" class="reset-btn">Reset</button>
     </section>
 </form>
 <a href="login.php"><button>Back to Login</button></a>

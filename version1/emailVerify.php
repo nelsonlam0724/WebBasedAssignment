@@ -29,7 +29,9 @@ if (is_post()) {
 $_title = 'Email Verify Code';
 include '_head.php';
 ?>
-<h1><?= $_title?></h1>
+<link rel="stylesheet" href="css/simpleDesign.css">
+
+<h1><?= $_title ?></h1>
 <form method="post" class="form">
     <label for="code">Enter the 6-digit verification code:</label>
     <?= html_text('code', 'maxlength="6"') ?>
@@ -40,4 +42,5 @@ include '_head.php';
         <button type="reset">Reset</button>
     </section>
 </form>
+
 <a href="login.php"><button>Back to Login</button></a>
