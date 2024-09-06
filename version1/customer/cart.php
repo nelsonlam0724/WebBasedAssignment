@@ -49,9 +49,9 @@ $results = $getUserID->fetchAll(PDO::FETCH_ASSOC);
                             </div>
 
 
-                            <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSSXUXld8NDEu716OSZ_8o7bvFgRi07Cs2ajw&s" width="90" height="90">
+                            <img src="<?=$c['product_photo'] ?>" width="90" height="90">
 
-                            <div class="product-name">
+                            <div class="product-name" style="width:20px;">
                                 <h4><?= $c['name'] ?></h4>
                             </div>
                         </div>

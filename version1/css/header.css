@@ -79,14 +79,13 @@ header{
      position:relative;
  }
 
- .first-row p span::after{
-     content: "5";
-     padding:0px 5px;
-     background-color: red;
-     color:white;
-     font-size:10px;
-     text-align: center;
-     border-radius: 50%;           
-     position: absolute;
-     top:1px;
+ .first-row p span{
+    padding: 0px 5px;
+    background-color: red;
+    color: white;
+    font-size: 10px;
+    text-align: center;
+    border-radius: 50%;           
+    position: absolute;
+    top: 15px;
  }

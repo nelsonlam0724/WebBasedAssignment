@@ -50,12 +50,7 @@ $(document).ready(function(){
             type: 'POST',
             data: {user: userID, product: productID},
             success: function(response) {
-                let checkClick = JSON.parse(response);
-                if (checkClick.success) {
-                    alert(checkClick.message);
-                } else {
-                    alert('Error adding product to cart');
-                }
+                fetchCart();
             }
         });
     });
@@ -74,6 +69,21 @@ $(document).ready(function(){
             }
         });
     });
+
+
+    
+       function fetchCart() {
+       let userID = parseInt($('.text-first h6').data('user'));
+    $.ajax({
+        url: '../function/fetch_cart.php',
+        type: 'POST',
+        data: { user: userID },
+        success: function(response) {
+            let records = JSON.parse(response);
+            $('.cart-icon span').text(records.total_records);
+        }
+    });
+}
     
 });
 
