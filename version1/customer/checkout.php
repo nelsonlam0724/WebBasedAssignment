@@ -150,7 +150,7 @@ if (!empty($productIds)) {
         <tr class="total-row">
 
           <td colspan="2">Subtotal</td>
-          <td colspan="1">RM <?= $subtotal ?></td>
+          <td colspan="1">RM <?= $subtotal = number_format($subtotal, 2, '.', ''); ?></td>
         </tr>
       </table>
 
@@ -188,11 +188,21 @@ if (!empty($productIds)) {
           </tr>
           <tr>
             <th>Merchandise Subtotal</th>
-            <td>RM <?=  $subtotal ?></td>
+            <td>RM <?=  $subtotal = number_format($subtotal, 2, '.', ''); ?></td>
           </tr>
           <tr>
             <th>Shipping Fee </th>
-            <td>RM <%= formatDeliveyFee %></td>
+            <td> <div class="optShip" style="text-align: center;gap:25px;display:flex;">
+        <label>
+            <input type="radio" name="payment">
+             RM1.60 (Self Pickup)
+        </label>
+        <label>
+            <input type="radio" name="payment" checked>
+            RM4.60 (Step Door)
+        </label>
+      
+    </div></td>
           </tr>
 
           <tr>
@@ -219,61 +229,76 @@ if (!empty($productIds)) {
       <div class="selected_payment_method">
         <h1>Payment Option</h1>
         <div class="box_select">
-          <input type="radio" name="payment" id="VisaMasterCard" class="invisible" value="card">
-          <input type="radio" name="payment" id="E-Wallet" class="invisible" value="eWallet">
-          <input type="radio" name="payment" id="Cash" class="invisible" value="Cash">
+ 
+        <h2 class="title">Payment Method</h2>
+        <div class="logos">
+            <img src="https://w7.pngwing.com/pngs/363/177/png-transparent-visa-mastercard-logo-visa-mastercard-computer-icons-visa-text-payment-logo-thumbnail.png" alt="Visa and MasterCard logos" id="card-logo">
+            <img src="https://is1-ssl.mzstatic.com/image/thumb/Purple221/v4/14/80/fe/1480feec-244b-6888-a853-99c37334d546/AppIcon-1x_U007emarketing-0-5-0-0-85-220-0.png/1200x630wa.png" alt="PayPal logo" id="paypal-logo">
+        </div>
 
-          <div class="category_payment">
-            <label id="lab1" for="VisaMasterCard" class="VM">
-              <div class="imgName">
-                <div class="imageContainer">
-                  <img id="img1" src="../Image/VISA-MASTER.png" alt="" width="300" height="200">
-
+        <div id="card-form" class="hidden">
+            <div class="form-group">
+                <label for="name">Name on Card</label>
+                <input id="name" type="text" value="John Smith">
+            </div>
+            <div class="form-group">
+                <label for="card">Card Number</label>
+                <input id="card" type="text" value="0000-0000-0000-0000">
+            </div>
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="cvv">CVV</label>
+                    <input id="cvv" type="text" value="">
                 </div>
-              </div>
-              <h3 style="padding: 15px;">Credit/Debit Card</h3>
-              <span class="check"><box-icon name='check-double' color=#3fa5f3 size="30px"></box-icon></span>
-            </label>
-
-            <label id="lab1" for="E-Wallet" class="Ewallet">
-              <div class="imgName">
-                <div class="imageContainer">
-                  <img id="img1" src="../Image/wallet.png" alt="" width="90" height="90">
-
+                <div class="form-group">
+                    <label for="date">Expiration Date</label>
+                    <input id="date" type="text" value="MM/YY">
                 </div>
-              </div>
-              <h3 style="padding: 15px;">Digital Wallet</h3>
-              <span class="check"><box-icon name='check-double' color=#3fa5f3 size="30px"></span>
-            </label>
+            </div>
+            <div class="button">
+                <button type="button">MAKE A PAYMENT →</button>
+            </div>
+        </div>
 
-          </div>
+            <div id="paypal-form" class="hidden">
+            <div class="form-group">
+                <label for="paypal-email">PayPal Email</label>
+                <input id="paypal-email" type="email" placeholder="example@paypal.com">
+            </div>
+            <div class="button">
+                <button type="button">PAY WITH PAYPAL →</button>
+            </div>
+        </div>
+        </div>
 
-          <div class="category_payment2">
-            <label id="lab1" for="Cash" class="CASH">
-              <div class="imgName">
-                <div class="imageContainer">
-                  <img id="img1" src="../Image/payment-method.png" alt="" width="300" height="200">
 
-                </div>
-              </div>
-              <h3 style="padding: 15px;">Cash</h3>
-              <span class="check"><box-icon name='check-double' color=#3fa5f3 size="30px"></box-icon></span>
-            </label>
 
-          </div>
 
         </div>
       </div>
       <!-----End of box 5-->
-    </div>
+ 
     <div class="btn_back_proceed">
       <a class="buttonb" id="backButton" href="#">Back</a>
-      <button class="buttonbc" id="proceedButton">Proceed</button>
+  
     </div>
   </form>
   <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
   <script src="../js/payment.js"></script>
   <script src="../js/map.js"></script>
+  <script>
+        $(document).ready(function() {
+            $('#card-logo').click(function() {
+                $('#card-form').removeClass('hidden');
+                $('#paypal-form').addClass('hidden');
+            });
+
+            $('#paypal-logo').click(function() {
+                $('#paypal-form').removeClass('hidden');
+                $('#card-form').addClass('hidden');
+            });
+        });
+    </script>
   <script>
 
   </script>
