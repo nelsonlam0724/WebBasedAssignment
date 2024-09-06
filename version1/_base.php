@@ -93,18 +93,29 @@ function get_mail() {
     return $m;
 }
 // Crop, resize and save photo
-function save_photo($f, $folder, $width = 200, $height = 200) {
-    $photo = uniqid() . '.jpg';
+function save_photo($file) {
+    // Check if $file is an object or array
+    if (is_object($file)) {
+        $file_tmp_name = $file->tmp_name;
+        $file_type = $file->type;
+        $file_size = $file->size;
+    } elseif (is_array($file)) {
+        $file_tmp_name = $file['tmp_name'];
+        $file_type = $file['type'];
+        $file_size = $file['size'];
+    } else {
+        throw new InvalidArgumentException('Invalid file input');
+    }
     
+    $photo = uniqid() . '.jpg';
     require_once 'lib/SimpleImage.php';
     $img = new SimpleImage();
-    $img->fromFile($f->tmp_name)
-        ->thumbnail($width, $height)
-        ->toFile("$folder/$photo", 'image/jpeg');
-
+    $img->fromFile($file_tmp_name)
+        ->thumbnail(200, 200)
+        ->toFile("uploads/$photo", 'image/jpeg');
+    
     return $photo;
 }
-
 function save_photo_admin($file) {
     // Check if $file is an object or array
     if (is_object($file)) {
