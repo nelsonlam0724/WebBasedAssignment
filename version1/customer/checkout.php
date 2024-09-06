@@ -167,11 +167,11 @@ if (!empty($productIds)) {
           </label><br>
           <input type="radio" id="pos" name="delivery_method" value="POS LAJU">
           <label for="pos"><img src="../Image/poslaju.png" width="150" height="50">
-            <p><%= fee %></p>
+            <p></p>
           </label><br>
           <input type="radio" id="jT" name="delivery_method" value="J&T">
           <label for="jT"><img src="https://upload.wikimedia.org/wikipedia/commons/thumb/0/01/J%26T_Express_logo.svg/2560px-J%26T_Express_logo.svg.png" width="150" height="50">
-            <p><%= fee %></p>
+            <p></p>
           </label>
         </div>
       </div>
@@ -255,9 +255,6 @@ if (!empty($productIds)) {
                     <input id="date" type="text" value="MM/YY">
                 </div>
             </div>
-            <div class="button">
-                <button type="button">MAKE A PAYMENT →</button>
-            </div>
         </div>
 
             <div id="paypal-form" class="hidden">
@@ -265,9 +262,7 @@ if (!empty($productIds)) {
                 <label for="paypal-email">PayPal Email</label>
                 <input id="paypal-email" type="email" placeholder="example@paypal.com">
             </div>
-            <div class="button">
-                <button type="button">PAY WITH PAYPAL →</button>
-            </div>
+            
         </div>
         </div>
 
@@ -280,6 +275,9 @@ if (!empty($productIds)) {
  
     <div class="btn_back_proceed">
       <a class="buttonb" id="backButton" href="#">Back</a>
+      <div class="button">
+                <button>Place Order →</button>
+            </div>
   
     </div>
   </form>
