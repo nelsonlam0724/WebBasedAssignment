@@ -7,17 +7,15 @@ if (is_post()) {
     $email = req('email');
 
     function generateVerificationCode() {
-        return rand(100000, 999999); // 生成6位随机数字
+        return rand(100000, 999999);
     }
     
-    $email = req('email'); // 用户请求的邮箱
-    $verification_code = generateVerificationCode(); // 生成验证码
+    $email = req('email');
+    $verification_code = generateVerificationCode(); //
     
-    // 将验证码保存到数据库 (假设 token 表存在)
     $stmt = $_db->prepare('INSERT INTO token (email, verification_code, expire) VALUES (?, ?, DATE_ADD(NOW(), INTERVAL 15 MINUTE))');
     $stmt->execute([$email, $verification_code]);
     
-    // 发送邮件包含验证码
     $m = get_mail();
     $m->addAddress($email);
     $m->isHTML(true);
@@ -32,7 +30,7 @@ if (is_post()) {
     
 
         temp('info', 'Email sent');
-        redirect('reset_password.php');
+        redirect('resetPassword.php');
     }
 
 
@@ -50,3 +48,4 @@ include '_head.php';
     
     <button type="submit">Reset Password</button>
 </form>
+<a href="login.php"><button>Back to Login</button></a>

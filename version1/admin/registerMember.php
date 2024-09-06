@@ -76,7 +76,7 @@ if (is_post()) {
 
     // DB operation
     if (!$_err) {
-        $photo = save_photo($f);
+        $photo = save_photo_admin($f);
 
         $stm = $_db->prepare('
             INSERT INTO user (email, password, name, gender, birthday, photo, role)
@@ -139,7 +139,7 @@ $_title = 'Register Member';
         <br>
 
         <label for="birthday">Birthday</label><br>
-        <?= html_text('birthday', 'placeholder="YYYY-MM-DD"') ?>
+        <input type="date" name="birthday" required>
         <?= err('birthday') ?>
         <br>
 

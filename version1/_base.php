@@ -76,19 +76,46 @@ function get_file($key)
     return null;
 }
 
+function get_mail() {
+    require_once 'lib/PHPMailer.php';
+    require_once 'lib/SMTP.php';
+
+    $m = new PHPMailer(true);
+    $m->isSMTP();
+    $m->SMTPAuth = true;
+    $m->Host = 'smtp.gmail.com';
+    $m->Port = 587;
+    $m->Username = 'AACS3173@gmail.com';
+    $m->Password = 'npsg gzfd pnio aylm';
+    $m->CharSet = 'utf-8';
+    $m->setFrom($m->Username, '😺 Admin');
+
+    return $m;
+}
 // Crop, resize and save photo
-function save_photo($f, $folder, $width = 200, $height = 200) {
-    $photo = uniqid() . '.jpg';
+function save_photo($file) {
+    // Check if $file is an object or array
+    if (is_object($file)) {
+        $file_tmp_name = $file->tmp_name;
+        $file_type = $file->type;
+        $file_size = $file->size;
+    } elseif (is_array($file)) {
+        $file_tmp_name = $file['tmp_name'];
+        $file_type = $file['type'];
+        $file_size = $file['size'];
+    } else {
+        throw new InvalidArgumentException('Invalid file input');
+    }
     
+    $photo = uniqid() . '.jpg';
     require_once 'lib/SimpleImage.php';
     $img = new SimpleImage();
-    $img->fromFile($f->tmp_name)
-        ->thumbnail($width, $height)
-        ->toFile("$folder/$photo", 'image/jpeg');
-
+    $img->fromFile($file_tmp_name)
+        ->thumbnail(200, 200)
+        ->toFile("uploads/$photo", 'image/jpeg');
+    
     return $photo;
 }
-
 function save_photo_admin($file) {
     // Check if $file is an object or array
     if (is_object($file)) {
@@ -264,6 +291,22 @@ function err($key)
 // Global user object
 $_user = $_SESSION['user'] ?? null;
 
+// Authorization
+function auth(...$roles) {
+    global $_user;
+    if ($_user) {
+        if ($roles) {
+            if (in_array($_user->role, $roles)) {
+                return; // OK
+            }
+        }
+        else {
+            return; // OK
+        }
+    }
+    
+    redirect('/login.php');
+}
 
 // Login user
 function login($user, $url = '/')

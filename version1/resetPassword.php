@@ -42,11 +42,11 @@ include '_head.php';
     <label for="password">New Password</label>
     <?= html_password('password', 'maxlength="100"') ?>
     <?= err('password') ?>
-
+    <br>
     <label for="confirm">Confirm Password</label>
     <?= html_password('confirm', 'maxlength="100"') ?>
     <?= err('confirm') ?>
-
+    <br>
     <input type="hidden" name="email" value="<?= htmlspecialchars(req('email')) ?>">
 
     <section>
@@ -54,7 +54,4 @@ include '_head.php';
         <button type="reset">Reset</button>
     </section>
 </form>
-
-<?php
-include '_foot.php';
-?>
+<a href="login.php"><button>Back to Login</button></a>

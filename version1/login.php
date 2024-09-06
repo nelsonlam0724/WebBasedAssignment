@@ -146,7 +146,7 @@ $_title = "Login";
                 </div>
                 <button type="submit">Log in</button>
                 <div class="register">
-                    <p>Don't have an account? <a href="register.php">Register</a></p>
+                    <p>Don't have an account? <a href="sendCode.php">Register</a></p>
                 </div>
             </div>
         </div>

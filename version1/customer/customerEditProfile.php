@@ -157,7 +157,7 @@ $_title = 'Edit Customer Profile';
         <br>
 
         <label for="birthday">Birthday</label><br>
-        <?= html_text('birthday', 'placeholder="YYYY-MM-DD"') ?>
+        <input type="date" name="birthday" required>
         <?= err('birthday') ?>
         <br>
 

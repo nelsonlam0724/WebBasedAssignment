@@ -1,7 +1,6 @@
 <?php
 include '_base.php';
 
-// Handle POST request for code verification
 if (is_post()) {
     $input_code = req('code');
 
@@ -15,29 +14,29 @@ if (is_post()) {
 
     $email = $stmt->fetchColumn();
 
-    // Debug output for troubleshooting
-    echo "Input Code: $input_code<br>";
-    echo "Email: $email<br>";
-
     // Verify the code
     if ($email) {
-        // Code is correct; proceed to password reset
-        header('Location: resetPassword.php?email=' . urlencode($email));
+        $_SESSION['verified'] = true;
+        $_SESSION['email'] = $email; // Store email in session
+        temp('info', 'Email verified. You may now complete your registration.');
+        redirect('register.php');
         exit;
     } else {
         temp('info', 'Verification code is incorrect or expired.');
     }
 }
 
-$_title = 'Verify Code';
+$_title = 'Email Verify Code';
 include '_head.php';
 ?>
-
+<h1><?= $_title?></h1>
 <form method="post" class="form">
     <label for="code">Enter the 6-digit verification code:</label>
     <?= html_text('code', 'maxlength="6"') ?>
+    <?= err('code') ?>
+    
     <section>
-        <button>Verify</button>
+        <button type="submit">Verify</button>
         <button type="reset">Reset</button>
     </section>
 </form>
