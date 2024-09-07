@@ -27,7 +27,7 @@ if (is_post()) {
     // Logout user and destroy session
     session_unset();
     session_destroy();
-    temp('info', 'Your account has been deactivated. You can recover it within 24 hours.');
+    temp('info', 'Your account has been deactivated. You can recover it within 1 minute.');
     redirect('../login.php');
 }
 
