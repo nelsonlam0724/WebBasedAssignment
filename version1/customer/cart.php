@@ -62,7 +62,7 @@ if(is_post()) {
                 <div class="cart-header">
                     <h5>Product</h5>
                     <h5>Quantity</h5>
-                    <h5>Subtotal</h5>
+                    <h5>Price</h5>
                     <div></div>
                 </div>
 

@@ -1,9 +1,11 @@
 <?php
 include '../_base.php';
 include '../include/header.php';
-$cartSelec =  $_SESSION['cartSelection'];
+$cartSelect =  $_SESSION['cartSelection'];
 
-$productIds = array_keys($cartSelec);
+$total =0 ;
+$count = 1;
+$productIds = array_keys($cartSelect);
 $products = [];
 
 if (!empty($productIds)) {
@@ -18,7 +20,6 @@ if (!empty($productIds)) {
   $products = $stmt->fetchAll(PDO::FETCH_ASSOC);
 }
 
-// var_dump($cartSelec);
 
 if (is_post()) {
 
@@ -26,6 +27,9 @@ if (is_post()) {
   $shopnameOption = req('delivery_method');
   $shipMethod = req('shipMethod');
   $paymentMethod = req('payment');
+  $phone = req('shippingPhone');
+  $name = req('receipent_name');
+
 
 
   if (!$address) {
@@ -43,10 +47,40 @@ if (is_post()) {
   if (!$paymentMethod) {
     $_err['payment'] = 'Please Select Payment Method!**';
   }
-  
+
 
   if (!$_err) {
-       redirect('payment.php');
+
+    $_db->beginTransaction();
+
+    $stm = $_db->prepare('
+    INSERT INTO `shippers` (address,company_name,phone,ship_method) VALUES (?, ? ,? , ?)
+    ');
+
+    $stm->execute([$address, $shopnameOption, $phone, $shipMethod]);
+    $ship_id = $_db->lastInsertId();
+
+    $_db->commit();
+
+    $_db->beginTransaction();
+    $stm = $_db->prepare('
+    INSERT INTO `orders` (datetime,user_id,ship_id,status,count) VALUES (NOW(), ?, ?, ?,?)
+    ');
+
+    $stm->execute([$userID, $ship_id, "Pending",$count]);
+    $id = $_db->lastInsertId();
+
+    $stm = $_db->prepare('
+    INSERT INTO order_details (order_id,product_id,price,unit,subtotal)
+    VALUES (?,?,(SELECT price FROM product WHERE product_id = ?),?,price * unit)
+    ');
+
+    foreach ($cartSelect as $product_id => $unit) {
+      $stm->execute([$id, $product_id, $product_id, $unit]);
+    }
+
+    $_db->commit();
+    redirect('payment.php');
   }
 }
 
@@ -157,12 +191,11 @@ if (is_post()) {
 
         <?php
         $subtotal = 0;
-        $count = 1;
         foreach ($products as $product):
 
 
           $productId = $product['product_id'];
-          $quantity = isset($cartSelec[$productId]) ? $cartSelec[$productId] : 0;
+          $quantity = isset($cartSelect[$productId]) ? $cartSelect[$productId] : 0;
           $subtotal += $product['price'] * $quantity;
 
         ?>
@@ -175,7 +208,7 @@ if (is_post()) {
             </td>
           </tr>
         <?php
-          $count++;
+          $count+=1;
         endforeach; ?>
 
 
@@ -191,7 +224,8 @@ if (is_post()) {
     <!-----End of box 2-->
     <div class="shadow" style="  box-shadow: rgba(100, 100, 111, 0.2) 0px 7px 29px 0px;">
       <div class="delivery-option">
-        <h1 style="padding:10px;"><img src="../Image/delivery-truck.png" weight="50" height="50"> Shipping Options   </h1><p style="color:red;padding:15px"><?= err('delivery_method') ?></p>
+        <h1 style="padding:10px;"><img src="../Image/delivery-truck.png" weight="50" height="50"> Shipping Options </h1>
+        <p style="color:red;padding:15px"><?= err('delivery_method') ?></p>
         <div class="delivery-type">
           <input type="radio" id="ninja" name="delivery_method" value="NINJA VAN">
           <label for="ninja"><img src="https://upload.wikimedia.org/wikipedia/commons/thumb/5/5d/Ninjavan.svg/900px-Ninjavan.svg.png" width="150" height="50">
@@ -213,11 +247,6 @@ if (is_post()) {
         <table class="payment_checking">
 
 
-
-          <tr>
-            <th>OrderID </th>
-            <td>ID <%= order_id  %></td>
-          </tr>
           <tr>
             <th>Merchandise Subtotal</th>
             <td>RM <?= $subtotal = number_format($subtotal, 2, '.', ''); ?></td>
@@ -231,7 +260,7 @@ if (is_post()) {
                   RM1.60 (Self Pickup)
                 </label>
                 <label>
-                  <input type="radio" name="shipMethod" >
+                  <input type="radio" name="shipMethod">
                   RM4.60 (Step Door)
                 </label>
                 <p style="color:red;"><?= err('shipMethod') ?></p>
@@ -261,41 +290,41 @@ if (is_post()) {
       </div>
       <!-----End of box 4-->
       <div class="selected_payment_method">
-  <h1>Payment Option</h1>
-  <p style="color:red;padding:20px;"><?= err('payment') ?></p>
+        <h1>Payment Option</h1>
+        <p style="color:red;padding:20px;"><?= err('payment') ?></p>
 
-     <div class="box_select">
-           <input type="radio" name="payment" id="VisaMasterCard" class="invisible" value="card">
-           <input type="radio" name="payment" id="E-Wallet" class="invisible" value="eWallet">
-           <input type="radio" name="payment" id="Cash" class="invisible" value="Cash">
-            
-           <div class="category_payment">
-            <label id="lab1" for = "VisaMasterCard" class="VM">
+        <div class="box_select">
+          <input type="radio" name="payment" id="VisaMasterCard" class="invisible" value="card">
+          <input type="radio" name="payment" id="E-Wallet" class="invisible" value="eWallet">
+          <input type="radio" name="payment" id="Cash" class="invisible" value="Cash">
+
+          <div class="category_payment">
+            <label id="lab1" for="VisaMasterCard" class="VM">
               <div class="imgName">
-                            <div class="imageContainer">
-                                      <img id="img1" src="../Image/VISA-MASTER.png" alt="" width="300" height="200">
-                                      
-                            </div>
+                <div class="imageContainer">
+                  <img id="img1" src="../Image/VISA-MASTER.png" alt="" width="300" height="200">
+
+                </div>
               </div>
               <h3 style="padding: 15px;">Credit/Debit Card</h3>
-              <span class="check"><box-icon name='check-double' color= #3fa5f3 size="30px"></box-icon></span>
+              <span class="check"><box-icon name='check-double' color=#3fa5f3 size="30px"></box-icon></span>
             </label>
 
             <label id="lab1" for="E-Wallet" class="Ewallet">
               <div class="imgName">
                 <div class="imageContainer">
-                          <img id="img1" src="../Image/wallet.png" alt="" width="90" height="90">
-                   
+                  <img id="img1" src="../Image/wallet.png" alt="" width="90" height="90">
+
                 </div>
-            </div>
-            <h3 style="padding: 15px;">Digital Wallet</h3>
-           <span class="check"><box-icon name='check-double' color= #3fa5f3 size="30px"></span>
+              </div>
+              <h3 style="padding: 15px;">Digital Wallet</h3>
+              <span class="check"><box-icon name='check-double' color=#3fa5f3 size="30px"></span>
             </label>
 
-           </div>
+          </div>
 
 
-      </div>
+        </div>
       </div>
     </div>
     <!-----End of box 5-->
