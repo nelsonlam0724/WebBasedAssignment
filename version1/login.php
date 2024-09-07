@@ -3,6 +3,10 @@ include '_base.php';
 include '_head.php';
 // ----------------------------------------------------------------------------
 
+
+$cleanup_stm = $_db->prepare('UPDATE user SET status = ? WHERE status = ? AND deactivated_at <= (NOW() - INTERVAL 5 MINUTE)');
+$cleanup_stm->execute(['Banned', 'Deactivate']);
+
 if (is_post()) {
     $email = req('email');
     $password = req('password');
@@ -18,7 +22,6 @@ if (is_post()) {
     if ($password == '') {
         $_err['password'] = 'Required';
     }
-
     // Login user
     if (!$_err) {
         $stm = $_db->prepare('
@@ -34,6 +37,25 @@ if (is_post()) {
             // Check if the user is banned
             if ($u->status == 'Banned') {
                 temp('info', 'Your account is banned.');
+                redirect();
+            } else if ($u->status == 'Deactivate') {
+                // Calculate remaining time until deactivation period is over
+                $deactivation_time = new DateTime($u->deactivated_at);
+                $remaining_time = $deactivation_time->add(new DateInterval('PT1M')); // Adding 5 minutes
+                $remaining_interval = $current_time->diff($remaining_time);
+
+                if ($current_time < $remaining_time) {
+                    temp('info', 'Your account is deactivated. Please wait ' . $remaining_interval->i . ' minutes before reactivation.');
+                } else {
+                    // Convert to banned if the deactivation period is over
+                    $stm = $_db->prepare('
+                        UPDATE user
+                        SET status = "Banned"
+                        WHERE email = ?
+                    ');
+                    $stm->execute([$email]);
+                    temp('info', 'Your account has been converted to banned status.');
+                }
                 redirect();
             } else if ($u->banned_until && $current_time < new DateTime($u->banned_until)) {
                 // User is banned and the ban period is not over
@@ -55,10 +77,10 @@ if (is_post()) {
                 $last_event_time = new DateTime($u->last_login_event_time);
                 $diff_minutes = $current_time->diff($last_event_time)->i;
 
-                if ($diff_minutes < 2 && $u->login_count >= 3) {
+                if ($diff_minutes < 1 && $u->login_count >= 3) {
                     temp('info', 'Frequent login attempts detected. Please wait 2 minutes before trying again.');
                     redirect();
-                } else if ($diff_minutes >= 2) {
+                } else if ($diff_minutes >= 1) {
                     $stm = $_db->prepare('
                         UPDATE user
                         SET login_count = 0
@@ -83,8 +105,6 @@ if (is_post()) {
                     $redirectUrl = 'admin/admin.php';
                 } elseif ($u->role == 'Member' && $u->status == 'Active') {
                     $redirectUrl = 'customer/customer.php';
-                } else {
-                    $redirectUrl = 'index.php'; // Default redirect
                 }
 
                 login($u, $redirectUrl);
@@ -92,7 +112,7 @@ if (is_post()) {
             } else {
                 // Incorrect password
                 $failed_attempts = $u->failed_attempts + 1;
-                $ban_duration = new DateInterval('PT2M'); // Ban for 3 minutes
+                $ban_duration = new DateInterval('PT1M'); // Ban for 3 minutes
                 $banned_until = ($failed_attempts >= 3) ? $current_time->add($ban_duration)->format('Y-m-d H:i:s') : $u->banned_until;
 
                 // Update user info with failed attempts and ban time
@@ -103,10 +123,10 @@ if (is_post()) {
                 ');
                 $stm->execute([$failed_attempts, $banned_until, $current_time->format('Y-m-d H:i:s'), $email]);
 
-                temp('error', ($failed_attempts >= 3) ? 'Too many failed attempts. Account banned for 1 minutes.' : 'Incorrect password');
+                temp('info', ($failed_attempts >= 3) ? 'Too many failed attempts. Account banned for 1 minutes.' : 'Incorrect password');
             }
         } else {
-            temp('error', 'No such user');
+            temp('info', 'No such user');
         }
     }
 }
@@ -114,11 +134,13 @@ $_title = "Login";
 ?>
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="./css/login.css">
 </head>
+
 <body>
     <form method="post" action="" class="form">
         <div class="form-box">
@@ -147,6 +169,7 @@ $_title = "Login";
                 <button type="submit">Log in</button>
                 <div class="register">
                     <p>Don't have an account? <a href="sendCode.php">Register</a></p>
+                    <p>Need Recovery Account? <a href="sendRecoveryToken.php">Recovery</a></p>
                 </div>
             </div>
         </div>
@@ -155,8 +178,9 @@ $_title = "Login";
     <script src="https://unpkg.com/ionicons@5.5.2/dist/ionicons/ionicons.js"></script>
     <script src="https://unpkg.com/ionicons@5.5.2/dist/ionicons/ionicons.esm.js"></script>
 </body>
+
 </html>
-    <!-- Footer -->
-    <?php
-    include '_foot.php';
-    ?>
+<!-- Footer -->
+<?php
+include '_foot.php';
+?>

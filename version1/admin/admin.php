@@ -7,10 +7,10 @@ if (is_get()) {
     $stm->execute([$_user->user_id]);
     $u = $stm->fetch();
 
-    if ($u->role !="Admin") {
+    if ($u->role != "Admin") {
+        temp('info', 'Please Login');
         redirect('../login.php');
     }
-    
 }
 // Fetch user profile information
 $user = $_SESSION['user'];
@@ -19,11 +19,13 @@ $_title = 'Admin Dashboard - ' . htmlspecialchars($user->name);
 ?>
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title><?= $_title ?></title>
 </head>
+
 <body>
     <h1>Welcome, <?= htmlspecialchars($user->name) ?> to the Admin Dashboard</h1>
     <nav>
@@ -35,4 +37,5 @@ $_title = 'Admin Dashboard - ' . htmlspecialchars($user->name);
     </nav>
     <p>Here you can manage your admin tasks.</p>
 </body>
+
 </html>

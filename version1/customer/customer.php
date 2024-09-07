@@ -8,6 +8,7 @@ if (is_get()) {
     $u = $stm->fetch();
 
     if ($u->role !="Member" && $u->role !="Admin") {
+        temp('info','Please Login');
         redirect('../login.php');
     }
     

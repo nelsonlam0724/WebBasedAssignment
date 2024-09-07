@@ -69,8 +69,8 @@ include '_head.php';
         </form>
     </div>
     <div class="action-buttons">
-            <a href="login.php"><button>Back to Login</button></a>
-        </div>
+        <a href="login.php"><button>Back to Login</button></a>
+    </div>
 </body>
 
 </html>
