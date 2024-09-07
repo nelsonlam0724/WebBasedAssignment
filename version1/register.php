@@ -1,6 +1,11 @@
 <?php
 include '_base.php';
-$email = isset($_SESSION['email']) ? $_SESSION['email'] : '';
+if (empty($_SESSION['verified']) || !$_SESSION['verified']) {
+    temp('info', 'You need to verify your email before registering.');
+    redirect('login.php');
+    exit;
+}
+
 if (is_post()) {
     $name = req('name');
     $password = req('password');

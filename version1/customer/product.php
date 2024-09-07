@@ -17,7 +17,7 @@ include '../include/header.php';
 
     <?php foreach ($getProduct as $i): ?>
       <div class="items-card cards">
-        <img src="<?= $i->product_photo ?>" width="100" height="200">
+        <img src="../uploads/<?= $i->product_photo ?>" width="100" height="200">
         <div class="text2">
           <p class="product-name space"> <?= $i->name ?></p>
           <p class="product-price space">RM <?= $i->price ?></p>

@@ -8,6 +8,7 @@ if (is_get()) {
     $u = $stm->fetch();
 
     if ($u->role != "Member" && $u->role != "Admin") {
+        temp('info','Please Login');
         redirect('../login.php');
     }
 }
@@ -220,8 +221,9 @@ $_title = 'Member Profile';
         </div>
 
         <div class="action-buttons">
-            <a href="customerEditProfile.php"><button>Edit All</button></a><br>
-            <a href="customer.php"><button>Back to Menu</button></a><br>
+            <a href="customerEditProfile.php"><button>Edit All</button></a>
+            <a href="customer.php"><button>Back to Menu</button></a>
+            <a href="deactivate.php"><button>Delete Account</button></a>
             <a href="../logout.php"><button>Logout</button></a>
         </div>
     </div>

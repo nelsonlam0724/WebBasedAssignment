@@ -8,6 +8,7 @@ if (is_get()) {
     $u = $stm->fetch();
 
     if ($u->role != "Member" && $u->role != "Admin") {
+        temp('info','Please Login');
         redirect('../login.php');
     }
 }
@@ -34,8 +35,6 @@ if (is_post()) {
         $_err['email'] = 'Maximum 100 characters';
     } else if (!is_email($email)) {
         $_err['email'] = 'Invalid email';
-    } else if (!is_unique($email, 'user', 'email')) {
-        $_err['email'] = 'Duplicated';
     }
 
     // Validation: password and confirm

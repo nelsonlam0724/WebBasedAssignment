@@ -31,7 +31,7 @@ if (is_post()) {
         $m->send();
         temp('info', 'Verification code sent.');
     } catch (Exception $e) {
-        temp('error', 'Failed to send verification email: ' . $m->ErrorInfo);
+        temp('info', 'Failed to send verification email: ' . $m->ErrorInfo);
         redirect('/');
     }
 
