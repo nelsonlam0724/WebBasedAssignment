@@ -19,6 +19,37 @@ if (!empty($productIds)) {
 }
 
 // var_dump($cartSelec);
+
+if (is_post()) {
+
+  $address = req('valueUpated');
+  $shopnameOption = req('delivery_method');
+  $shipMethod = req('shipMethod');
+  $paymentMethod = req('payment');
+
+
+  if (!$address) {
+    $_err['valueUpated'] = 'Address is Required!**';
+  }
+
+  if (!$shopnameOption) {
+    $_err['delivery_method'] = 'Please Select Delivery Company!**';
+  }
+
+  if (!$shipMethod) {
+    $_err['shipMethod'] = 'Please Select Delivery Method!**';
+  }
+
+  if (!$paymentMethod) {
+    $_err['payment'] = 'Please Select Payment Method!**';
+  }
+  
+
+  if (!$_err) {
+       redirect('payment.php');
+  }
+}
+
 ?>
 <title>Check Out</title>
 
@@ -86,16 +117,17 @@ if (!empty($productIds)) {
 
   <!-- Invisible box 3 -->
 
-  <form class="container" method="get" action="/PlayTime/paymentServlet" onsubmit="return validForm()">
+  <form class="container" method="post">
 
     <h1 class="check-out-text" style="padding:10px 0;">Check Out</h1>
 
     <div class="address-detail">
       <div class="text-address">
         <h2 class="Address" style="padding:5px 0;"><i class="material-icons" style="color:red;">place</i> Delivery Address</h2>
-        <h5 class="owner-address" style="color:red;">
-          <p> Please enter your current address for delivery </p>
+        <h5 class="owner-address" style="color:black;">
+          <p> Please enter your current address for delivery</p>
         </h5>
+        <p style="color:red;"><?= err('valueUpated') ?></p>
       </div>
 
 
@@ -159,11 +191,11 @@ if (!empty($productIds)) {
     <!-----End of box 2-->
     <div class="shadow" style="  box-shadow: rgba(100, 100, 111, 0.2) 0px 7px 29px 0px;">
       <div class="delivery-option">
-        <h1 style="padding:10px;"><img src="../Image/delivery-truck.png" weight="50" height="50"> Shipping Options</h1>
+        <h1 style="padding:10px;"><img src="../Image/delivery-truck.png" weight="50" height="50"> Shipping Options   </h1><p style="color:red;padding:15px"><?= err('delivery_method') ?></p>
         <div class="delivery-type">
           <input type="radio" id="ninja" name="delivery_method" value="NINJA VAN">
           <label for="ninja"><img src="https://upload.wikimedia.org/wikipedia/commons/thumb/5/5d/Ninjavan.svg/900px-Ninjavan.svg.png" width="150" height="50">
-            <p><%= fee %></p>
+            <p></p>
           </label><br>
           <input type="radio" id="pos" name="delivery_method" value="POS LAJU">
           <label for="pos"><img src="../Image/poslaju.png" width="150" height="50">
@@ -188,21 +220,23 @@ if (!empty($productIds)) {
           </tr>
           <tr>
             <th>Merchandise Subtotal</th>
-            <td>RM <?=  $subtotal = number_format($subtotal, 2, '.', ''); ?></td>
+            <td>RM <?= $subtotal = number_format($subtotal, 2, '.', ''); ?></td>
           </tr>
           <tr>
             <th>Shipping Fee </th>
-            <td> <div class="optShip" style="text-align: center;gap:25px;display:flex;">
-        <label>
-            <input type="radio" name="payment">
-             RM1.60 (Self Pickup)
-        </label>
-        <label>
-            <input type="radio" name="payment" checked>
-            RM4.60 (Step Door)
-        </label>
-      
-    </div></td>
+            <td>
+              <div class="optShip" style="text-align: center;gap:25px;display:flex;">
+                <label>
+                  <input type="radio" name="shipMethod">
+                  RM1.60 (Self Pickup)
+                </label>
+                <label>
+                  <input type="radio" name="shipMethod" >
+                  RM4.60 (Step Door)
+                </label>
+                <p style="color:red;"><?= err('shipMethod') ?></p>
+              </div>
+            </td>
           </tr>
 
           <tr>
@@ -227,79 +261,57 @@ if (!empty($productIds)) {
       </div>
       <!-----End of box 4-->
       <div class="selected_payment_method">
-        <h1>Payment Option</h1>
-        <div class="box_select">
- 
-        <h2 class="title">Payment Method</h2>
-        <div class="logos">
-            <img src="https://w7.pngwing.com/pngs/363/177/png-transparent-visa-mastercard-logo-visa-mastercard-computer-icons-visa-text-payment-logo-thumbnail.png" alt="Visa and MasterCard logos" id="card-logo">
-            <img src="https://is1-ssl.mzstatic.com/image/thumb/Purple221/v4/14/80/fe/1480feec-244b-6888-a853-99c37334d546/AppIcon-1x_U007emarketing-0-5-0-0-85-220-0.png/1200x630wa.png" alt="PayPal logo" id="paypal-logo">
-        </div>
+  <h1>Payment Option</h1>
+  <p style="color:red;padding:20px;"><?= err('payment') ?></p>
 
-        <div id="card-form" class="hidden">
-            <div class="form-group">
-                <label for="name">Name on Card</label>
-                <input id="name" type="text" value="John Smith">
-            </div>
-            <div class="form-group">
-                <label for="card">Card Number</label>
-                <input id="card" type="text" value="0000-0000-0000-0000">
-            </div>
-            <div class="form-row">
-                <div class="form-group">
-                    <label for="cvv">CVV</label>
-                    <input id="cvv" type="text" value="">
-                </div>
-                <div class="form-group">
-                    <label for="date">Expiration Date</label>
-                    <input id="date" type="text" value="MM/YY">
-                </div>
-            </div>
-        </div>
-
-            <div id="paypal-form" class="hidden">
-            <div class="form-group">
-                <label for="paypal-email">PayPal Email</label>
-                <input id="paypal-email" type="email" placeholder="example@paypal.com">
-            </div>
+     <div class="box_select">
+           <input type="radio" name="payment" id="VisaMasterCard" class="invisible" value="card">
+           <input type="radio" name="payment" id="E-Wallet" class="invisible" value="eWallet">
+           <input type="radio" name="payment" id="Cash" class="invisible" value="Cash">
             
-        </div>
-        </div>
+           <div class="category_payment">
+            <label id="lab1" for = "VisaMasterCard" class="VM">
+              <div class="imgName">
+                            <div class="imageContainer">
+                                      <img id="img1" src="../Image/VISA-MASTER.png" alt="" width="300" height="200">
+                                      
+                            </div>
+              </div>
+              <h3 style="padding: 15px;">Credit/Debit Card</h3>
+              <span class="check"><box-icon name='check-double' color= #3fa5f3 size="30px"></box-icon></span>
+            </label>
+
+            <label id="lab1" for="E-Wallet" class="Ewallet">
+              <div class="imgName">
+                <div class="imageContainer">
+                          <img id="img1" src="../Image/wallet.png" alt="" width="90" height="90">
+                   
+                </div>
+            </div>
+            <h3 style="padding: 15px;">Digital Wallet</h3>
+           <span class="check"><box-icon name='check-double' color= #3fa5f3 size="30px"></span>
+            </label>
+
+           </div>
 
 
-
-
-        </div>
       </div>
-      <!-----End of box 5-->
- 
+      </div>
+    </div>
+    <!-----End of box 5-->
+
     <div class="btn_back_proceed">
       <a class="buttonb" id="backButton" href="#">Back</a>
       <div class="button">
-                <button>Place Order →</button>
-            </div>
-  
+        <button>Place Order →</button>
+      </div>
+
     </div>
   </form>
   <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
-  <script src="../js/payment.js"></script>
+  <script src="../js/checkout.js"></script>
   <script src="../js/map.js"></script>
-  <script>
-        $(document).ready(function() {
-            $('#card-logo').click(function() {
-                $('#card-form').removeClass('hidden');
-                $('#paypal-form').addClass('hidden');
-            });
 
-            $('#paypal-logo').click(function() {
-                $('#paypal-form').removeClass('hidden');
-                $('#card-form').addClass('hidden');
-            });
-        });
-    </script>
-  <script>
-
-  </script>
 </body>
 
 </html>
