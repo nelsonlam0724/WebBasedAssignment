@@ -2,17 +2,8 @@
 include '../_base.php';
 include '../_head.php';
 
-// Check if the user is a valid Member or Admin
-if (is_get()) {
-    $stm = $_db->prepare('SELECT * FROM user WHERE user_id = ?');
-    $stm->execute([$_user->user_id]);
-    $u = $stm->fetch();
+auth('Admin','Member');
 
-    if ($u->role != "Member" && $u->role != "Admin") {
-        temp('info','Please Login');
-        redirect('../login.php');
-    }
-}
 $user = $_SESSION['user'];
 
 if (is_post()) {

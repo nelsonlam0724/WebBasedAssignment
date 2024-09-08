@@ -2,18 +2,7 @@
 include '../_base.php';
 include '../_head.php';
 
-if (is_get()) {
-    $stm = $_db->prepare('SELECT * FROM user WHERE user_id = ?');
-    $stm->execute([$_user->user_id]);
-    $u = $stm->fetch();
-
-    if ($u->role !="Admin") {
-        temp('info', 'Please Login');
-        redirect('../login.php');
-    }
-    
-}
-
+auth('Admin');
 // Check if the form is submitted
 if (is_post()) {
     // Get the member ID from the form

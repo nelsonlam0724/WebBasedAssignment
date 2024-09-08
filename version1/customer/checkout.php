@@ -1,6 +1,8 @@
 <?php
 include '../_base.php';
 include '../include/header.php';
+
+
 $cartSelec =  $_SESSION['cartSelection'];
 
 $productIds = array_keys($cartSelec);
