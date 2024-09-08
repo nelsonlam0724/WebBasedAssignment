@@ -1,0 +1,60 @@
+body {
+    font-family: Arial, sans-serif;
+    background-color: #f2f2f2;
+    display: grid;
+    place-items: center;
+}
+
+.receipt {
+    position: absolute;
+    top:5cm;
+    width: 90%;
+    padding: 20px;
+    border: 1px solid #ddd;
+    border-radius: 10px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    background-color: #fff;
+}
+
+.receipt h2 {
+    text-align: center;
+    margin-bottom: 20px;
+    color: #3498db;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+th, td {
+    border: 1px solid #ddd;
+    padding: 10px;
+    text-align: left;
+}
+
+th {
+    background-color: #f0f0f0;
+    color: #666;
+}
+
+tfoot tr:last-child {
+    font-weight: bold;
+    color: #e74c3c;
+}
+
+tfoot tr:last-child td:last-child {
+    color: #2ecc71;
+}
+
+.receipt .highlight {
+    background-color: #dff0d8;
+}
+
+.receipt .highlight td {
+    background-color: #dff0d8;
+}
+
+tbody tr:nth-child(odd) {
+    background-color: #f9f9f9;
+}

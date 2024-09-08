@@ -3,9 +3,6 @@ include '../_base.php';
 include '../include/header.php';
 
 $cartSelect =  $_SESSION['cartSelection'];
-=======
-
-
 
 
 
