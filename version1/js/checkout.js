@@ -28,3 +28,26 @@ function save_address() {
         alert("Updated successfully");
     }
 }
+
+//ship method form-----------------------------------------------------------------------------------------------
+
+$(document).ready(function() {
+
+    let payText = $('#pays').text(); 
+    const amount = parseFloat(payText.replace('RM', '').trim()); 
+
+    $('#totals').val(amount);
+
+    $('.shipMethod').on('change', function() {
+        let total = amount;
+        const shippingMethod = $('input[name="shipMethod"]:checked').val();
+
+        if (shippingMethod === 'pick') {
+            total += 1.60; 
+        } else if (shippingMethod === 'door') {
+            total += 4.60; 
+        }
+        $('#pays').text(`RM${total.toFixed(2)}`);
+        $('#totals').val(total);
+    });
+});

@@ -17,7 +17,7 @@ $(document).ready(function() {
             }
         });
 
-        const tax = subtotal * 0.10;
+        const tax = subtotal * 0.02;
         const total = subtotal + tax;
 
         subtotalElement.text('RM ' + subtotal.toFixed(2));
