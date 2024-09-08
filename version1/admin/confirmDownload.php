@@ -18,6 +18,7 @@ if (isset($_GET['file'])) {
 
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -25,17 +26,19 @@ if (isset($_GET['file'])) {
     <link rel="stylesheet" href="../css/backup.css">
     <script src="../js/backup.js"></script>
 </head>
+
 <body>
     <div class="container">
-        <form class="form-group">
-        <h1>Confirm Download</h1>
-        <p>Do you want to download the local backup database SQL file?</p>
-        <button onclick="downloadAndRedirect('<?php echo htmlspecialchars($fileName); ?>')">Download</button>
-    </form>
+        <div class="form-confirm" method="get">
+            <h1>Confirm Download</h1>
+            <p>Do you want to download the local backup database SQL file?</p>
+            <button onclick="downloadAndRedirect('<?php echo htmlspecialchars($fileName); ?>')">Download</button>
+        </div>
     </div>
     <div class="action-buttons">
         <a href="backup.php"><button>Back to Backup</button></a>
         <a href="admin.php"><button>Back to Menu</button></a>
     </div>
 </body>
+
 </html>

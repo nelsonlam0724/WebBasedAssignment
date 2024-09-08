@@ -13,5 +13,5 @@ function downloadAndRedirect(fileName) {
     // Redirect after download
     setTimeout(function() {
         window.location.href = 'admin.php';
-    }, 500); // Wait a second to ensure download starts
+    }, 500);
 }

@@ -2,13 +2,32 @@
 include '_base.php';
 include '_head.php';
 // ----------------------------------------------------------------------------
-
 $cleanup_stm = $_db->prepare('UPDATE user SET status = ? WHERE status = ? AND deactivated_at <= (NOW() - INTERVAL 1 MINUTE)');
 $cleanup_stm->execute(['Banned', 'Deactivate']);
 
+if (isset($_COOKIE['remember_token'])) {
+    $token = $_COOKIE['remember_token'];
+
+    $stm = $_db->prepare('SELECT * FROM user WHERE remember_token = ? AND remember_token_expiry > NOW()');
+    $stm->execute([$token]);
+    $u = $stm->fetch(PDO::FETCH_OBJ);
+
+    if ($u) {
+        // Automatically log the user in if the token is valid
+        if ($u->role == 'Admin') {
+            $redirectUrl = 'admin/admin.php';
+        } elseif ($u->role == 'Member' && $u->status == 'Active') {
+            $redirectUrl = 'customer/customer.php';
+        }
+        login($u, $redirectUrl); // Log the user in and redirect
+        exit();
+    }
+}
+//------------------------------------------------------------------------------
 if (is_post()) {
     $email = req('email');
     $password = req('password');
+    $remember_me = isset($_POST['remember']);
 
     // Validate: email
     if ($email == '') {
@@ -99,7 +118,20 @@ if (is_post()) {
                 ');
                 $stm->execute([$current_time->format('Y-m-d H:i:s'), $current_time->format('Y-m-d H:i:s'), $email]);
 
-                temp('info', 'Login successfully');
+                //remember me cookie 14 day
+                if ($remember_me) {
+                    $token = bin2hex(random_bytes(16)); // Generate a random token
+                    $expiry_time = time() + (86400 * 14); // Set the token to expire in 14 days
+
+                    // Store the token in the database
+                    $stm = $_db->prepare('UPDATE user SET remember_token = ?, remember_token_expiry = ? WHERE email = ?');
+                    $stm->execute([$token, date('Y-m-d H:i:s', $expiry_time), $email]);
+
+                    // Set a cookie with the token that expires in 30 days
+                    setcookie('remember_token', $token, $expiry_time, '/', '', false, true);
+                }
+
+                temp('info', 'Login Successfully.');
                 if ($u->role == 'Admin') {
                     $redirectUrl = 'admin/admin.php';
                 } elseif ($u->role == 'Member' && $u->status == 'Active') {

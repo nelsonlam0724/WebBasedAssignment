@@ -1,7 +1,7 @@
 <?php
 include '../_base.php';
 auth('Admin');
-$user = $_SESSION['user'];
+
 if (is_post() && isset($_POST['tables'])) {
     $selectedTables = $_POST['tables'];
 
@@ -11,8 +11,16 @@ if (is_post() && isset($_POST['tables'])) {
 
     $conn = $_db;
 
-    // Store SQL backup
-    $sql = '';
+    // Get the database name
+    $result = $conn->query('SELECT DATABASE()');
+    $databaseName = $result->fetchColumn();
+
+    // Start the SQL backup file with CREATE DATABASE and USE statements
+    $sql = "-- Database Backup\n";
+    $sql .= "CREATE DATABASE IF NOT EXISTS `$databaseName`;\n";
+    $sql .= "USE `$databaseName`;\n\n";
+
+    // Loop through selected tables to add CREATE TABLE and INSERT statements
     foreach ($selectedTables as $table) {
         $result = $conn->query('SHOW CREATE TABLE ' . $table);
         $row = $result->fetch(PDO::FETCH_ASSOC);
@@ -25,16 +33,13 @@ if (is_post() && isset($_POST['tables'])) {
         }
     }
 
-    // Save file
+    // Save SQL to file
     file_put_contents($backupFilePath, $sql);
-
-    // Set temporary message
     temp('info', 'Database Backup File Created Successfully.');
     redirect('confirmDownload.php?file=' . urlencode($backupFileName));
-    
 }
 
-// Get all tables
+// Get all tables in the database
 $tables = $_db->query('SHOW TABLES')->fetchAll(PDO::FETCH_COLUMN);
 ?>
 
