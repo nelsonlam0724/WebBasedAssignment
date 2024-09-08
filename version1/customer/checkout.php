@@ -1,7 +1,13 @@
 <?php
 include '../_base.php';
 include '../include/header.php';
+<<<<<<< HEAD
 $cartSelect =  $_SESSION['cartSelection'];
+=======
+
+
+$cartSelec =  $_SESSION['cartSelection'];
+>>>>>>> b597198e87d586471ad0de5756b918ca0a56dee7
 
 $total = 0;
 

@@ -10,7 +10,12 @@ session_start();
 // ============================================================================
 // General Page Functions
 // ============================================================================
-
+function getTableNameFromQuery($query) {
+    if (preg_match('/CREATE TABLE `?(\w+)`?/i', $query, $matches)) {
+        return $matches[1];
+    }
+    return null;
+}
 // Is GET request?
 function is_get()
 {
@@ -291,22 +296,19 @@ function err($key)
 // Global user object
 $_user = $_SESSION['user'] ?? null;
 
-// Authorization
+//Auth
 function auth(...$roles) {
     global $_user;
     if ($_user) {
-        if ($roles) {
-            if (in_array($_user->role, $roles)) {
-                return; // OK
-            }
-        }
-        else {
-            return; // OK
+        if (empty($roles) || in_array($_user->role, $roles)) {
+            return; 
         }
     }
     
-    redirect('/login.php');
+    temp('info', 'Please Login...');
+    redirect('../login.php');
 }
+
 
 // Login user
 function login($user, $url = '/')

@@ -2,16 +2,7 @@
 include '../_base.php';
 include '../_head.php';
 
-if (is_get()) {
-    $stm = $_db->prepare('SELECT * FROM user WHERE user_id = ?');
-    $stm->execute([$_user->user_id]);
-    $u = $stm->fetch();
-
-    if ($u->role != "Admin") {
-        temp('info', 'Please Login');
-        redirect('../login.php');
-    }
-}
+auth('Admin');
 // Retrieve the member ID from the query string
 $user_id = isset($_GET['user_id']) ? trim($_GET['user_id']) : '';
 if (!$user_id) {

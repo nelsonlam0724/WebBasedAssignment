@@ -2,16 +2,7 @@
 include '../_base.php';
 include '../_head.php';
 
-if (is_get()) {
-    $stm = $_db->prepare('SELECT * FROM user WHERE user_id = ?');
-    $stm->execute([$_user->user_id]);
-    $u = $stm->fetch();
-
-    if ($u->role != "Admin") {
-        temp('info', 'Please Login');
-        redirect('../login.php');
-    }
-}
+auth('Admin');
 // Fetch user profile information
 $user = $_SESSION['user'];
 
@@ -32,6 +23,8 @@ $_title = 'Admin Dashboard - ' . htmlspecialchars($user->name);
         <ul>
             <li><a href="profile.php">Admin Profile</a></li>
             <li><a href="memberList.php">Member List</a></li>
+            <li><a href="backup.php">Backup</a></li>
+            <li><a href="restore.php">Restore</a></li>
             <li><a href="../logout.php">Logout</a></li>
         </ul>
     </nav>

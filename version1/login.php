@@ -3,7 +3,6 @@ include '_base.php';
 include '_head.php';
 // ----------------------------------------------------------------------------
 
-
 $cleanup_stm = $_db->prepare('UPDATE user SET status = ? WHERE status = ? AND deactivated_at <= (NOW() - INTERVAL 1 MINUTE)');
 $cleanup_stm->execute(['Banned', 'Deactivate']);
 
