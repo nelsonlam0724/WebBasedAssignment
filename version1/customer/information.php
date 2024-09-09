@@ -90,23 +90,44 @@ $results = $getPending->fetchAll();
         <label class="label" for="tab-4">To Rate</label>
         <div class="panel">
 
+            <?php
 
 
+
+            $getPaid = $_db->prepare('
+               SELECT od.* ,o.* , p.product_id , p.name AS product_name ,od.price AS odPrice
+               FROM order_details AS od 
+               JOIN orders AS o ON od.order_id = o.id
+               JOIN product AS p ON od.product_id = p.product_id
+               WHERE o.status = ? AND o.user_id = ?
+               ');
+
+            $getPaid->execute(["Paid",$userID]);
+            $results = $getPaid->fetchAll();
+
+
+
+            ?>
+
+          <?php $count = 0;
+            foreach ($results as $o): ?>
             <div class="item-container">
 
                 <div class="item-details">
-                    <img src="<%= rate[3] %>" alt="" class="item-image" width="100" height="100">
+                    <img src="<?= $o->photo ?>" alt="" class="item-image" width="100" height="100">
                     <div class="item-text">
-                        <h2>Payment ID :<%= rate[0] %></h2>
-                        <h3><%= rate[1] %></h3>
-                        <p>RM <%= rate[2] %></p>
-                        <p> <%= rate[5] %></p>
+                        <h2>Product ID :<?= $o->product_id ?></h2>
+                        <h3><?= $o->product_name  ?></h3>
+                        <h3>unit : <?= $o->unit ?></h3>
+                        <h3>price : <?= $o->odPrice ?></h3>
+                        <p style="color:orangered">Subtotal :RM <?= $o->subtotal ?></p>
                     </div>
 
                 </div>
 
-                <button class="rate-button" style="width:150px" onclick="goRate('<%= rate[0] %>','<%= rate[4] %>')">Rate</button>
+                <a href="comment.php?id=<?= $o->product_id ?>"><button class="rate-button" style="width:150px">Rate</button></a>
             </div>
+            <?php endforeach; ?>
 
         </div>
 
