@@ -72,7 +72,7 @@ $(document).ready(function(){
 
 
     
-       function fetchCart() {
+    function fetchCart() {
        let userID = parseInt($('.text-first h6').data('user'));
     $.ajax({
         url: '../function/fetch_cart.php',
@@ -84,6 +84,23 @@ $(document).ready(function(){
         }
     });
 }
+
+
+$('.likes').on("click", function() {     
+    let $this = $(this);  
+    let userID = parseInt($('.text-first h6').data('user'));
+    let commentID = parseInt($this.data('comment'));             
+    $.ajax({
+        url: '../function/updateLikes.php',
+        type: 'POST',
+        data: {user: userID, comment: commentID},
+        success: function(response) {
+            $('.once-like').text(records.total_records);
+        }
+    });
+});
+
+
     
 });
 
@@ -121,4 +138,30 @@ $('.add-to-card').on('click',function(){
          $(this).detach()
      });
  }
+});
+
+
+$(document).ready(function() {
+    const ratingElements = $('.rate');
+    const starContainers = $('.star-rating-display');
+    ratingElements.each(function(index) {
+        const rating = parseInt($(this).val());  
+        const starContainer = $(starContainers[index]);  
+     
+        displayStars(rating, starContainer);
+    });
+
+    function displayStars(rating, starContainer) {
+        starContainer.empty();         
+       
+        for (let i = 0; i < rating; i++) {
+            const star = $('<span>').addClass('star').html('★');  
+            starContainer.append(star);
+        }
+
+        for (let i = rating; i < 5; i++) {
+            const star = $('<span>').addClass('star').html('☆'); 
+            starContainer.append(star);
+        }
+    }
 });
