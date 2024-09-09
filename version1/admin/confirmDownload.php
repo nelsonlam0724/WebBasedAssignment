@@ -23,7 +23,7 @@ if (isset($_GET['file'])) {
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Confirm Download</title>
-    <link rel="stylesheet" href="../css/backup.css">
+    <link rel="stylesheet" href="../css/confirm.css">
     <script src="../js/backup.js"></script>
 </head>
 
@@ -36,8 +36,7 @@ if (isset($_GET['file'])) {
         </div>
     </div>
     <div class="action-buttons">
-        <a href="backup.php"><button>Back to Backup</button></a>
-        <a href="admin.php"><button>Back to Menu</button></a>
+        <a href="admin.php" onclick="clearSelectedTablesCookie()"><button>Back to Menu</button></a>
     </div>
 </body>
 

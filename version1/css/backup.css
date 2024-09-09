@@ -1,18 +1,26 @@
+/* General body styling */
 body {
     font-family: Arial, sans-serif;
     margin: 20px;
 }
 
+/* Main container with adaptive width */
 .container {
+    width: 90%;
     max-width: 600px;
     margin: 0 auto;
+    border: 1px solid black;
+    border-radius: 8px;
+    background-color: #f9f9f9;
 }
 
+/* Table styles for layout and readability */
 table {
     width: 100%;
     border-collapse: collapse;
 }
 
+/* Styling table header and cells */
 th,
 td {
     border: 1px solid #ddd;
@@ -20,23 +28,35 @@ td {
     text-align: left;
 }
 
+/* Table header background color */
 th {
     background-color: #f2f2f2;
 }
 
+/* Alternating row colors for better readability */
+tr:nth-child(even) {
+    background-color: #f9f9f9;
+}
+
+tr:nth-child(odd) {
+    background-color: #ffffff;
+}
+
+/* Form and confirmation box styling */
 .form-group {
     margin-top: 20px;
     text-align: center;
 }
-form{
+
+/* Styling for the form container */
+form {
     max-width: 600px;
     margin: 0 auto;
     padding: 20px;
-    border: 1px solid black;
-    border-radius: 8px;
-    background-color: #f9f9f9;
 }
-.form-confirm{
+
+/* Styling for confirmation forms */
+.form-confirm {
     max-width: 600px;
     margin: 0 auto;
     padding: 20px;
@@ -46,6 +66,8 @@ form{
     margin-top: 20px;
     text-align: center;
 }
+
+/* General button styles */
 .button {
     padding: 10px 20px;
     margin: 10px 0;
@@ -53,13 +75,15 @@ form{
     color: white;
     background-color: #4CAF50;
     cursor: pointer;
+    border-radius: 4px;
 }
 
+/* Button hover effect */
 .button:hover {
     background-color: #45a049;
 }
 
-
+/* Primary button styles */
 button {
     background-color: #007bff;
     color: white;
@@ -73,25 +97,85 @@ button {
     border-radius: 4px;
 }
 
+/* Button hover effect for primary buttons */
 button:hover {
     background-color: #0056b3;
 }
+input[type="text"] {
+    width: 200px; /* Adjust width as needed */
+    padding: 8px;
+    margin-right: 5px; /* Space between the input and button */
+    box-sizing: border-box;
+    border-radius: 5px;
+}
 
+
+/* Specific styles for action buttons */
 .actions button {
     background-color: #28a745;
 }
 
+/* Hover effect for action buttons */
 .actions button:hover {
     background-color: #218838;
 }
 
-
+/* Centered action buttons */
 .action-buttons {
     text-align: center;
     margin: 20px 0;
 }
 
+/* Action buttons with uniform width */
 .action-buttons a button {
     width: 200px;
     margin: 5px;
+}
+
+/* Pagination styling */
+.pagination {
+    text-align: center;
+    padding: 10px 0;
+}
+
+/* Pagination links */
+.pagination a {
+    padding: 10px 15px;
+    margin: 0 5px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    background-color: #f9f9f9;
+    color: #007bff;
+    text-decoration: none;
+}
+
+/* Pagination hover effect */
+.pagination a:hover {
+    background-color: #007bff;
+    color: white;
+}
+
+/* Adjusting checkbox size */
+input[type="checkbox"] {
+    width: 18px;
+    height: 18px;
+}
+
+/* Responsive design for screens under 768px */
+@media only screen and (max-width: 768px) {
+    /* Smaller font size for table on small screens */
+    table {
+        font-size: 14px;
+    }
+
+    /* Smaller button size for small screens */
+    .button, button {
+        font-size: 12px;
+        padding: 8px;
+    }
+
+    /* Full width container on smaller screens */
+    .container {
+        width: 100%;
+    }
 }
