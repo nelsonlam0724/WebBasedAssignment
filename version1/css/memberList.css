@@ -5,11 +5,13 @@ body {
 
 h1 {
     text-align: center;
+    margin-bottom: 20px;
 }
 
 .container {
     max-width: 1200px;
     margin: auto;
+    padding: 0 15px;
 }
 
 form {
@@ -100,23 +102,6 @@ th {
     background-color: #c82333;
 }
 
-.pagination {
-    text-align: center;
-    margin: 20px 0;
-}
-
-.pagination button {
-    background-color: #007bff;
-    color: white;
-    border-radius: 4px;
-    padding: 10px 20px;
-    margin: 0 5px;
-}
-
-.pagination button:hover {
-    background-color: #0056b3;
-}
-
 .no-results {
     text-align: center;
     font-size: 16px;
@@ -131,4 +116,33 @@ th {
 .action-buttons a button {
     width: 200px;
     margin: 5px;
+}
+
+.pagination {
+    text-align: center;
+    margin: 20px 0;
+}
+
+.pagination a {
+    padding: 10px 15px;
+    margin: 0 5px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    background-color: #f9f9f9;
+    color: #007bff;
+    text-decoration: none;
+}
+
+.pagination a:hover{
+    background-color: #007bff;
+    color: white;
+}
+
+.pagination .current-page {
+    margin: 0 5px;
+    padding: 5px 10px;
+    border: 1px solid #007bff;
+    background-color: #007bff;
+    color: #ffffff;
+    border-radius: 4px;
 }
