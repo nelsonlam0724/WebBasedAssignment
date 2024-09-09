@@ -51,6 +51,20 @@ $results = $getPending->fetchAll();
         <input class="input" name="tabs" type="radio" id="tab-3" />
         <label class="label" for="tab-3">Shipping details</label>
         <div class="panel">
+            <?php
+
+
+
+            $getPending = $_db->prepare('
+                SELECT * FROM `orders` WHERE user_id = ? AND status = ?
+            ');
+
+            $getPending->execute([$userID, "Pending"]);
+            $results = $getPending->fetchAll();
+
+
+
+            ?>
 
 
 

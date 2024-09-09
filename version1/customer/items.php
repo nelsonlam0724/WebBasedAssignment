@@ -5,6 +5,18 @@ $product_id = get('id');
 $getProduct = $_db->prepare('SELECT * FROM product WHERE product_id = ?');
 $getProduct->execute([$product_id]);
 $product = $getProduct->fetch(PDO::FETCH_OBJ);
+
+
+$getComment = $_db->prepare('
+    SELECT c.* ,u.name AS user_name , p.name AS product_name 
+    FROM comment AS c 
+    JOIN product AS p ON c.product_id = p.product_id
+    JOIN user AS u ON c.user_id = u.user_id
+    WHERE c.product_id = ?
+');
+$getComment -> execute([$product_id]);
+$comment = $getComment->fetchAll();
+
 ?>
 
 <title>Item Details</title>
@@ -30,38 +42,40 @@ $product = $getProduct->fetch(PDO::FETCH_OBJ);
   </div>
   <div class="review-field">
     <h3>Reviews</h3>
+
+
+    <?php $count=0; foreach($comment as $c): ?>
     <div class="comment-box">
-      <div class="user-review">
-        <div class="user-name">Kimho</div>
-        <div class="star-rating">
-          <p style="font-size:20px;color:yellowgreen">★★★★★</p>
-          <p><i class='bx bx-like'></i> 0</p>
+        <div class="user-review">
+            <div class="user-name" style="color:black;font-size:15px"><?= $c->user_name ?></div>
+            <div class="star-rating">
+            <input type="hidden" name="rate" value="<?= $c->rate ?>" class="rate">
+                <p style="font-size:20px;color:yellowgreen;display:flex;" class="star-rating-display"></p>               
+            </div>
         </div>
-      </div>
-      <div class="review-content">
-        <div class="variation">Variation: keyboard</div>
-        <div class="comment-text">Item received in good condition, packed well, hopefully the quality is good, thank you</div>
-        <img src="https://www.bing.com/th?id=OIP.CJUZPzHxXG_PeTDV4UuojQHaF0&w=200&h=150&c=8&rs=1&qlt=90&o=6&dpr=1.2&pid=3.1&rm=2" alt="User Image" width="100" height="100">
-        <div class="date">12-05-2024</div>
-      </div>
-    </div>
-    <div class="comment-box">
-      <div class="user-review">
-        <div class="user-name">Kimho</div>
-        <div class="star-rating">
-          <p style="font-size:20px;color:yellowgreen">★★★★★</p>
-          <p><i class='bx bx-like'></i> 0</p>
+        <div class="review-content">
+            <div class="variation">Variation: <?= $c->product_name ?></div>
+            <div class="comment-text"><?= $c->comment ?></div>
+            <?php if($c->photo!= null){  ?>
+            <img src="../uploads/<?= $c->photo ?>" alt="User Image" width="100" height="100">
+            <?php }  ?>
+            <div class="date"><?= $c->datetime ?></div>
         </div>
-      </div>
-      <div class="review-content">
-        <div class="comment-text">Item received in good condition, packed well, hopefully the quality is good, thank you</div>
-        <img src="https://www.bing.com/th?id=OIP.CJUZPzHxXG_PeTDV4UuojQHaF0&w=200&h=150&c=8&rs=1&qlt=90&o=6&dpr=1.2&pid=3.1&rm=2" alt="User Image" width="100" height="100">
-        <div class="date">12-05-2024</div>
-      </div>
     </div>
+<?php $count++; endforeach; 
+
+    
+    if($count==0){
+      echo "<p style='padding:30px;'>Record Not Found</p>";
+    }  
+    ?>
+
+
   </div>
 </div>
 
 <script src="../js/product.js"></script>
 </body>
+
+
 </html>
