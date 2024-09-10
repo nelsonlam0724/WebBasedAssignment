@@ -1,5 +1,4 @@
 <?php
-
 // ============================================================================
 // PHP Setups
 // ============================================================================
@@ -10,6 +9,12 @@ session_start();
 // ============================================================================
 // General Page Functions
 // ============================================================================
+function cleanup_deactivated_users() {
+    global $_db;
+    $cleanup_stm = $_db->prepare('UPDATE user SET status = ? WHERE status = ? AND deactivated_at <= (NOW() - INTERVAL 1 MINUTE)');
+    $cleanup_stm->execute(['Banned', 'Deactivate']);
+}
+
 function getTableNameFromQuery($query) {
     if (preg_match('/CREATE TABLE `?(\w+)`?/i', $query, $matches)) {
         return $matches[1];
@@ -350,3 +355,4 @@ function is_exists($value, $table, $field) {
 // ============================================================================
 // Global Constants and Variables
 // ============================================================================
+cleanup_deactivated_users();

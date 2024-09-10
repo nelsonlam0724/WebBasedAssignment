@@ -84,7 +84,7 @@ $statuses = $statuses_stm->fetchAll(PDO::FETCH_COLUMN);
                 <!-- Status Filter -->
                 <label for="status">Status:</label>
                 <select name="status" id="status" onchange="this.form.submit()">
-                    <option value="">All Statuses</option>
+                    <option value="">All Status</option>
                     <?php foreach ($statuses as $status): ?>
                         <option value="<?= htmlspecialchars($status) ?>" <?= $status == $status_filter ? 'selected' : '' ?>>
                             <?= htmlspecialchars($status) ?>
@@ -98,7 +98,6 @@ $statuses = $statuses_stm->fetchAll(PDO::FETCH_COLUMN);
                     <option value="user_id" <?= $sort_by == 'user_id' ? 'selected' : '' ?>>ID</option>
                     <option value="name" <?= $sort_by == 'name' ? 'selected' : '' ?>>Username</option>
                     <option value="email" <?= $sort_by == 'email' ? 'selected' : '' ?>>Email</option>
-                    <option value="role" <?= $sort_by == 'role' ? 'selected' : '' ?>>Role</option>
                     <option value="status" <?= $sort_by == 'status' ? 'selected' : '' ?>>Status</option>
                 </select>
                 <label for="sort_order">Order:</label>
@@ -118,7 +117,6 @@ $statuses = $statuses_stm->fetchAll(PDO::FETCH_COLUMN);
                         <th>Username</th>
                         <th>Email</th>
                         <th>Status</th>
-                        <th>Role</th>
                         <th colspan="3">Actions</th>
                     </tr>
                 </thead>
@@ -129,7 +127,6 @@ $statuses = $statuses_stm->fetchAll(PDO::FETCH_COLUMN);
                             <td><?= htmlspecialchars($member->name) ?></td>
                             <td><?= htmlspecialchars($member->email) ?></td>
                             <td><?= htmlspecialchars($member->status) ?></td>
-                            <td><?= htmlspecialchars($member->role) ?></td>
 
                             <td class="actions">
                                 <a href="memberDetails.php?user_id=<?= $member->user_id ?>&page=<?= $page ?>&search=<?= urlencode($search_query) ?>&sort_by=<?= urlencode($sort_by) ?>&sort_order=<?= urlencode($sort_order) ?>">

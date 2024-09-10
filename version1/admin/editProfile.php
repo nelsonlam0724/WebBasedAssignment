@@ -26,18 +26,32 @@ if (is_post()) {
         $_err['email'] = 'Maximum 100 characters';
     } else if (!is_email($email)) {
         $_err['email'] = 'Invalid email';
+    } else if ($email !== $user->email) { // Check for uniqueness only if email has changed
+        $stmt = $conn->prepare("SELECT COUNT(*) FROM users WHERE email = :email");
+        $stmt->execute(['email' => $email]);
+        $emailCount = $stmt->fetchColumn();
+
+        if ($emailCount > 0) {
+            $_err['email'] = 'Email is already in use';
+        }
     }
 
     // Validation: password and confirm
-    if (!$password) {
-        $_err['password'] = 'Required';
-    } else if (strlen($password) < 5 || strlen($password) > 100) {
-        $_err['password'] = 'Between 5-100 characters';
-    }
-    if (!$confirm) {
-        $_err['confirm'] = 'Required';
-    } else if ($confirm != $password) {
-        $_err['confirm'] = 'Passwords do not match';
+    if (!empty($password)) {
+        // If password is provided, validate it
+        if (strlen($password) < 5 || strlen($password) > 100) {
+            $_err['password'] = 'Between 5-100 characters';
+        }
+        if ($confirm !== $password) {
+            $_err['confirm'] = 'Passwords do not match';
+        }
+        // If no errors, hash the new password
+        if (empty($_err['password']) && empty($_err['confirm'])) {
+            $hashed_password = password_hash($password, PASSWORD_DEFAULT);
+        }
+    } else {
+        // No new password provided, retain the current password
+        $hashed_password = $user->password; // Assuming you store the hashed password in session
     }
 
     // Validation: name
@@ -62,21 +76,21 @@ if (is_post()) {
     }
 
     // Validation: photo (file)
-    if (!isset($photo['name']) || $photo['error'] === UPLOAD_ERR_NO_FILE) {
-        $_err['photo'] = 'Required';
-    } else if (!in_array($photo['type'], ['image/jpeg', 'image/png'])) {
-        $_err['photo'] = 'Must be a JPEG or PNG';
-    } else if ($photo['size'] > 1 * 1024 * 1024) {
-        $_err['photo'] = 'Maximum 1MB';
+    if (!empty($photo['name']) && $photo['error'] === UPLOAD_ERR_OK) {
+        // If a new file is uploaded, validate it
+        if (!in_array($photo['type'], ['image/jpeg', 'image/png'])) {
+            $_err['photo'] = 'Must be a JPEG or PNG';
+        } else if ($photo['size'] > 1 * 1024 * 1024) {
+            $_err['photo'] = 'Maximum 1MB';
+        }
+    } else {
+        // No new photo uploaded, retain the current photo
+        $photo_name = $user->photo;
     }
 
     if (empty($_err)) {
-        // Update password hash
-        $hashed_password = password_hash($password, PASSWORD_DEFAULT);
-
-        // Photo handling
-        $photo_name = $user->photo; // Default to existing photo
-        if ($photo['error'] === UPLOAD_ERR_OK) {
+        // If a new photo was uploaded, save it and update $photo_name
+        if (!empty($photo['name']) && $photo['error'] === UPLOAD_ERR_OK) {
             $photo_name = save_photo_admin($photo);
         }
 
@@ -90,7 +104,7 @@ if (is_post()) {
             'name' => $name,
             'birthday' => $birthday,
             'gender' => $gender,
-            'photo' => $photo_name,
+            'photo' => $photo_name, // Update session with the new or existing photo
         ]);
 
         temp('info', 'Profile updated successfully');
@@ -133,13 +147,13 @@ $_title = 'Edit Admin Profile';
 
                     <div class="form-group">
                         <label for="password">Password:</label>
-                        <input type="password" name="password" id="password" maxlength="100" required>
+                        <input type="password" name="password" id="password" maxlength="100"  placeholder="Leave blank to keep current password">
                         <?= isset($_err['password']) ? "<span class='error'>{$_err['password']}</span>" : '' ?>
                     </div>
 
                     <div class="form-group">
                         <label for="confirm">Confirm Password:</label>
-                        <input type="password" name="confirm" id="confirm" maxlength="100" required>
+                        <input type="password" name="confirm" id="confirm" maxlength="100"  placeholder="Leave blank to keep current password">
                         <?= isset($_err['confirm']) ? "<span class='error'>{$_err['confirm']}</span>" : '' ?>
                     </div>
 

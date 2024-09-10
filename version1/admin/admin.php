@@ -25,6 +25,7 @@ $_title = 'Admin Dashboard - ' . htmlspecialchars($user->name);
             <li><a href="memberList.php">Member List</a></li>
             <li><a href="backup.php">Backup</a></li>
             <li><a href="restore.php">Restore</a></li>
+            <li><a href="../customer/customer.php">Customer Page</a></li>
             <li><a href="../logout.php">Logout</a></li>
         </ul>
     </nav>
