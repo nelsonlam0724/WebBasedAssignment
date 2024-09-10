@@ -57,7 +57,7 @@ $comment = $getComment->fetchAll();
             <div class="variation">Variation: <?= $c->product_name ?></div>
             <div class="comment-text"><?= $c->comment ?></div>
             <?php if($c->photo!= null){  ?>
-            <img src="../uploads/<?= $c->photo ?>" alt="User Image" width="100" height="100">
+            <img src="../comment_img/<?= $c->photo ?>" alt="User Image" width="100" height="100">
             <?php }  ?>
             <div class="date"><?= $c->datetime ?></div>
         </div>
