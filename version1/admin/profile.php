@@ -13,7 +13,8 @@ if (is_post()) {
 
     $field = req('field');
     $value = req('value');
-
+    $currentEmail = req('email');
+    
     switch ($field) {
         case 'email':
             if (strlen($value) > 100) {
