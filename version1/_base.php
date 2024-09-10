@@ -190,11 +190,25 @@ function encode($value)
     return htmlentities($value);
 }
 
+// Generate <input type='hideen'>
+function html_hidden($key, $attr = '')
+{
+    $value = encode($GLOBALS[$key] ?? '');
+    echo "<input type='hidden' id='$key' name='$key' value='$value' $attr>";
+}
+
 // Generate <input type='text'>
 function html_text($key, $attr = '')
 {
     $value = encode($GLOBALS[$key] ?? '');
     echo "<input type='text' id='$key' name='$key' value='$value' $attr>";
+}
+
+// Generate <input type='date'>
+function html_date($key, $attr = '')
+{
+    $value = encode($GLOBALS[$key] ?? '');
+    echo "<input type='date' id='$key' name='$key' value='$value' $attr>";
 }
 
 // Generate <input type='password'>

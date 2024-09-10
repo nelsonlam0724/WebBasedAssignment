@@ -123,28 +123,29 @@ include '_head.php';
                 <label for="name">Name:</label>
                 <input type="text" name="name" maxlength="100">
                 <?= err('name') ?>
-
                 <label for="password">Password:</label>
-                <input type="password" name="password" maxlength="100">
+                <?= html_password('password', 'maxlength="100"') ?>
                 <?= err('password') ?>
 
                 <label for="confirm">Confirm Password:</label>
-                <input type="password" name="confirm" maxlength="100">
+                <?= html_password('confirm', 'maxlength="100"') ?>
                 <?= err('confirm') ?>
 
                 <label for="gender">Gender:</label>
-                <select name="gender">
-                    <option value="">Select Gender</option>
-                    <option value="Male">Male</option>
-                    <option value="Female">Female</option>
-                    <option value="Other">Other</option>
-                </select>
+                <?php
+                $genderOptions = [
+                    '' => 'Select Gender',
+                    'Male' => 'Male',
+                    'Female' => 'Female'
+                ];
+                html_select('gender', $genderOptions);
+                ?>
                 <?= err('gender') ?>
 
             </div>
             <div class="form-right">
                 <label for="birthday">Birthday:</label>
-                <input type="date" name="birthday" required>
+                <?= html_date('birthday', 'required') ?>
                 <?= err('birthday') ?>
 
                 <label for="photo">Photo:</label>
@@ -161,8 +162,8 @@ include '_head.php';
         </section>
     </form>
     <div class="action-buttons">
-            <a href="login.php"><button>Back to Login</button></a>
-        </div>
+        <a href="login.php"><button>Back to Login</button></a>
+    </div>
 </body>
 
 </html>

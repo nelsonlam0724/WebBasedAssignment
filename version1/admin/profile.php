@@ -7,13 +7,13 @@ $user = $_SESSION['user'];
 
 // Initialize error array
 $_err = [];
-
 // Handle form submission (POST request)
 if (is_post()) {
 
     $field = req('field');
     $value = req('value');
     $currentEmail = req('email');
+    $email = req('email');
     
     switch ($field) {
         case 'email':
