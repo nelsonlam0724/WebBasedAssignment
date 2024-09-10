@@ -52,7 +52,7 @@ tr:nth-child(odd) {
 form {
     max-width: 600px;
     margin: 0 auto;
-    padding: 20px;
+    padding: 10px;
 }
 
 /* Styling for confirmation forms */
@@ -108,8 +108,6 @@ input[type="text"] {
     box-sizing: border-box;
     border-radius: 5px;
 }
-
-
 /* Specific styles for action buttons */
 .actions button {
     background-color: #28a745;

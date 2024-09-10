@@ -111,7 +111,6 @@ if (isset($_POST['select_all'])) {
                 Sort by Table Name (<?php echo $sortOrder == 'ASC' ? 'Ascending' : 'Descending'; ?>)
             </button>
         </form>
-
         <form method="post" action="">
             <input type="hidden" name="allTables" value='<?php echo json_encode($tables); ?>'>
             <table>
