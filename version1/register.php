@@ -4,10 +4,11 @@ include '_base.php';
 
 $email = $_SESSION['email']; // Retrieve email from session
 if (empty($_SESSION['email']) || !$_SESSION['email']) {
-    temp('info', 'You need to verify your email before registering.');
+    temp('info', 'You need to verify your email.');
     redirect('login.php');
     exit;
 }
+
 if (is_post()) {
     $name = req('name');
     $password = req('password');

@@ -1,5 +1,11 @@
 <?php
 include '_base.php';
+$email = $_SESSION['email']; // Retrieve email from session
+if (empty($_SESSION['email']) || !$_SESSION['email']) {
+    temp('info', 'You need to verify your email.');
+    redirect('login.php');
+    exit;
+}
 
 if (is_post()) {
     $input_code = req('code');
@@ -16,7 +22,7 @@ if (is_post()) {
 
     // Verify the code
     if ($email) {
-        $_SESSION['verified'] = 1;
+        $_SESSION['verified'] = true;
         $_SESSION['email'] = $email; // Store email in session
         temp('info', 'Email verified. You may now complete your registration.');
         redirect('register.php');
