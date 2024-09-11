@@ -122,7 +122,7 @@ function save_photo($file) {
     $img = new SimpleImage();
     $img->fromFile($file_tmp_name)
         ->thumbnail(200, 200)
-        ->toFile("uploads/$photo", 'image/jpeg');
+        ->toFile("`uploads`/$photo", 'image/jpeg');
     
     return $photo;
 }

@@ -79,7 +79,7 @@ if (is_post()) {
                         $input_date->setTime(0, 0, 0);
                         $today->setTime(0, 0, 0);
             
-                        if ($input_date >= $today) {
+                        if ($input_date > $today) {
                             $_err['birthday'] = 'Date must be before today';
                         } else {
                             // Update the database if no errors

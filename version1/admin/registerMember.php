@@ -73,7 +73,7 @@ if (is_post()) {
             $input_date->setTime(0, 0, 0);
             $today->setTime(0, 0, 0);
 
-            if ($input_date >= $today) {
+            if ($input_date > $today) {
                 $_err['birthday'] = 'Date must be before today';
             }
         }
@@ -94,8 +94,8 @@ if (is_post()) {
         $photo = save_photo_admin($f);
 
         $stm = $_db->prepare('
-            INSERT INTO user (email, password, name, gender, birthday, photo, role)
-            VALUES (?, SHA1(?), ?, ?, ?, ?, "Member")
+            INSERT INTO user (email, password, name, gender, birthday, photo, role, status)
+            VALUES (?, SHA1(?), ?, ?, ?, ?, "Member", "Active")
         ');
         $stm->execute([$email, $password, $name, $gender, $birthday, $photo]);
 
