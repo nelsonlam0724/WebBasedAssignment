@@ -1,11 +1,13 @@
 <?php
 include '_base.php';
-if (empty($_SESSION['verified']) || !$_SESSION['verified']) {
+
+
+$email = $_SESSION['email']; // Retrieve email from session
+if (empty($_SESSION['email']) || !$_SESSION['email']) {
     temp('info', 'You need to verify your email before registering.');
     redirect('login.php');
     exit;
 }
-
 if (is_post()) {
     $name = req('name');
     $password = req('password');
@@ -14,7 +16,10 @@ if (is_post()) {
     $gender = req('gender');
     $birthday = req('birthday');
 
-    // Validate email
+    // Validate form data...
+    $_err = [];
+
+    // Validate email (from session)
     if (!$email) {
         $_err['email'] = 'Required';
     } else if (strlen($email) > 100) {
@@ -77,6 +82,7 @@ if (is_post()) {
     }
 
     if (!$_err) {
+        // Process registration
         $photo = save_photo($f);
 
         $stm = $_db->prepare('
@@ -84,6 +90,10 @@ if (is_post()) {
             VALUES (?, SHA1(?), ?, ?, ?, ?, "Member", "Active")
         ');
         $stm->execute([$email, $password, $name, $gender, $birthday, $photo]);
+
+        // Unset verification only after successful registration
+        unset($_SESSION['verified']);
+        unset($_SESSION['email']);  // Optionally clear email
 
         temp('info', 'Record inserted');
         redirect('login.php');

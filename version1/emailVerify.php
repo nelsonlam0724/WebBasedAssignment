@@ -16,7 +16,7 @@ if (is_post()) {
 
     // Verify the code
     if ($email) {
-        $_SESSION['verified'] = true;
+        $_SESSION['verified'] = 1;
         $_SESSION['email'] = $email; // Store email in session
         temp('info', 'Email verified. You may now complete your registration.');
         redirect('register.php');
