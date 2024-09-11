@@ -55,6 +55,7 @@ if (is_post()) {
         $_err['gender'] = 'Invalid gender';
     }
 
+
     // Validate: birthday
     if (!$birthday) {
         $_err['birthday'] = 'Required';
@@ -64,8 +65,20 @@ if (is_post()) {
         $birthdate_parts = explode('-', $birthday);
         if (!checkdate($birthdate_parts[1], $birthdate_parts[2], $birthdate_parts[0])) {
             $_err['birthday'] = 'Invalid date';
+        } else {
+            $input_date = new DateTime($birthday);
+            $today = new DateTime();  // Today's date
+
+            // Set the time of both dates to the start of the day to ensure accurate comparison
+            $input_date->setTime(0, 0, 0);
+            $today->setTime(0, 0, 0);
+
+            if ($input_date >= $today) {
+                $_err['birthday'] = 'Date must be before today';
+            }
         }
     }
+
 
     // Validate: photo (file)
     if (!$f) {

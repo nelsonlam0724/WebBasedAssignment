@@ -11,7 +11,7 @@ function toggleEditForm(field, event) {
     event.stopPropagation(); // Prevent click event from bubbling up
     const form = document.getElementById(`edit_${field}_form`);
     form.style.display = form.style.display === 'block' ? 'none' : 'block';
-    
+
     // Position the form near the icon
     const icon = event.target;
     const rect = icon.getBoundingClientRect();
@@ -24,7 +24,7 @@ function hideEditForm(field) {
 }
 
 // Click outside the form to hide it
-document.addEventListener('click', function(event) {
+document.addEventListener('click', function (event) {
     const editForms = document.querySelectorAll('.edit-form');
     editForms.forEach(form => {
         if (!form.contains(event.target) && !form.previousElementSibling.contains(event.target)) {
@@ -52,5 +52,11 @@ $(document).ready(function () {
     });
     photo_value
 
+});
+
+
+document.addEventListener('DOMContentLoaded', function () {
+    const today = new Date().toISOString().split('T')[0];
+    document.getElementById('birthday').setAttribute('max', today);
 });
 

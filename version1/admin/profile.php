@@ -62,16 +62,34 @@ if (is_post()) {
             }
             break;
 
-        case 'birthday':
-            if (!is_birthday($value)) {
-                $_err['birthday'] = 'Invalid date format';
-                temp('info','Invalid date format.');
-            } else {
-                $stm = $_db->prepare('UPDATE user SET birthday = ? WHERE user_id = ?');
-                $stm->execute([$value, $user->user_id]);
-                $_SESSION['user']->birthday = $value;
-            }
-            break;
+            case 'birthday':
+                if (!$value) {
+                    $_err['birthday'] = 'Required';
+                } else if (!is_birthday($value)) {
+                    $_err['birthday'] = 'Invalid date format';
+                } else {
+                    $birthdate_parts = explode('-', $value);
+                    if (!checkdate($birthdate_parts[1], $birthdate_parts[2], $birthdate_parts[0])) {
+                        $_err['birthday'] = 'Invalid date';
+                    } else {
+                        $input_date = new DateTime($value);
+                        $today = new DateTime();  // Today's date
+            
+                        // Set the time of both dates to the start of the day to ensure accurate comparison
+                        $input_date->setTime(0, 0, 0);
+                        $today->setTime(0, 0, 0);
+            
+                        if ($input_date >= $today) {
+                            $_err['birthday'] = 'Date must be before today';
+                        } else {
+                            // Update the database if no errors
+                            $stm = $_db->prepare('UPDATE user SET birthday = ? WHERE user_id = ?');
+                            $stm->execute([$value, $user->user_id]);
+                            $_SESSION['user']->birthday = $value;
+                        }
+                    }
+                }
+                break;            
 
         case 'gender':
             if (!is_gender($value)) {

@@ -47,6 +47,29 @@ if (is_post()) {
         $_err['name'] = 'Required';
     }
 
+    // Validate: birthday
+    if (!$new_birthday) {
+        $_err['birthday'] = 'Required';
+    } else if (!is_birthday($new_birthday)) {
+        $_err['birthday'] = 'Invalid date format';
+    } else {
+        $birthdate_parts = explode('-', $new_birthday);
+        if (!checkdate($birthdate_parts[1], $birthdate_parts[2], $birthdate_parts[0])) {
+            $_err['birthday'] = 'Invalid date';
+        } else {
+            $input_date = new DateTime($new_birthday);
+            $today = new DateTime();  // Today's date
+
+            // Set the time of both dates to the start of the day to ensure accurate comparison
+            $input_date->setTime(0, 0, 0);
+            $today->setTime(0, 0, 0);
+
+            if ($input_date > $today) {
+                $_err['birthday'] = 'Date must be before today';
+            }
+        }
+    }
+
     // Password validation
     if (!empty($password)) {
         if ($password !== $confirm_password) {
@@ -139,6 +162,7 @@ $_title = 'Edit Member';
                         <option value="Male" <?= $member->gender == 'Male' ? 'selected' : '' ?>>Male</option>
                         <option value="Female" <?= $member->gender == 'Female' ? 'selected' : '' ?>>Female</option>
                     </select>
+                    <?= isset($_err['gender']) ? "<span class='error'>{$_err['gender']}</span>" : '' ?>
                 </div>
             </div>
 
@@ -150,10 +174,12 @@ $_title = 'Edit Member';
                         <option value="Active" <?= $member->status == 'Active' ? 'selected' : '' ?>>Active</option>
                         <option value="Banned" <?= $member->status == 'Banned' ? 'selected' : '' ?>>Banned</option>
                     </select>
+                    <?= isset($_err['status']) ? "<span class='error'>{$_err['status']}</span>" : '' ?>
                 </div>
                 <div class="form-group">
                     <label for="birthday">Birthday:</label>
                     <input type="date" name="birthday" id="birthday" value="<?= htmlspecialchars($member->birthday) ?>" required>
+                    <?= isset($_err['birthday']) ? "<span class='error'>{$_err['birthday']}</span>" : '' ?>
                 </div>
 
                 <label for="photo">Photo:</label>

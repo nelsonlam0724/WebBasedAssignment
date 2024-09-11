@@ -28,6 +28,7 @@ if (is_post()) {
     // Verify the code
     if ($email) {
         // Code is correct; proceed to password reset
+        temp('info', 'You can reset your password now.');
         header('Location: resetPassword.php?email=' . urlencode($email));
         exit;
     } else {
