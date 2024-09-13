@@ -32,7 +32,7 @@ if (is_post()) {
         temp('info', 'Verification code sent.');
     } catch (Exception $e) {
         temp('info', 'Failed to send verification email: ' . $m->ErrorInfo);
-        redirect('/');
+        redirect();
     }
 
     $_SESSION['email'] = $email; // Store the email in session

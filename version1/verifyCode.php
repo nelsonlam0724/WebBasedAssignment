@@ -1,5 +1,11 @@
 <?php
 include '_base.php';
+$email = $_SESSION['email']; // Retrieve email from session
+if (empty($_SESSION['email']) || !$_SESSION['email']) {
+    temp('info', 'You need to verify your email.');
+    redirect('login.php');
+    exit;
+}
 
 // Handle POST request for code verification
 if (is_post()) {
@@ -22,6 +28,7 @@ if (is_post()) {
     // Verify the code
     if ($email) {
         // Code is correct; proceed to password reset
+        temp('info', 'You can reset your password now.');
         header('Location: resetPassword.php?email=' . urlencode($email));
         exit;
     } else {

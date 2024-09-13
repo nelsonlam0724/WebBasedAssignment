@@ -13,7 +13,7 @@ $sort_by = isset($_GET['sort_by']) ? $_GET['sort_by'] : 'user_id'; // Default so
 $sort_order = isset($_GET['sort_order']) ? $_GET['sort_order'] : 'ASC'; // Default sort order ascending
 $status_filter = isset($_GET['status']) ? $_GET['status'] : ''; // Status filter
 
-// Build SQL query with search filter, status filter, and sorting
+// Build SQL query with search filter and status filter (without pagination and sorting)
 $sql = 'SELECT * FROM user WHERE role = ?';
 $params = ['Member'];
 
@@ -27,33 +27,34 @@ if ($status_filter) {
     $params[] = $status_filter;
 }
 
-// Count total records for pagination (use a separate query without LIMIT)
-$count_sql = 'SELECT COUNT(*) FROM user WHERE role = ?';
-if ($search_query) {
-    $count_sql .= ' AND name LIKE ?';
-}
-if ($status_filter) {
-    $count_sql .= ' AND status = ?';
-}
-$count_stm = $_db->prepare($count_sql);
-$count_stm->execute($params);
-$total_records = $count_stm->fetchColumn();
-$total_pages = ceil($total_records / $records_per_page);
-
-// Add sorting to the SQL query
-$sql .= ' ORDER BY ' . $sort_by . ' ' . $sort_order;
-
-// Fetch records for current page
-$sql .= ' LIMIT ' . $records_per_page . ' OFFSET ' . $offset;
+// Fetch all filtered records without pagination
 $stm = $_db->prepare($sql);
 $stm->execute($params);
-$members = $stm->fetchAll(PDO::FETCH_OBJ);
+$all_filtered_members = $stm->fetchAll(PDO::FETCH_OBJ);
 
-$_title = 'Member List';
+// Apply sorting to the filtered results
+usort($all_filtered_members, function($a, $b) use ($sort_by, $sort_order) {
+    $valueA = $a->$sort_by;
+    $valueB = $b->$sort_by;
+    if ($sort_order === 'ASC') {
+        return $valueA <=> $valueB;
+    } else {
+        return $valueB <=> $valueA;
+    }
+});
+
+// Apply pagination to the sorted, filtered results
+$members = array_slice($all_filtered_members, $offset, $records_per_page);
+
+// Get the total number of filtered records (for pagination)
+$total_records = count($all_filtered_members);
+$total_pages = ceil($total_records / $records_per_page);
 
 // Fetch statuses for filter options
 $statuses_stm = $_db->query('SELECT DISTINCT status FROM user');
 $statuses = $statuses_stm->fetchAll(PDO::FETCH_COLUMN);
+
+$_title = 'Member List';
 ?>
 
 <!DOCTYPE html>
@@ -63,6 +64,7 @@ $statuses = $statuses_stm->fetchAll(PDO::FETCH_COLUMN);
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="../css/memberList.css">
+    <title><?= $_title ?></title>
 </head>
 
 <body>
@@ -84,7 +86,7 @@ $statuses = $statuses_stm->fetchAll(PDO::FETCH_COLUMN);
                 <!-- Status Filter -->
                 <label for="status">Status:</label>
                 <select name="status" id="status" onchange="this.form.submit()">
-                    <option value="">All Statuses</option>
+                    <option value="">All Status</option>
                     <?php foreach ($statuses as $status): ?>
                         <option value="<?= htmlspecialchars($status) ?>" <?= $status == $status_filter ? 'selected' : '' ?>>
                             <?= htmlspecialchars($status) ?>
@@ -98,7 +100,6 @@ $statuses = $statuses_stm->fetchAll(PDO::FETCH_COLUMN);
                     <option value="user_id" <?= $sort_by == 'user_id' ? 'selected' : '' ?>>ID</option>
                     <option value="name" <?= $sort_by == 'name' ? 'selected' : '' ?>>Username</option>
                     <option value="email" <?= $sort_by == 'email' ? 'selected' : '' ?>>Email</option>
-                    <option value="role" <?= $sort_by == 'role' ? 'selected' : '' ?>>Role</option>
                     <option value="status" <?= $sort_by == 'status' ? 'selected' : '' ?>>Status</option>
                 </select>
                 <label for="sort_order">Order:</label>
@@ -118,7 +119,6 @@ $statuses = $statuses_stm->fetchAll(PDO::FETCH_COLUMN);
                         <th>Username</th>
                         <th>Email</th>
                         <th>Status</th>
-                        <th>Role</th>
                         <th colspan="3">Actions</th>
                     </tr>
                 </thead>
@@ -129,7 +129,6 @@ $statuses = $statuses_stm->fetchAll(PDO::FETCH_COLUMN);
                             <td><?= htmlspecialchars($member->name) ?></td>
                             <td><?= htmlspecialchars($member->email) ?></td>
                             <td><?= htmlspecialchars($member->status) ?></td>
-                            <td><?= htmlspecialchars($member->role) ?></td>
 
                             <td class="actions">
                                 <a href="memberDetails.php?user_id=<?= $member->user_id ?>&page=<?= $page ?>&search=<?= urlencode($search_query) ?>&sort_by=<?= urlencode($sort_by) ?>&sort_order=<?= urlencode($sort_order) ?>">

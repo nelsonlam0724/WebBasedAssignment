@@ -1,7 +1,10 @@
 <?php
 include '_base.php';
-if (empty($_SESSION['verified']) || !$_SESSION['verified']) {
-    temp('info', 'You need to verify your email before registering.');
+
+
+$email = $_SESSION['email']; // Retrieve email from session
+if (empty($_SESSION['email']) || !$_SESSION['email']) {
+    temp('info', 'You need to verify your email.');
     redirect('login.php');
     exit;
 }
@@ -14,7 +17,10 @@ if (is_post()) {
     $gender = req('gender');
     $birthday = req('birthday');
 
-    // Validate email
+    // Validate form data...
+    $_err = [];
+
+    // Validate email (from session)
     if (!$email) {
         $_err['email'] = 'Required';
     } else if (strlen($email) > 100) {
@@ -55,7 +61,7 @@ if (is_post()) {
         $_err['gender'] = 'Invalid gender';
     }
 
-    // Validate birthday
+    // Validate: birthday
     if (!$birthday) {
         $_err['birthday'] = 'Required';
     } else if (!is_birthday($birthday)) {
@@ -64,6 +70,17 @@ if (is_post()) {
         $birthdate_parts = explode('-', $birthday);
         if (!checkdate($birthdate_parts[1], $birthdate_parts[2], $birthdate_parts[0])) {
             $_err['birthday'] = 'Invalid date';
+        } else {
+            $input_date = new DateTime($birthday);
+            $today = new DateTime();  // Today's date
+
+            // Set the time of both dates to the start of the day to ensure accurate comparison
+            $input_date->setTime(0, 0, 0);
+            $today->setTime(0, 0, 0);
+
+            if ($input_date > $today) {
+                $_err['birthday'] = 'Date must be before today';
+            }
         }
     }
 
@@ -77,6 +94,7 @@ if (is_post()) {
     }
 
     if (!$_err) {
+        // Process registration
         $photo = save_photo($f);
 
         $stm = $_db->prepare('
@@ -84,6 +102,10 @@ if (is_post()) {
             VALUES (?, SHA1(?), ?, ?, ?, ?, "Member", "Active")
         ');
         $stm->execute([$email, $password, $name, $gender, $birthday, $photo]);
+
+        // Unset verification only after successful registration
+        unset($_SESSION['verified']);
+        unset($_SESSION['email']);  // Optionally clear email
 
         temp('info', 'Record inserted');
         redirect('login.php');
@@ -123,28 +145,28 @@ include '_head.php';
                 <label for="name">Name:</label>
                 <input type="text" name="name" maxlength="100">
                 <?= err('name') ?>
-
                 <label for="password">Password:</label>
-                <input type="password" name="password" maxlength="100">
+                <?= html_password('password', 'maxlength="100"') ?>
                 <?= err('password') ?>
 
                 <label for="confirm">Confirm Password:</label>
-                <input type="password" name="confirm" maxlength="100">
+                <?= html_password('confirm', 'maxlength="100"') ?>
                 <?= err('confirm') ?>
 
                 <label for="gender">Gender:</label>
-                <select name="gender">
-                    <option value="">Select Gender</option>
-                    <option value="Male">Male</option>
-                    <option value="Female">Female</option>
-                    <option value="Other">Other</option>
-                </select>
+                <?php
+                $genderOptions = [
+                    'Male' => 'Male',
+                    'Female' => 'Female'
+                ];
+                html_select('gender', $genderOptions);
+                ?>
                 <?= err('gender') ?>
 
             </div>
             <div class="form-right">
                 <label for="birthday">Birthday:</label>
-                <input type="date" name="birthday" required>
+                <?= html_date('birthday', 'required') ?>
                 <?= err('birthday') ?>
 
                 <label for="photo">Photo:</label>
@@ -161,8 +183,8 @@ include '_head.php';
         </section>
     </form>
     <div class="action-buttons">
-            <a href="login.php"><button>Back to Login</button></a>
-        </div>
+        <a href="login.php"><button>Back to Login</button></a>
+    </div>
 </body>
 
 </html>

@@ -33,9 +33,14 @@ if (is_post()) {
         <p>Here is your verification code: <strong>$verification_code</strong></p>
         <p>This code will expire in 15 minutes.</p>
     ";
-    $m->send();
-
-    temp('info', 'Verification code sent.');
+    try {
+        $m->send();
+        temp('info', 'Verification code sent.');
+    } catch (Exception $e) {
+        temp('info', 'Failed to send verification email: ' . $m->ErrorInfo);
+        redirect();
+    }
+    $_SESSION['email'] = $email; // Store the email in session
     redirect('verifyCode.php');
 }
 

@@ -2,9 +2,6 @@
 include '_base.php';
 include '_head.php';
 // ----------------------------------------------------------------------------
-$cleanup_stm = $_db->prepare('UPDATE user SET status = ? WHERE status = ? AND deactivated_at <= (NOW() - INTERVAL 1 MINUTE)');
-$cleanup_stm->execute(['Banned', 'Deactivate']);
-
 if (isset($_COOKIE['remember_token'])) {
     $token = $_COOKIE['remember_token'];
 
@@ -63,7 +60,7 @@ if (is_post()) {
                 $remaining_interval = $current_time->diff($remaining_time);
 
                 if ($current_time < $remaining_time) {
-                    temp('info', 'Your account is deactivated. Please wait ' . $remaining_interval->i . ' minutes before reactivation.');
+                    temp('info', 'Your account is deactivated. Please wait ' . $remaining_interval->s . ' seconds before reactivation.');
                 } else {
                     // Convert to banned if the deactivation period is over
                     $stm = $_db->prepare('
@@ -78,7 +75,7 @@ if (is_post()) {
             } else if ($u->banned_until && $current_time < new DateTime($u->banned_until)) {
                 // User is banned and the ban period is not over
                 $remaining_ban_time = (new DateTime($u->banned_until))->diff($current_time);
-                temp('info', 'Your account is banned. Try again after ' . $remaining_ban_time->i . ' minutes.');
+                temp('info', 'Your account is banned. Try again after ' . $remaining_ban_time->s . ' seconds.');
                 redirect();
             } else {
                 // Ban period is over, reset status
@@ -93,10 +90,10 @@ if (is_post()) {
             // Check frequent login/logouts
             if ($u->last_login_event_time) {
                 $last_event_time = new DateTime($u->last_login_event_time);
-                $diff_minutes = $current_time->diff($last_event_time)->i;
+                $diff_minutes = $current_time->diff($last_event_time)->s;
 
                 if ($diff_minutes < 1 && $u->login_count >= 3) {
-                    temp('info', 'Frequent login attempts detected. Please wait 2 minutes before trying again.');
+                    temp('info', 'Frequent login attempts detected. Please wait '.$diff_minutes. ' before trying again.');
                     redirect();
                 } else if ($diff_minutes >= 1) {
                     $stm = $_db->prepare('
@@ -154,7 +151,7 @@ if (is_post()) {
                 ');
                 $stm->execute([$failed_attempts, $banned_until, $current_time->format('Y-m-d H:i:s'), $email]);
 
-                temp('info', ($failed_attempts >= 3) ? 'Too many failed attempts. Account banned for 1 minutes.' : 'Incorrect password');
+                temp('info', ($failed_attempts > 3) ? 'Too many failed attempts. Account banned for 1 minutes.' : 'Incorrect password');
             }
         } else {
             temp('info', 'No such user');

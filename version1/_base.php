@@ -1,5 +1,4 @@
 <?php
-
 // ============================================================================
 // PHP Setups
 // ============================================================================
@@ -10,6 +9,12 @@ session_start();
 // ============================================================================
 // General Page Functions
 // ============================================================================
+function cleanup_deactivated_users() {
+    global $_db;
+    $cleanup_stm = $_db->prepare('UPDATE user SET status = ? WHERE status = ? AND deactivated_at <= (NOW() - INTERVAL 1 MINUTE)');
+    $cleanup_stm->execute(['Banned', 'Deactivate']);
+}
+
 function getTableNameFromQuery($query) {
     if (preg_match('/CREATE TABLE `?(\w+)`?/i', $query, $matches)) {
         return $matches[1];
@@ -117,7 +122,7 @@ function save_photo($file) {
     $img = new SimpleImage();
     $img->fromFile($file_tmp_name)
         ->thumbnail(200, 200)
-        ->toFile("uploads/$photo", 'image/jpeg');
+        ->toFile("`uploads`/$photo", 'image/jpeg');
     
     return $photo;
 }
@@ -185,11 +190,25 @@ function encode($value)
     return htmlentities($value);
 }
 
+// Generate <input type='hideen'>
+function html_hidden($key, $attr = '')
+{
+    $value = encode($GLOBALS[$key] ?? '');
+    echo "<input type='hidden' id='$key' name='$key' value='$value' $attr>";
+}
+
 // Generate <input type='text'>
 function html_text($key, $attr = '')
 {
     $value = encode($GLOBALS[$key] ?? '');
     echo "<input type='text' id='$key' name='$key' value='$value' $attr>";
+}
+
+// Generate <input type='date'>
+function html_date($key, $attr = '')
+{
+    $value = encode($GLOBALS[$key] ?? '');
+    echo "<input type='date' id='$key' name='$key' value='$value' $attr>";
 }
 
 // Generate <input type='password'>
@@ -350,3 +369,4 @@ function is_exists($value, $table, $field) {
 // ============================================================================
 // Global Constants and Variables
 // ============================================================================
+cleanup_deactivated_users();

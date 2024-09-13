@@ -40,12 +40,12 @@ if (is_post()) {
             redirect('verifyRecoveryCode.php');
         } catch (Exception $e) {
             temp('info', 'Failed to send verification email: ' . $m->ErrorInfo);
-            redirect('sendRecoveryToken.php');
+            redirect();
         }
     } else {
         // If account is not deactivated, show an error message
         temp('info', 'This email address is not associated with a deactivated account.');
-        redirect('sendRecoveryToken.php');
+        redirect();
     }
 }
 

@@ -55,6 +55,7 @@ if (is_post()) {
         $_err['gender'] = 'Invalid gender';
     }
 
+
     // Validate: birthday
     if (!$birthday) {
         $_err['birthday'] = 'Required';
@@ -64,8 +65,20 @@ if (is_post()) {
         $birthdate_parts = explode('-', $birthday);
         if (!checkdate($birthdate_parts[1], $birthdate_parts[2], $birthdate_parts[0])) {
             $_err['birthday'] = 'Invalid date';
+        } else {
+            $input_date = new DateTime($birthday);
+            $today = new DateTime();  // Today's date
+
+            // Set the time of both dates to the start of the day to ensure accurate comparison
+            $input_date->setTime(0, 0, 0);
+            $today->setTime(0, 0, 0);
+
+            if ($input_date > $today) {
+                $_err['birthday'] = 'Date must be before today';
+            }
         }
     }
+
 
     // Validate: photo (file)
     if (!$f) {
@@ -81,8 +94,8 @@ if (is_post()) {
         $photo = save_photo_admin($f);
 
         $stm = $_db->prepare('
-            INSERT INTO user (email, password, name, gender, birthday, photo, role)
-            VALUES (?, SHA1(?), ?, ?, ?, ?, "Member")
+            INSERT INTO user (email, password, name, gender, birthday, photo, role, status)
+            VALUES (?, SHA1(?), ?, ?, ?, ?, "Member", "Active")
         ');
         $stm->execute([$email, $password, $name, $gender, $birthday, $photo]);
 
@@ -115,7 +128,7 @@ $_title = 'Register Member';
         <div class="form-container">
             <div class="form-left">
                 <label for="name">Name:</label>
-                <input type="text" name="name" maxlength="100">
+                <?= html_text('name', 'maxlength="100"') ?>
                 <?= err('name') ?>
 
                 <label for="email">Email</label>
@@ -124,26 +137,27 @@ $_title = 'Register Member';
                 <br>
 
                 <label for="password">Password:</label>
-                <input type="password" name="password" maxlength="100">
+                <?= html_password('password', 'maxlength="100"') ?>
                 <?= err('password') ?>
 
                 <label for="confirm">Confirm Password:</label>
-                <input type="password" name="confirm" maxlength="100">
+                <?= html_password('confirm', 'maxlength="100"') ?>
                 <?= err('confirm') ?>
 
                 <label for="gender">Gender:</label>
-                <select name="gender">
-                    <option value="">Select Gender</option>
-                    <option value="Male">Male</option>
-                    <option value="Female">Female</option>
-                    <option value="Other">Other</option>
-                </select>
+                <?php
+                $genderOptions = [
+                    '' => 'Select Gender',
+                    'Male' => 'Male',
+                    'Female' => 'Female'
+                ];
+                html_select('gender', $genderOptions);
+                ?>
                 <?= err('gender') ?>
-
             </div>
             <div class="form-right">
                 <label for="birthday">Birthday:</label>
-                <input type="date" name="birthday" required>
+                <?= html_date('birthday', 'required') ?>
                 <?= err('birthday') ?>
 
                 <label for="photo">Photo:</label>

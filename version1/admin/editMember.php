@@ -24,6 +24,7 @@ if (!$member) {
 
 // Handle form submission
 if (is_post()) {
+    // Capture and validate input
     $new_email = req('email');
     $new_name = req('name');
     $new_role = req('role');
@@ -31,12 +32,60 @@ if (is_post()) {
     $new_birthday = req('birthday');
     $new_photo = $_FILES['photo'];
     $new_status = req('status');
+    $password = req('password');
+    $confirm_password = req('confirm');
 
-    // Update member's details
-    $stm = $_db->prepare('UPDATE user SET email = ?, name = ?, role = ?, gender = ?, birthday = ?, status = ? WHERE user_id = ?');
-    $stm->execute([$new_email, $new_name, $new_role, $new_gender, $new_birthday, $new_status, $user_id]);
+    // Validation: email
+    if (!$new_email) {
+        $_err['email'] = 'Required';
+    } else if (!is_email($new_email)) {
+        $_err['email'] = 'Invalid email';
+    }
 
-    // Handle picture upload
+    // Validation: name
+    if (!$new_name) {
+        $_err['name'] = 'Required';
+    }
+
+    // Validate: birthday
+    if (!$new_birthday) {
+        $_err['birthday'] = 'Required';
+    } else if (!is_birthday($new_birthday)) {
+        $_err['birthday'] = 'Invalid date format';
+    } else {
+        $birthdate_parts = explode('-', $new_birthday);
+        if (!checkdate($birthdate_parts[1], $birthdate_parts[2], $birthdate_parts[0])) {
+            $_err['birthday'] = 'Invalid date';
+        } else {
+            $input_date = new DateTime($new_birthday);
+            $today = new DateTime();  // Today's date
+
+            // Set the time of both dates to the start of the day to ensure accurate comparison
+            $input_date->setTime(0, 0, 0);
+            $today->setTime(0, 0, 0);
+
+            if ($input_date > $today) {
+                $_err['birthday'] = 'Date must be before today';
+            }
+        }
+    }
+
+    // Password validation
+    if (!empty($password)) {
+        if ($password !== $confirm_password) {
+            $_err['password'] = 'Passwords do not match';
+        } else if (strlen($password) < 5 || strlen($password) > 100) {
+            $_err['password'] = 'Password must be between 5 and 100 characters';
+        } else {
+            // Hash new password
+            $hashed_password = password_hash($password, PASSWORD_DEFAULT);
+        }
+    } else {
+        // Retain the current password
+        $hashed_password = $member->password;
+    }
+
+    // Photo handling
     if ($new_photo['error'] === UPLOAD_ERR_OK) {
         $allowed_types = ['image/jpeg', 'image/png'];
         if (!in_array($new_photo['type'], $allowed_types)) {
@@ -45,14 +94,19 @@ if (is_post()) {
             $_err['photo'] = 'File size exceeds 2MB.';
         } else {
             $photo_name = save_photo_admin($new_photo);
-            $stm = $_db->prepare('UPDATE user SET photo = ? WHERE user_id = ?');
-            $stm->execute([$photo_name, $user_id]);
-            $_SESSION['user']->photo = $photo_name;
         }
+    } else {
+        $photo_name = $member->photo; // Retain the existing photo
     }
 
-    temp('info', 'Member updated successfully');
-    redirect('memberList.php');
+    // If no errors, update the database
+    if (empty($_err)) {
+        $stm = $_db->prepare('UPDATE user SET email = ?, name = ?, password = ?, role = ?, gender = ?, birthday = ?, photo = ?, status = ? WHERE user_id = ?');
+        $stm->execute([$new_email, $new_name, $hashed_password, $new_role, $new_gender, $new_birthday, $photo_name, $new_status, $user_id]);
+
+        temp('info', 'Member updated successfully');
+        redirect('memberList.php');
+    }
 }
 
 $_title = 'Edit Member';
@@ -86,11 +140,20 @@ $_title = 'Edit Member';
                 </div>
 
                 <div class="form-group">
+                    <label for="password">Password:</label>
+                    <input type="password" name="password" id="password" maxlength="100" placeholder="Leave blank to keep current password">
+                    <?= isset($_err['password']) ? "<span class='error'>{$_err['password']}</span>" : '' ?>
+                </div>
+
+                <div class="form-group">
+                    <label for="confirm">Confirm Password:</label>
+                    <input type="password" name="confirm" id="confirm" maxlength="100" placeholder="Leave blank to keep current password">
+                    <?= isset($_err['confirm']) ? "<span class='error'>{$_err['confirm']}</span>" : '' ?>
+                </div>
+
+                <div class="form-group">
                     <label for="role">Role:</label>
-                    <select name="role" id="role">
-                        <option value="Member" <?= $member->role == 'Member' ? 'selected' : '' ?>>Member</option>
-                        <option value="Admin" <?= $member->role == 'Admin' ? 'selected' : '' ?>>Admin</option>
-                    </select>
+                    <input type="text" name="role" id="role" value="<?= htmlspecialchars($member->role) ?>" readonly>
                 </div>
 
                 <div class="form-group">
@@ -99,7 +162,11 @@ $_title = 'Edit Member';
                         <option value="Male" <?= $member->gender == 'Male' ? 'selected' : '' ?>>Male</option>
                         <option value="Female" <?= $member->gender == 'Female' ? 'selected' : '' ?>>Female</option>
                     </select>
+                    <?= isset($_err['gender']) ? "<span class='error'>{$_err['gender']}</span>" : '' ?>
                 </div>
+            </div>
+
+            <div class="form-right">
 
                 <div class="form-group">
                     <label for="status">Status:</label>
@@ -107,32 +174,28 @@ $_title = 'Edit Member';
                         <option value="Active" <?= $member->status == 'Active' ? 'selected' : '' ?>>Active</option>
                         <option value="Banned" <?= $member->status == 'Banned' ? 'selected' : '' ?>>Banned</option>
                     </select>
+                    <?= isset($_err['status']) ? "<span class='error'>{$_err['status']}</span>" : '' ?>
                 </div>
-            </div>
-
-            <div class="form-right">
                 <div class="form-group">
                     <label for="birthday">Birthday:</label>
                     <input type="date" name="birthday" id="birthday" value="<?= htmlspecialchars($member->birthday) ?>" required>
+                    <?= isset($_err['birthday']) ? "<span class='error'>{$_err['birthday']}</span>" : '' ?>
                 </div>
 
                 <label for="photo">Photo:</label>
                 <div class="form-group upload">
-                    <?php if ($member->photo): ?>
-                        <label class="upload">
-                            <?= html_file('photo', 'image/*', 'hidden') ?>
-                            <img src="../uploads/<?= htmlspecialchars($member->photo) ?>" alt="Profile Photo">
-                        </label>
-                        <?= isset($_err['photo']) ? "<span class='error'>{$_err['photo']}</span>" : '' ?>
-                    <?php else: ?>
-                        <input type="file" name="photo" id="photo" accept="image/jpeg, image/png">
-                    <?php endif; ?>
+                    <label class="upload">
+                        <?= html_file('photo', 'image/*', 'hidden') ?>
+                        <img src="../uploads/<?= htmlspecialchars($member->photo) ?>" alt="Profile Photo">
+                    </label>
+                    <?= isset($_err['photo']) ? "<span class='error'>{$_err['photo']}</span>" : '' ?>
                 </div>
             </div>
         </div>
 
         <button type="submit">Update Member</button>
     </form>
+
     <div class="action-buttons">
         <a href="memberList.php?page=<?= htmlspecialchars($page) ?>&search=<?= urlencode($search_query) ?>">
             <button>Back to Member List</button>

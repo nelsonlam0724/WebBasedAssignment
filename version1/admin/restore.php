@@ -15,28 +15,50 @@ if (is_post()) {
             $conn = $_db;
 
             try {
+                // Begin the transaction
+                if (!$conn->inTransaction()) {
+                    $conn->beginTransaction();
+                }
                 $conn->exec('SET FOREIGN_KEY_CHECKS = 0');
-                $conn->beginTransaction();
 
                 $queries = explode(';', $sql);
+                $actionTaken = false;
+
                 foreach ($queries as $query) {
                     $query = trim($query);
                     if ($query) {
                         if (stripos($query, 'CREATE TABLE') === 0) {
                             $tableName = getTableNameFromQuery($query);
                             if ($tableName) {
-                                $conn->exec('DROP TABLE IF EXISTS ' . $tableName);
+                                // Check if the table exists
+                                $result = $conn->query("SHOW TABLES LIKE '$tableName'");
+                                if ($result->rowCount() == 0) {
+                                    // If the table doesn't exist, create it
+                                    $conn->exec($query);
+                                    $actionTaken = true;
+                                }
                             }
+                        } else {
+                            // Execute non-`CREATE TABLE` queries
+                            $conn->exec($query);
+                            $actionTaken = true;
                         }
-                        $conn->exec($query);
                     }
                 }
 
-                $conn->commit();
+                // Commit the transaction if it was successful
+                if ($conn->inTransaction()) {
+                    $conn->commit();
+                }
                 $conn->exec('SET FOREIGN_KEY_CHECKS = 1');
 
-                temp('info', 'Database restored successfully');
+                if ($actionTaken) {
+                    temp('info', 'Database restored successfully.');
+                } else {
+                    temp('info', 'No action needed: All tables are already up to date.');
+                }
             } catch (PDOException $e) {
+                // Rollback the transaction if an error occurs
                 if ($conn->inTransaction()) {
                     $conn->rollBack();
                 }
@@ -52,6 +74,7 @@ if (is_post()) {
     // Redirect after setting the message
     redirect('admin.php');
 }
+
 ?>
 
 <!DOCTYPE html>
