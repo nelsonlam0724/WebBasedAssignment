@@ -42,7 +42,7 @@ if ($status_filter) {
     $params[] = $status_filter;
 }
 
-// Fetch all filtered records without pagination
+// Fetch all filtered records
 $stm = $_db->prepare($sql);
 $stm->execute($params);
 $all_filtered_users = $stm->fetchAll(PDO::FETCH_OBJ);
@@ -59,11 +59,9 @@ usort($all_filtered_users, function ($a, $b) use ($sort_by, $sort_order) {
 });
 
 // Apply pagination to the sorted, filtered results
-$users = array_slice($all_filtered_users, $offset, $records_per_page);
-
-// Get the total number of filtered records (for pagination)
 $total_records = count($all_filtered_users);
 $total_pages = ceil($total_records / $records_per_page);
+$users = array_slice($all_filtered_users, $offset, $records_per_page);
 
 // Fetch roles and statuses for filter options
 $roles_stm = $_db->query('SELECT DISTINCT role FROM user');
@@ -115,7 +113,6 @@ $_title = 'User List';
                 <?php else: ?>
                     <input type="hidden" name="role" value="member">
                 <?php endif; ?>
-
 
                 <!-- Status Filter -->
                 <label for="status">Status:</label>
@@ -176,59 +173,78 @@ $_title = 'User List';
                                     <button>Edit</button>
                                 </a>
                             </td>
-
-                            <td class="delete">
-                                <!-- If the current user is a root and not the same user, show Delete button -->
-                                <?php if ($current_role == 'Root'): ?>
+                            <?php if ($current_role == 'Root'): ?>
+                                <td class="delete">
+                                    <!-- If the current user is a root and not the same user, show Delete button -->
                                     <form action="deleteUser.php?user_id=<?= $user->user_id ?>&search=<?= urlencode($search_query) ?>
                                     &page=<?= $page - 1 ?>&sort_by=<?= urlencode($sort_by) ?>&sort_order=<?= urlencode($sort_order) ?>
                                     &status=<?= urlencode($status_filter) ?>&role=<?= urlencode($role_filter) ?>" method="post" style="display:inline;">
-                                    
                                         <input type="hidden" name="id" value="<?= $user->user_id ?>">
                                         <button type="submit" onclick="return confirm('Are you sure you want to delete this user?');">Delete</button>
                                     </form>
-                                <?php elseif ($current_role == 'Admin'): ?>
-                                    <!-- If the current user is Admin, show Deactivate button -->
+                                </td>
+                            <?php endif; ?>
+                            <?php if ($current_role == 'Admin' && $user->status != 'banned'): ?>
+                                <td class="deactivate">
+                                    <!-- If the current user is a root and not the same user, show Deactivate button -->
                                     <form action="deactivateUser.php?user_id=<?= $user->user_id ?>&search=<?= urlencode($search_query) ?>
                                     &page=<?= $page - 1 ?>&sort_by=<?= urlencode($sort_by) ?>&sort_order=<?= urlencode($sort_order) ?>
                                     &status=<?= urlencode($status_filter) ?>&role=<?= urlencode($role_filter) ?>" method="post" style="display:inline;">
-
                                         <input type="hidden" name="id" value="<?= $user->user_id ?>">
                                         <button type="submit" onclick="return confirm('Are you sure you want to deactivate this user?');">Deactivate</button>
                                     </form>
-                                <?php endif; ?>
-                            </td>
+                                </td>
+                            <?php endif; ?>
                         </tr>
                     <?php endforeach; ?>
                 </tbody>
             </table>
 
-            <!-- Pagination Controls -->
+            <!-- Pagination -->
             <div class="pagination">
-                <!-- Previous Button -->
+                <!-- Previous Page Link -->
                 <?php if ($page > 1): ?>
-                    <a href="?search=<?= urlencode($search_query) ?>&page=<?= $page - 1 ?>&sort_by=<?= urlencode($sort_by) ?>&sort_order=<?= urlencode($sort_order) ?>&status=<?= urlencode($status_filter) ?>&role=<?= urlencode($role_filter) ?>">Previous</a>
+                    <a href="?page=<?= $page - 1 ?>&search=<?= urlencode($search_query) ?>&sort_by=<?= urlencode($sort_by) ?>&sort_order=<?= urlencode($sort_order) ?>&status=<?= urlencode($status_filter) ?>&role=<?= urlencode($role_filter) ?>">Previous</a>
                 <?php endif; ?>
 
                 <!-- Page Numbers -->
-                <?php for ($i = 1; $i <= $total_pages; $i++): ?>
-                    <?php if ($i == $page): ?>
-                        <span class="current-page"><?= $i ?></span>
-                    <?php else: ?>
-                        <a href="?search=<?= urlencode($search_query) ?>&page=<?= $i ?>&sort_by=<?= urlencode($sort_by) ?>&sort_order=<?= urlencode($sort_order) ?>&status=<?= urlencode($status_filter) ?>&role=<?= urlencode($role_filter) ?>"><?= $i ?></a>
+                <?php
+                $page_range = 2; // Number of pages to show before and after the current page
+                $start_page = max(1, $page - $page_range);
+                $end_page = min($total_pages, $page + $page_range);
+
+                // Display "First" link if there are skipped pages
+                if ($start_page > 1): ?>
+                    <a href="?page=1&search=<?= urlencode($search_query) ?>&sort_by=<?= urlencode($sort_by) ?>&sort_order=<?= urlencode($sort_order) ?>&status=<?= urlencode($status_filter) ?>&role=<?= urlencode($role_filter) ?>">1</a>
+                    <?php if ($start_page > 2): ?>
+                        <span>...</span>
                     <?php endif; ?>
+                <?php endif; ?>
+
+                <?php for ($i = $start_page; $i <= $end_page; $i++): ?>
+                    <a href="?page=<?= $i ?>&search=<?= urlencode($search_query) ?>&sort_by=<?= urlencode($sort_by) ?>&sort_order=<?= urlencode($sort_order) ?>&status=<?= urlencode($status_filter) ?>&role=<?= urlencode($role_filter) ?>" class="<?= $i == $page ? 'current-page' : '' ?>">
+                        <?= $i ?>
+                    </a>
                 <?php endfor; ?>
 
-                <!-- Next Button -->
+                <!-- Display "Last" link if there are skipped pages -->
+                <?php if ($end_page < $total_pages): ?>
+                    <?php if ($end_page < $total_pages - 1): ?>
+                        <span>...</span>
+                    <?php endif; ?>
+                    <a href="?page=<?= $total_pages ?>&search=<?= urlencode($search_query) ?>&sort_by=<?= urlencode($sort_by) ?>&sort_order=<?= urlencode($sort_order) ?>&status=<?= urlencode($status_filter) ?>&role=<?= urlencode($role_filter) ?>"><?= $total_pages ?></a>
+                <?php endif; ?>
+
+                <!-- Next Page Link -->
                 <?php if ($page < $total_pages): ?>
-                    <a href="?search=<?= urlencode($search_query) ?>&page=<?= $page + 1 ?>&sort_by=<?= urlencode($sort_by) ?>&sort_order=<?= urlencode($sort_order) ?>&status=<?= urlencode($status_filter) ?>&role=<?= urlencode($role_filter) ?>">Next</a>
+                    <a href="?page=<?= $page + 1 ?>&search=<?= urlencode($search_query) ?>&sort_by=<?= urlencode($sort_by) ?>&sort_order=<?= urlencode($sort_order) ?>&status=<?= urlencode($status_filter) ?>&role=<?= urlencode($role_filter) ?>">Next</a>
                 <?php endif; ?>
             </div>
-
-            <?php else: ?>
+x
+        <?php else: ?>
             <p class="no-results">No User found.</p>
         <?php endif; ?>
-
+        
         <div class="action-buttons">
             <a href="registerUser.php"><button>Register New User</button></a>
             <a href="admin.php"><button>Back To Menu</button></a>
