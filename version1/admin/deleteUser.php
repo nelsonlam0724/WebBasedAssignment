@@ -2,7 +2,7 @@
 include '../_base.php';
 include '../_head.php';
 
-auth('Root', 'Admin');
+auth('Root');
 
 // Check if the form is submitted
 if (is_post()) {
