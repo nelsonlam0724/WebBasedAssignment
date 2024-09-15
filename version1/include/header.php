@@ -10,6 +10,9 @@ if ($userID != '0') {
     $countCartRecord->execute([$userID]);
     $result = $countCartRecord->fetch(PDO::FETCH_ASSOC);
 }
+
+
+
 ?>
 
 <!DOCTYPE html>
@@ -33,10 +36,10 @@ if ($userID != '0') {
 
         <div class="first-row">
 
-            <div class="search-bar">
+            <form class="search-bar"  method="get">
                 <button id="search-button"><i class='bx bx-search' style="font-size:15px;"></i> search</button>
-                <input id="search" type="text">
-            </div>
+                <input id="search" type="text" name="search">
+          </form>
 
             <div class="brand">
                 <h1> QIAN<span style="color:red">HO</span></h1>

@@ -1,15 +1,24 @@
 <?php
 include '../_base.php';
-
-$getProduct = $_db->query('SELECT * FROM product ');
-
+require_once '../lib/SimplePager.php';
 include '../include/header.php';
+
+$page = req('page', 1);
+$searchTerms = '%'.$search.'%';
+$p = new SimplePager('SELECT * FROM product ', [], 10, $page);
+$getProduct = $p->result;
+
+
 
 ?>
 <link rel="stylesheet" href="../css/product.css">
+
 <div class="items">
   <div class="line1">
-    <p>763 product</p>
+    <p><?= $p->item_count ?> product</p>
+    <p>
+    <?= $p->count ?> of <?= $p->item_count ?> product(s)
+   </p>
     <p style="cursor:pointer;background-color:yellow;padding:6px;">Filter <i class='bx bx-filter'></i></p>
   </div>
 
@@ -43,7 +52,12 @@ include '../include/header.php';
         </div>
       </div>
     <?php endforeach ?>
-
+  </div>
+  <div style="padding:30px;display:grid;place-items:center;">
+  <p style="padding:50px;">
+     <?= $p->page ?> / <?= $p->page_count ?>
+   </p>
+  <?= $p->html() ?>
   </div>
 </div>
 </body>

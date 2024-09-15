@@ -30,7 +30,7 @@
     /* grid-template-columns:25% 25% 25% 25%; */
     grid:auto/repeat(5,20% );
     padding: 10px 50px;
-    /* row-gap: 20px; */
+     row-gap: 20px; 
 }
 
 .items-card {
@@ -135,3 +135,24 @@
         -webkit-text-stroke-width: 3px;
             -webkit-text-stroke-color: white;
        }
+
+/* Pager */
+nav.pager {
+    padding: 0;
+    background: transparent;
+    display:flex;
+    gap:20px;
+}
+
+nav.pager a {
+    border-radius:10px;
+    outline: 1px solid #333;
+    padding:15px;
+    color:black;
+}
+
+nav.pager a.active {
+    background: #007bff;
+    color:white;
+}
+  
