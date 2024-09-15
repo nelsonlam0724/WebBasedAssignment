@@ -1,6 +1,6 @@
 <?php
 include '../_base.php';
-auth('Admin');
+auth('Root','Admin');
 
 // Define how many results per page
 $resultsPerPage = 5;

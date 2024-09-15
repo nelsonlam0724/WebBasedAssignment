@@ -1,6 +1,6 @@
 <?php
 include '../_base.php';
-auth('Admin');
+auth('Root','Admin');
 
 if (isset($_GET['file'])) {
     $fileName = basename($_GET['file']);

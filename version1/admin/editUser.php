@@ -2,25 +2,29 @@
 include '../_base.php';
 include '../_head.php';
 
-auth('Admin');
+auth('Root', 'Admin');
 
 // Check if ID is provided in the URL
 if (!isset($_GET['user_id'])) {
-    redirect('memberList.php');
+    redirect('userList.php');
 }
 
 $user_id = $_GET['user_id'];
 $page = isset($_GET['page']) ? (int)$_GET['page'] : 1;
 $search_query = isset($_GET['search']) ? trim($_GET['search']) : '';
 
-// Fetch the member's details
+// Fetch the user's details
 $stm = $_db->prepare('SELECT * FROM user WHERE user_id = ?');
 $stm->execute([$user_id]);
-$member = $stm->fetch(PDO::FETCH_OBJ);
+$user = $stm->fetch(PDO::FETCH_OBJ);
 
-if (!$member) {
-    redirect('memberList.php');
+if (!$user) {
+    redirect('userList.php');
 }
+
+// Determine the current user's role
+$current_role = $_SESSION['user']->role;
+$current_user_id = $_SESSION['user']->user_id;
 
 // Handle form submission
 if (is_post()) {
@@ -82,7 +86,7 @@ if (is_post()) {
         }
     } else {
         // Retain the current password
-        $hashed_password = $member->password;
+        $hashed_password = $user->password;
     }
 
     // Photo handling
@@ -96,20 +100,28 @@ if (is_post()) {
             $photo_name = save_photo_admin($new_photo);
         }
     } else {
-        $photo_name = $member->photo; // Retain the existing photo
+        $photo_name = $user->photo; // Retain the existing photo
     }
+
+    // Check if current user is trying to edit their own details
+    $is_editing_self = $user_id == $current_user_id;
 
     // If no errors, update the database
     if (empty($_err)) {
-        $stm = $_db->prepare('UPDATE user SET email = ?, name = ?, password = ?, role = ?, gender = ?, birthday = ?, photo = ?, status = ? WHERE user_id = ?');
-        $stm->execute([$new_email, $new_name, $hashed_password, $new_role, $new_gender, $new_birthday, $photo_name, $new_status, $user_id]);
+        // Additional check before updating
+        if ($current_role == 'Root' && $is_editing_self && $new_status == 'Banned') {
+            temp('info', 'You cannot banned yourself.');
+        } else {
+            $stm = $_db->prepare('UPDATE user SET email = ?, name = ?, password = ?, role = ?, gender = ?, birthday = ?, photo = ?, status = ? WHERE user_id = ?');
+            $stm->execute([$new_email, $new_name, $hashed_password, $new_role, $new_gender, $new_birthday, $photo_name, $new_status, $user_id]);
 
-        temp('info', 'Member updated successfully');
-        redirect('memberList.php');
+            temp('info', 'User updated successfully');
+            redirect('userList.php');
+        }
     }
 }
 
-$_title = 'Edit Member';
+$_title = 'Edit User';
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -123,19 +135,19 @@ $_title = 'Edit Member';
 </head>
 
 <body>
-    <h1>Edit Member</h1>
+    <h1>Edit User</h1>
     <form method="post" enctype="multipart/form-data" class="form">
         <div class="form-container">
             <div class="form-left">
                 <div class="form-group">
                     <label for="email">Email:</label>
-                    <input type="email" name="email" id="email" value="<?= htmlspecialchars($member->email) ?>" required maxlength="100">
+                    <input type="email" name="email" id="email" value="<?= htmlspecialchars($user->email) ?>" required maxlength="100">
                     <?= isset($_err['email']) ? "<span class='error'>{$_err['email']}</span>" : '' ?>
                 </div>
 
                 <div class="form-group">
                     <label for="name">Username:</label>
-                    <input type="text" name="name" id="name" value="<?= htmlspecialchars($member->name) ?>" required maxlength="100">
+                    <input type="text" name="name" id="name" value="<?= htmlspecialchars($user->name) ?>" required maxlength="100">
                     <?= isset($_err['name']) ? "<span class='error'>{$_err['name']}</span>" : '' ?>
                 </div>
 
@@ -152,33 +164,44 @@ $_title = 'Edit Member';
                 </div>
 
                 <div class="form-group">
-                    <label for="role">Role:</label>
-                    <input type="text" name="role" id="role" value="<?= htmlspecialchars($member->role) ?>" readonly>
+                    <?php if ($current_role == 'Root' && $user_id == $current_user_id): ?>
+                        <label for="role">Role:</label>
+                        <input type="text" name="role" id="role" value="<?= htmlspecialchars($user->role) ?>" readonly>
+                    <?php elseif ($current_role == 'Root'): ?>
+                        <label for="role">Role:</label>
+                        <select name="role" id="role">
+                            <option value="Admin" <?= $user->role == 'Admin' ? 'selected' : '' ?>>Admin</option>
+                            <option value="Member" <?= $user->role == 'Member' ? 'selected' : '' ?>>Member</option>
+                        </select>
+                    <?php elseif ($current_role == 'Admin'): ?>
+                        <label for="role">Role:</label>
+                        <input type="text" name="role" id="role" value="<?= htmlspecialchars($user->role) ?>" readonly>
+                    <?php endif; ?>
                 </div>
 
                 <div class="form-group">
                     <label for="gender">Gender:</label>
                     <select name="gender" id="gender">
-                        <option value="Male" <?= $member->gender == 'Male' ? 'selected' : '' ?>>Male</option>
-                        <option value="Female" <?= $member->gender == 'Female' ? 'selected' : '' ?>>Female</option>
+                        <option value="Male" <?= $user->gender == 'Male' ? 'selected' : '' ?>>Male</option>
+                        <option value="Female" <?= $user->gender == 'Female' ? 'selected' : '' ?>>Female</option>
                     </select>
                     <?= isset($_err['gender']) ? "<span class='error'>{$_err['gender']}</span>" : '' ?>
                 </div>
             </div>
 
             <div class="form-right">
-
                 <div class="form-group">
                     <label for="status">Status:</label>
                     <select name="status" id="status">
-                        <option value="Active" <?= $member->status == 'Active' ? 'selected' : '' ?>>Active</option>
-                        <option value="Banned" <?= $member->status == 'Banned' ? 'selected' : '' ?>>Banned</option>
+                        <option value="Active" <?= $user->status == 'Active' ? 'selected' : '' ?>>Active</option>
+                        <option value="Banned" <?= $user->status == 'Banned' ? 'selected' : '' ?>>Banned</option>
                     </select>
                     <?= isset($_err['status']) ? "<span class='error'>{$_err['status']}</span>" : '' ?>
                 </div>
+
                 <div class="form-group">
                     <label for="birthday">Birthday:</label>
-                    <input type="date" name="birthday" id="birthday" value="<?= htmlspecialchars($member->birthday) ?>" required>
+                    <input type="date" name="birthday" id="birthday" value="<?= htmlspecialchars($user->birthday) ?>" required>
                     <?= isset($_err['birthday']) ? "<span class='error'>{$_err['birthday']}</span>" : '' ?>
                 </div>
 
@@ -186,22 +209,18 @@ $_title = 'Edit Member';
                 <div class="form-group upload">
                     <label class="upload">
                         <?= html_file('photo', 'image/*', 'hidden') ?>
-                        <img src="../uploads/<?= htmlspecialchars($member->photo) ?>" alt="Profile Photo">
+                        <img src="../uploads/<?= htmlspecialchars($user->photo) ?>" alt="Profile Photo">
                     </label>
                     <?= isset($_err['photo']) ? "<span class='error'>{$_err['photo']}</span>" : '' ?>
                 </div>
             </div>
         </div>
 
-        <button type="submit">Update Member</button>
+        <div class="form-actions">
+            <button type="submit">Update User</button>
+            <a href="userList.php"><button>Cancel</button></a>
+        </div>
     </form>
-
-    <div class="action-buttons">
-        <a href="memberList.php?page=<?= htmlspecialchars($page) ?>&search=<?= urlencode($search_query) ?>">
-            <button>Back to Member List</button>
-        </a>
-    </div>
-
 </body>
 
 </html>
