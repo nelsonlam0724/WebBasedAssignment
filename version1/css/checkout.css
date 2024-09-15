@@ -32,7 +32,7 @@
     padding: 30px;
     width: 16.5cm;
     display: none;
-    z-index:2;
+    z-index:50;
 }
 
 .address-form {
@@ -151,7 +151,7 @@
 
 }
 
-#map {
+#maps {
     height: 4.5cm;
     width: 100%;
 
