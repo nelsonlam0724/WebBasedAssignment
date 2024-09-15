@@ -2,8 +2,7 @@
 include '../_base.php';
 include '../_head.php';
 
-auth('Admin');
-
+auth('Root','Admin');
 // Get search query, page number, sort parameters, and status filter
 $search_query = isset($_GET['search']) ? trim($_GET['search']) : '';
 $page = isset($_GET['page']) ? (int)$_GET['page'] : 1;

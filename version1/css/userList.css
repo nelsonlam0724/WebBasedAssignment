@@ -77,11 +77,11 @@ th {
     background-color: #f4f4f4;
 }
 
-.actions, .delete {
+.actions, .delete, .deactivate {
     width: 100px; /* Set column width */
 }
 
-.actions button, .delete button {
+.actions button, .delete button, .deactivate button  {
     width: 100%; /* Make buttons fill the column width */
     margin: 0; /* Remove extra margin */
 }
@@ -99,6 +99,14 @@ th {
 }
 
 .delete button:hover {
+    background-color: #c82333;
+}
+
+.deactivate button {
+    background-color: #dc3545;
+}
+
+.deactivate button:hover {
     background-color: #c82333;
 }
 
@@ -120,7 +128,6 @@ th {
 
 .pagination {
     text-align: center;
-    margin: 20px 0;
 }
 
 .pagination a {
@@ -133,14 +140,13 @@ th {
     text-decoration: none;
 }
 
-.pagination a:hover{
+.pagination a:hover {
     background-color: #007bff;
     color: white;
 }
 
 .pagination .current-page {
     margin: 0 5px;
-    padding: 5px 10px;
     border: 1px solid #007bff;
     background-color: #007bff;
     color: #ffffff;

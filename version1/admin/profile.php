@@ -2,7 +2,7 @@
 include '../_base.php';
 include '../_head.php';
 
-auth('Admin');
+auth('Root','Admin');
 $user = $_SESSION['user'];
 
 // Initialize error array

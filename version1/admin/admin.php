@@ -2,7 +2,7 @@
 include '../_base.php';
 include '../_head.php';
 
-auth('Admin');
+auth('Root','Admin');
 // Fetch user profile information
 $user = $_SESSION['user'];
 
@@ -22,7 +22,7 @@ $_title = 'Admin Dashboard - ' . htmlspecialchars($user->name);
     <nav>
         <ul>
             <li><a href="profile.php">Admin Profile</a></li>
-            <li><a href="memberList.php">Member List</a></li>
+            <li><a href="userList.php">User List</a></li>
             <li><a href="backup.php">Backup</a></li>
             <li><a href="restore.php">Restore</a></li>
             <li><a href="../customer/customer.php">Customer Page</a></li>

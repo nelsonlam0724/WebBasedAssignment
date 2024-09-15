@@ -2,7 +2,11 @@
 include '../_base.php';
 include '../_head.php';
 
-auth('Admin');
+auth('Root', 'Admin'); // Allow both Root and Admin to access
+
+// Determine the logged-in user's role
+$current_role = $_SESSION['user']->role;
+$current_user_id = $_SESSION['user']->user_id;
 
 // Handle form submission
 if (is_post()) {
@@ -13,6 +17,13 @@ if (is_post()) {
     $f = get_file('photo');
     $gender = req('gender');
     $birthday = req('birthday');
+
+    // Set role based on the logged-in user
+    if ($current_user_role === 'Root') {
+        $role = req('role'); // Root can select the role
+    } else {
+        $role = 'Member'; // Admin can only register members
+    }
 
     // Validate: email
     if (!$email) {
@@ -55,7 +66,6 @@ if (is_post()) {
         $_err['gender'] = 'Invalid gender';
     }
 
-
     // Validate: birthday
     if (!$birthday) {
         $_err['birthday'] = 'Required';
@@ -69,7 +79,6 @@ if (is_post()) {
             $input_date = new DateTime($birthday);
             $today = new DateTime();  // Today's date
 
-            // Set the time of both dates to the start of the day to ensure accurate comparison
             $input_date->setTime(0, 0, 0);
             $today->setTime(0, 0, 0);
 
@@ -78,7 +87,6 @@ if (is_post()) {
             }
         }
     }
-
 
     // Validate: photo (file)
     if (!$f) {
@@ -95,16 +103,16 @@ if (is_post()) {
 
         $stm = $_db->prepare('
             INSERT INTO user (email, password, name, gender, birthday, photo, role, status)
-            VALUES (?, SHA1(?), ?, ?, ?, ?, "Member", "Active")
+            VALUES (?, SHA1(?), ?, ?, ?, ?, ?, "Active")
         ');
-        $stm->execute([$email, $password, $name, $gender, $birthday, $photo]);
+        $stm->execute([$email, $password, $name, $gender, $birthday, $photo, $role]);
 
         temp('info', 'Record inserted');
         redirect();
     }
 }
 
-$_title = 'Register Member';
+$_title = 'Register User';
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -120,7 +128,7 @@ $_title = 'Register Member';
 </head>
 
 <body>
-    <h1>Register New Member</h1>
+    <h1>Register New User</h1>
     <?php if (isset($_err['general'])): ?>
         <p class="error"><?= htmlspecialchars($_err['general']) ?></p>
     <?php endif; ?>
@@ -131,7 +139,7 @@ $_title = 'Register Member';
                 <?= html_text('name', 'maxlength="100"') ?>
                 <?= err('name') ?>
 
-                <label for="email">Email</label>
+                <label for="email">Email:</label>
                 <?= html_text('email', 'maxlength="100"') ?>
                 <?= err('email') ?>
                 <br>
@@ -160,6 +168,21 @@ $_title = 'Register Member';
                 <?= html_date('birthday', 'required') ?>
                 <?= err('birthday') ?>
 
+                <?php if ($current_role == 'Root'): ?>
+                    <label for="role">Role:</label>
+                    <?php
+                    $roleOptions = [
+                        'Member' => 'Member',
+                        'Admin' => 'Admin'
+                    ];
+                    html_select('role', $roleOptions);
+                    ?>
+                    <?= err('role') ?>
+
+                <?php else: ?>
+                    <input type="hidden" name="role" value="Member">
+                <?php endif; ?>
+
                 <label for="photo">Photo:</label>
                 <label class="upload">
                     <?= html_file('photo', 'image/*', 'hidden') ?>
@@ -174,8 +197,7 @@ $_title = 'Register Member';
         </section>
     </form>
     <div class="action-buttons">
-        <a href="memberList.php"><button>Back to Member List</button></a>
-        </a>
+        <a href="userList.php"><button>Back to User List</button></a>
     </div>
 </body>
 

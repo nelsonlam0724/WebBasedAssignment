@@ -2,7 +2,7 @@
 include '../_base.php';
 include '../_head.php';
 
-auth('Admin','Member');
+auth('Role','Admin','Member');
 // Fetch user profile information
 $user = $_SESSION['user'];
 

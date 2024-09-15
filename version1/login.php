@@ -129,7 +129,7 @@ if (is_post()) {
                 }
 
                 temp('info', 'Login Successfully.');
-                if ($u->role == 'Admin') {
+                if ($u->role == 'Admin' || $u->role == 'Root') {
                     $redirectUrl = 'admin/admin.php';
                 } elseif ($u->role == 'Member' && $u->status == 'Active') {
                     $redirectUrl = 'customer/customer.php';

@@ -2,8 +2,7 @@
 include '../_base.php';
 include '../_head.php';
 
-auth('Admin');
-
+auth('Root','Admin');
 $user = $_SESSION['user'];
 
 // Initialize error array
@@ -127,7 +126,7 @@ if (is_post()) {
     }
 }
 
-$_title = 'Edit Admin Profile';
+$_title = 'Edit Profile';
 ?>
 
 <!DOCTYPE html>
