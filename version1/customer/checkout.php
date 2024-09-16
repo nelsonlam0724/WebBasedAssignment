@@ -1,11 +1,7 @@
 <?php
 include '../_base.php';
 include '../include/header.php';
-
 $cartSelect =  $_SESSION['cartSelection'];
-
-
-
 $total = 0;
 
 $productIds = array_keys($cartSelect);
@@ -34,7 +30,7 @@ if (is_post()) {
   $name = req('receipent_name');
   $count = req('count');
   $total = req('total');
-
+ 
 
   if (!$address) {
     $_err['valueUpated'] = 'Address is Required!**';
@@ -85,7 +81,16 @@ if (is_post()) {
     }
 
     $_db->commit();
+
+    $stm = $_db->prepare('
+    INSERT INTO `payment_record` (user_id,amount,method,order_id) VALUES (?, ? ,? , ?)
+    ');
+
+    $stm->execute([$userID, $total, $paymentMethod, $id]);
+  
+    $_SESSION['order_id'] = $id;
     redirect('payment.php');
+    exit();
   }
 }
 
