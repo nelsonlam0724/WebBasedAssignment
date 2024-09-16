@@ -148,7 +148,7 @@ $_title = 'User List';
                             <td><?= htmlspecialchars($user->status) ?></td>
                             <td><?= htmlspecialchars($user->role) ?></td>
                             <td class="actions">
-                                <a href="userDetails.php?user_id=<?= urlencode($user->user_id) ?>&page=<?= $page ?>&search=<?= urlencode($search_query) ?>&sort_by=<?= urlencode($sort_by) ?>&sort_order=<?= urlencode($sort_order) ?>">
+                                <a href="displayUser.php?user_id=<?= urlencode($user->user_id) ?>&page=<?= $page ?>&search=<?= urlencode($search_query) ?>&sort_by=<?= urlencode($sort_by) ?>&sort_order=<?= urlencode($sort_order) ?>">
                                     <button>Details</button>
                                 </a>
                             </td>
