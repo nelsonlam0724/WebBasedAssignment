@@ -1,67 +1,50 @@
 <?php
 include '../_base.php';
 include '../_head.php';
+require_once '../lib/SimplePager.php'; // Include SimplePager class
 
 auth('Root', 'Admin');  // Ensure both Root and Admin roles can access this page
 
-// Get the current logged-in user role and user ID
-$current_role = $_SESSION['user']->role;
-$current_user_id = $_SESSION['user']->user_id;
-
-// Get search query, page number, sort parameters, status filter, and role filter
+// Initialize variables
 $search_query = isset($_GET['search']) ? trim($_GET['search']) : '';
+$role_filter = isset($_GET['role']) ? trim($_GET['role']) : '';
+$status_filter = isset($_GET['status']) ? trim($_GET['status']) : '';
+$sort_by = isset($_GET['sort_by']) ? trim($_GET['sort_by']) : 'user_id';
+$sort_order = isset($_GET['sort_order']) ? trim($_GET['sort_order']) : 'ASC';
 $page = isset($_GET['page']) ? (int)$_GET['page'] : 1;
-$records_per_page = 5;
-$offset = ($page - 1) * $records_per_page;
-$sort_by = isset($_GET['sort_by']) ? $_GET['sort_by'] : 'user_id'; // Default sort by id
-$sort_order = isset($_GET['sort_order']) ? $_GET['sort_order'] : 'ASC'; // Default sort order ascending
-$status_filter = isset($_GET['status']) ? $_GET['status'] : ''; // Status filter
-$role_filter = isset($_GET['role']) ? $_GET['role'] : ''; // Role filter
+$limit = 5; // Number of records per page
 
-// Build SQL query with search filter, status filter, and role filter (without pagination and sorting)
-$sql = 'SELECT * FROM user WHERE 1=1'; // Base query (fetch all users)
+// Start constructing the query
+$query = 'SELECT * FROM user WHERE 1=1';
 $params = [];
 
-if ($current_role == 'Admin') {
-    $sql .= ' AND role = ?';
-    $params[] = 'member';
-}
-
-if ($role_filter) {
-    $sql .= ' AND role = ?';
-    $params[] = $role_filter;
-}
-
+// Add search condition if provided
 if ($search_query) {
-    $sql .= ' AND name LIKE ?';
+    $query .= ' AND name LIKE ?';
     $params[] = '%' . $search_query . '%';
 }
 
+// Add role filter if provided
+if ($role_filter) {
+    $query .= ' AND role = ?';
+    $params[] = $role_filter;
+}
+
+// Add status filter if provided
 if ($status_filter) {
-    $sql .= ' AND status = ?';
+    $query .= ' AND status = ?';
     $params[] = $status_filter;
 }
 
-// Fetch all filtered records
-$stm = $_db->prepare($sql);
-$stm->execute($params);
-$all_filtered_users = $stm->fetchAll(PDO::FETCH_OBJ);
+// Add sorting
+$query .= " ORDER BY $sort_by $sort_order";
 
-// Apply sorting to the filtered results
-usort($all_filtered_users, function ($a, $b) use ($sort_by, $sort_order) {
-    $valueA = $a->$sort_by;
-    $valueB = $b->$sort_by;
-    if ($sort_order === 'ASC') {
-        return $valueA <=> $valueB;
-    } else {
-        return $valueB <=> $valueA;
-    }
-});
+// Initialize SimplePager with the query, parameters, limit, and current page
+$pager = new SimplePager($query, $params, $limit, $page);
 
-// Apply pagination to the sorted, filtered results
-$total_records = count($all_filtered_users);
-$total_pages = ceil($total_records / $records_per_page);
-$users = array_slice($all_filtered_users, $offset, $records_per_page);
+// Get results for the current page
+$users = $pager->result;
+$total_pages = $pager->page_count;
 
 // Fetch roles and statuses for filter options
 $roles_stm = $_db->query('SELECT DISTINCT role FROM user');
@@ -80,16 +63,21 @@ $_title = 'User List';
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="../css/userList.css">
-    <title><?= $_title ?></title>
+    <title><?= htmlspecialchars($_title) ?></title>
 </head>
 
 <body>
     <div class="container">
-        <h1>User List</h1>
+        <h1><?= htmlspecialchars($_title) ?></h1>
 
         <!-- Search Form -->
         <form action="userList.php" method="get">
             <input type="text" name="search" placeholder="Search by name" value="<?= htmlspecialchars($search_query) ?>">
+            <input type="hidden" name="role" value="<?= htmlspecialchars($role_filter) ?>">
+            <input type="hidden" name="status" value="<?= htmlspecialchars($status_filter) ?>">
+            <input type="hidden" name="sort_by" value="<?= htmlspecialchars($sort_by) ?>">
+            <input type="hidden" name="sort_order" value="<?= htmlspecialchars($sort_order) ?>">
+            <input type="hidden" name="page" value="1"> <!-- Always start at page 1 for new searches -->
             <button type="submit" class="form-button">Search</button>
         </form>
 
@@ -97,22 +85,18 @@ $_title = 'User List';
         <div class="filter-sorting">
             <form action="userList.php" method="get">
                 <input type="hidden" name="search" value="<?= htmlspecialchars($search_query) ?>">
-                <input type="hidden" name="page" value="<?= $page ?>">
+                <input type="hidden" name="page" value="1"> <!-- Always start at page 1 for new filters and sorting -->
 
                 <!-- Role Filter -->
-                <?php if ($current_role == 'Root'): ?>
-                    <label for="role">Role:</label>
-                    <select name="role" id="role" onchange="this.form.submit()">
-                        <option value="">All Roles</option>
-                        <?php foreach ($roles as $role): ?>
-                            <option value="<?= htmlspecialchars($role) ?>" <?= $role == $role_filter ? 'selected' : '' ?>>
-                                <?= htmlspecialchars($role) ?>
-                            </option>
-                        <?php endforeach; ?>
-                    </select>
-                <?php else: ?>
-                    <input type="hidden" name="role" value="member">
-                <?php endif; ?>
+                <label for="role">Role:</label>
+                <select name="role" id="role" onchange="this.form.submit()">
+                    <option value="">All Roles</option>
+                    <?php foreach ($roles as $role): ?>
+                        <option value="<?= htmlspecialchars($role) ?>" <?= $role == $role_filter ? 'selected' : '' ?>>
+                            <?= htmlspecialchars($role) ?>
+                        </option>
+                    <?php endforeach; ?>
+                </select>
 
                 <!-- Status Filter -->
                 <label for="status">Status:</label>
@@ -141,6 +125,7 @@ $_title = 'User List';
             </form>
         </div>
 
+
         <!-- User Table -->
         <?php if ($users): ?>
             <table>
@@ -162,45 +147,26 @@ $_title = 'User List';
                             <td><?= htmlspecialchars($user->email) ?></td>
                             <td><?= htmlspecialchars($user->status) ?></td>
                             <td><?= htmlspecialchars($user->role) ?></td>
-
                             <td class="actions">
-                                <a href="userDetails.php?user_id=<?= $user->user_id ?>&page=<?= $page ?>&search=<?= urlencode($search_query) ?>&sort_by=<?= urlencode($sort_by) ?>&sort_order=<?= urlencode($sort_order) ?>">
+                                <a href="userDetails.php?user_id=<?= urlencode($user->user_id) ?>&page=<?= $page ?>&search=<?= urlencode($search_query) ?>&sort_by=<?= urlencode($sort_by) ?>&sort_order=<?= urlencode($sort_order) ?>">
                                     <button>Details</button>
                                 </a>
                             </td>
                             <td class="actions">
-                                <a href="editUser.php?user_id=<?= $user->user_id ?>&page=<?= $page ?>&search=<?= urlencode($search_query) ?>&sort_by=<?= urlencode($sort_by) ?>&sort_order=<?= urlencode($sort_order) ?>">
+                                <a href="editUser.php?user_id=<?= urlencode($user->user_id) ?>&page=<?= $page ?>&search=<?= urlencode($search_query) ?>&sort_by=<?= urlencode($sort_by) ?>&sort_order=<?= urlencode($sort_order) ?>">
                                     <button>Edit</button>
                                 </a>
                             </td>
-                            <?php if ($current_role == 'Root'): ?>
-                                <td class="delete">
-                                    <!-- If the current user is a root and not the same user, show Delete button -->
-                                    <form action="deleteUser.php?user_id=<?= $user->user_id ?>&search=<?= urlencode($search_query) ?>
-                                    &page=<?= $page - 1 ?>&sort_by=<?= urlencode($sort_by) ?>&sort_order=<?= urlencode($sort_order) ?>
-                                    &status=<?= urlencode($status_filter) ?>&role=<?= urlencode($role_filter) ?>" method="post" style="display:inline;">
-                                        <input type="hidden" name="id" value="<?= $user->user_id ?>">
-                                        <button type="submit" onclick="return confirm('Are you sure you want to delete this user?');">Delete</button>
-                                    </form>
-                                </td>
-                            <?php endif; ?>
-                            <?php if ($current_role == 'Admin' && $user->status != 'banned'): ?>
-                                <td class="deactivate">
-                                    <!-- If the current user is a root and not the same user, show Deactivate button -->
-                                    <form action="deactivateUser.php?user_id=<?= $user->user_id ?>&search=<?= urlencode($search_query) ?>
-                                    &page=<?= $page - 1 ?>&sort_by=<?= urlencode($sort_by) ?>&sort_order=<?= urlencode($sort_order) ?>
-                                    &status=<?= urlencode($status_filter) ?>&role=<?= urlencode($role_filter) ?>" method="post" style="display:inline;">
-                                        <input type="hidden" name="id" value="<?= $user->user_id ?>">
-                                        <button type="submit" onclick="return confirm('Are you sure you want to deactivate this user?');">Deactivate</button>
-                                    </form>
-                                </td>
-                            <?php endif; ?>
+                            <td class="actions">
+                                <a href="deleteUser.php?user_id=<?= urlencode($user->user_id) ?>&page=<?= $page ?>&search=<?= urlencode($search_query) ?>&sort_by=<?= urlencode($sort_by) ?>&sort_order=<?= urlencode($sort_order) ?>">
+                                    <button>Delete</button>
+                                </a>
+                            </td>
                         </tr>
                     <?php endforeach; ?>
                 </tbody>
             </table>
 
-            <!-- Pagination -->
             <div class="pagination">
                 <!-- Previous Page Link -->
                 <?php if ($page > 1): ?>
@@ -213,7 +179,6 @@ $_title = 'User List';
                 $start_page = max(1, $page - $page_range);
                 $end_page = min($total_pages, $page + $page_range);
 
-                // Display "First" link if there are skipped pages
                 if ($start_page > 1): ?>
                     <a href="?page=1&search=<?= urlencode($search_query) ?>&sort_by=<?= urlencode($sort_by) ?>&sort_order=<?= urlencode($sort_order) ?>&status=<?= urlencode($status_filter) ?>&role=<?= urlencode($role_filter) ?>">1</a>
                     <?php if ($start_page > 2): ?>
@@ -227,12 +192,13 @@ $_title = 'User List';
                     </a>
                 <?php endfor; ?>
 
-                <!-- Display "Last" link if there are skipped pages -->
                 <?php if ($end_page < $total_pages): ?>
                     <?php if ($end_page < $total_pages - 1): ?>
                         <span>...</span>
                     <?php endif; ?>
-                    <a href="?page=<?= $total_pages ?>&search=<?= urlencode($search_query) ?>&sort_by=<?= urlencode($sort_by) ?>&sort_order=<?= urlencode($sort_order) ?>&status=<?= urlencode($status_filter) ?>&role=<?= urlencode($role_filter) ?>"><?= $total_pages ?></a>
+                    <a href="?page=<?= $total_pages ?>&search=<?= urlencode($search_query) ?>&sort_by=<?= urlencode($sort_by) ?>&sort_order=<?= urlencode($sort_order) ?>&status=<?= urlencode($status_filter) ?>&role=<?= urlencode($role_filter) ?>">
+                        <?= $total_pages ?>
+                    </a>
                 <?php endif; ?>
 
                 <!-- Next Page Link -->
@@ -240,11 +206,11 @@ $_title = 'User List';
                     <a href="?page=<?= $page + 1 ?>&search=<?= urlencode($search_query) ?>&sort_by=<?= urlencode($sort_by) ?>&sort_order=<?= urlencode($sort_order) ?>&status=<?= urlencode($status_filter) ?>&role=<?= urlencode($role_filter) ?>">Next</a>
                 <?php endif; ?>
             </div>
-x
+
         <?php else: ?>
             <p class="no-results">No User found.</p>
         <?php endif; ?>
-        
+
         <div class="action-buttons">
             <a href="registerUser.php"><button>Register New User</button></a>
             <a href="admin.php"><button>Back To Menu</button></a>
