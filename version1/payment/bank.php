@@ -7,9 +7,9 @@ if (is_post()) {
     $cvv = req('cvv');
     $date = req('date');
 
-    $validation = $_db->prepare('SELECT * FROM `bank` WHERE ccv = ? AND year = ? AND card = ? AND name= ?');
-        $validation->execute([$cvv,$date,$card,$name]);
-        $validResult = $validation->fetch();
+    $validations = $_db->prepare('SELECT * FROM `bank` WHERE ccv = ? AND year = ? AND card = ? AND name= ?');
+        $validations->execute([$cvv,$date,$card,$name]);
+        $validResult = $validations->fetch();
 
     if (!$name) {
         $_err['name'] = '  **Name is required  ';
@@ -38,15 +38,15 @@ if (is_post()) {
     if (!$_err) {
         
 
-        if ($validResult) {
+        if ($validResult === false) {
            
-            redirect("../message/thanks.php");
+       
+            temp('info','Invalid card details. Please check and try again.');
+
         }else{
 
-            temp('info','Invalid card details. Please check and try again.');
-    
-
-           
+            redirect("../message/thanks.php");
+       
         }
     }
 }
