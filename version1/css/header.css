@@ -18,6 +18,10 @@ header{
    
  }
 
+ a{
+    color:black;
+ }
+
  header ,header .first-row ,header .second-row{
     width:100%;
  }

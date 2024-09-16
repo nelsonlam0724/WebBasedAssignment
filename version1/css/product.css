@@ -54,6 +54,60 @@
 
 }
 
+.filter-container {
+    position: relative;
+    display: inline-block;
+}
+
+.filter-button {
+    cursor: pointer;
+    background-color: yellow;
+    padding: 6px;
+    border: 1px solid #ccc;
+    display: inline-block;
+}
+
+.filter-button i {
+    margin-left: 5px;
+}
+
+
+.filter-list {
+    list-style-type: none;
+    margin: 0;
+    padding: 0;
+    display: none;
+    position: absolute;
+    background-color: white;
+    box-shadow: 0px 8px 16px rgba(0,0,0,0.2);
+    z-index: 1;
+    width: 100%;
+    right:0;
+}
+
+
+.filter-list  {
+    width:502px;
+
+    
+}
+
+.filter-list li {
+    padding:20px;
+    cursor: pointer;
+    border-bottom: 1px solid #ddd;
+}
+
+.filter-list li:hover {
+    background-color: #f1f1f1;
+}
+
+
+.filter-container:hover .filter-list {
+    display: block;
+}
+
+
 .text2 {
     padding: 20px;
     text-align: center;

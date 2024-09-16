@@ -37,10 +37,11 @@ if ($userID != '0') {
 
         <div class="first-row">
 
-        <form class="search-bar" method="get" action="../customer/product.php" onsubmit="return searchProduct()">
+   
+  <form class="search-bar" method="get" action="../customer/product.php" onsubmit="return searchProduct()">
     <button id="search-button" type="submit"><i class='bx bx-search' style="font-size:15px;"></i> search</button>
-    <input id="search" type="text" name="search">
-</form>
+    <?= html_text("search")  ?>
+   </form>
 <script>
     function searchProduct() {
         var search = $("#search").val();
@@ -84,13 +85,10 @@ if ($userID != '0') {
         <div class="second-row">
 
             <ul>
-                <li>SHOP</li>
-                <li>NEW</li>
-                <li>BRANDS</li>
-                <li>GIFTS</li>
-                <li>SALE</li>
-                <li>COMUNITY</li>
-                <li>MAPPENING IN STORE</li>
+            <li><a href="customerProfile.php">Profile</a></li>
+            <li><a href="product.php">Product</a></li>
+            <li><a href="information.php">View Details</a></li>
+            <li><a href="../logout.php">Logout</a></li>
             </ul>
 
         </div>
