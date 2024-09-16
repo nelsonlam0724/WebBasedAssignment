@@ -3,9 +3,9 @@ include '../_base.php';
 require_once '../lib/SimplePager.php';
 include '../include/header.php';
 
+$search = req('search');
 $page = req('page', 1);
-$searchTerms = '%'.$search.'%';
-$p = new SimplePager('SELECT * FROM product ', [], 10, $page);
+$p = new SimplePager('SELECT * FROM product WHERE name LIKE ?', ['%'.$search.'%'], 10, $page);
 $getProduct = $p->result;
 
 

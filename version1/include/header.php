@@ -2,8 +2,8 @@
 $user = $_SESSION['user']->name ?? 'guest';
 $userID = $_SESSION['user']->user_id  ?? '0';
 
-$countCartRecord=[];
-$result=[] ;
+$countCartRecord = [];
+$result = [];
 
 if ($userID != '0') {
     $countCartRecord = $_db->prepare('SELECT COUNT(*) AS total_records FROM carts WHERE user_id = ? ');
@@ -26,6 +26,7 @@ if ($userID != '0') {
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.js"></script>
+    
     <link rel="stylesheet" href="../css/header.css">
 </head>
 
@@ -36,10 +37,22 @@ if ($userID != '0') {
 
         <div class="first-row">
 
-            <form class="search-bar"  method="get">
-                <button id="search-button"><i class='bx bx-search' style="font-size:15px;"></i> search</button>
-                <input id="search" type="text" name="search">
-          </form>
+        <form class="search-bar" method="get" action="../customer/product.php" onsubmit="return searchProduct()">
+    <button id="search-button" type="submit"><i class='bx bx-search' style="font-size:15px;"></i> search</button>
+    <input id="search" type="text" name="search">
+</form>
+<script>
+    function searchProduct() {
+        var search = $("#search").val();
+
+        if (search === "") {
+            return false;
+        }
+
+        return true;
+    }
+</script>
+
 
             <div class="brand">
                 <h1> QIAN<span style="color:red">HO</span></h1>
@@ -59,12 +72,12 @@ if ($userID != '0') {
             <a href="../customer/cart.php">
                 <p style="font-size: 30px;cursor:pointer;color:black;" class="cart-icon">
                     <i class='bx bx-cart'></i>
-               <?php if ($userID != '0') {?>
-                    <span style="font-size:10px;">
-                    <?=  $result['total_records']  ?>
-                </span>
-                <?php } ?>
-            </P>
+                    <?php if ($userID != '0') { ?>
+                        <span style="font-size:10px;">
+                            <?= $result['total_records']  ?>
+                        </span>
+                    <?php } ?>
+                </P>
             </a>
 
         </div>
@@ -82,3 +95,4 @@ if ($userID != '0') {
 
         </div>
     </header>
+    
