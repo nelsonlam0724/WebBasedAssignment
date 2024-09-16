@@ -130,7 +130,7 @@ $_title = 'Member List';
                             <td><?= htmlspecialchars($member->status) ?></td>
 
                             <td class="actions">
-                                <a href="memberDetails.php?user_id=<?= $member->user_id ?>&page=<?= $page ?>&search=<?= urlencode($search_query) ?>&sort_by=<?= urlencode($sort_by) ?>&sort_order=<?= urlencode($sort_order) ?>">
+                                <a href="displayUser.php?user_id=<?= $member->user_id ?>&page=<?= $page ?>&search=<?= urlencode($search_query) ?>&sort_by=<?= urlencode($sort_by) ?>&sort_order=<?= urlencode($sort_order) ?>">
                                     <button>Details</button>
                                 </a>
                             </td>
