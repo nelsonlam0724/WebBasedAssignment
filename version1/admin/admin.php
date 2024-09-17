@@ -23,6 +23,7 @@ $_title = 'Admin Dashboard - ' . htmlspecialchars($user->name);
         <ul>
             <li><a href="profile.php">Admin Profile</a></li>
             <li><a href="userList.php">User List</a></li>
+            <li><a href="orderList.php">Order List</a></li>
             <li><a href="backup.php">Backup</a></li>
             <li><a href="restore.php">Restore</a></li>
             <li><a href="../customer/customer.php">Customer Page</a></li>

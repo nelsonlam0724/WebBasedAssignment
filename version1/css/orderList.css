@@ -1,0 +1,11 @@
+
+
+.action-buttons {
+    text-align: center;
+    margin: 20px 0;
+}
+
+.action-buttons a button {
+    width: 200px;
+    margin: 5px;
+}
