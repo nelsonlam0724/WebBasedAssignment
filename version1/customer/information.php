@@ -29,6 +29,8 @@ $results = $getPending->fetchAll();
         <label class="label" onclick="back()"><i class="fa fa-angle-double-left" style="color:white"></i>Back</label>
         <input class="input" name="tabs" type="radio" id="tab-1" checked="checked" />
         <label class="label" for="tab-1">To Pay</label>
+        
+        
         <div class="panel">
 
             <?php $count = 0;

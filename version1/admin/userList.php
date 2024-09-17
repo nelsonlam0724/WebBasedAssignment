@@ -4,6 +4,8 @@ include '../_head.php';
 require_once '../lib/SimplePager.php'; // Include SimplePager class
 
 auth('Root', 'Admin');  // Ensure both Root and Admin roles can access this page
+$current_role = $_SESSION['user']->role;
+$current_user_id = $_SESSION['user']->user_id;
 
 // Initialize variables
 $search_query = isset($_GET['search']) ? trim($_GET['search']) : '';
@@ -18,6 +20,10 @@ $limit = 5; // Number of records per page
 $query = 'SELECT * FROM user WHERE 1=1';
 $params = [];
 
+if ($current_role == 'Admin') {
+    $query .= ' AND role = ?';
+    $params[] = 'member';
+}
 // Add search condition if provided
 if ($search_query) {
     $query .= ' AND name LIKE ?';
@@ -88,15 +94,19 @@ $_title = 'User List';
                 <input type="hidden" name="page" value="1"> <!-- Always start at page 1 for new filters and sorting -->
 
                 <!-- Role Filter -->
-                <label for="role">Role:</label>
-                <select name="role" id="role" onchange="this.form.submit()">
-                    <option value="">All Roles</option>
-                    <?php foreach ($roles as $role): ?>
-                        <option value="<?= htmlspecialchars($role) ?>" <?= $role == $role_filter ? 'selected' : '' ?>>
-                            <?= htmlspecialchars($role) ?>
-                        </option>
-                    <?php endforeach; ?>
-                </select>
+                <?php if ($current_role == 'Root'): ?>
+                    <label for="role">Role:</label>
+                    <select name="role" id="role" onchange="this.form.submit()">
+                        <option value="">All Roles</option>
+                        <?php foreach ($roles as $role): ?>
+                            <option value="<?= htmlspecialchars($role) ?>" <?= $role == $role_filter ? 'selected' : '' ?>>
+                                <?= htmlspecialchars($role) ?>
+                            </option>
+                        <?php endforeach; ?>
+                    </select>
+                <?php elseif ($current_role == 'Admin'): ?>
+                    <input type="hidden" name="role" value="Member">
+                <?php endif; ?>
 
                 <!-- Status Filter -->
                 <label for="status">Status:</label>
@@ -157,11 +167,28 @@ $_title = 'User List';
                                     <button>Edit</button>
                                 </a>
                             </td>
-                            <td class="actions">
-                                <a href="deleteUser.php?user_id=<?= urlencode($user->user_id) ?>&page=<?= $page ?>&search=<?= urlencode($search_query) ?>&sort_by=<?= urlencode($sort_by) ?>&sort_order=<?= urlencode($sort_order) ?>">
-                                    <button>Delete</button>
-                                </a>
-                            </td>
+                            <?php if ($current_role == 'Root'): ?>
+                                <td class="delete">
+                                    <!-- If the current user is a root and not the same user, show Delete button -->
+                                    <form action="deleteUser.php?user_id=<?= $user->user_id ?>&search=<?= urlencode($search_query) ?>
+                                    &page=<?= $page - 1 ?>&sort_by=<?= urlencode($sort_by) ?>&sort_order=<?= urlencode($sort_order) ?>
+                                    &status=<?= urlencode($status_filter) ?>&role=<?= urlencode($role_filter) ?>" method="post" style="display:inline;">
+                                        <input type="hidden" name="id" value="<?= $user->user_id ?>">
+                                        <button type="submit" onclick="return confirm('Are you sure you want to delete this user?');">Delete</button>
+                                    </form>
+                                </td>
+                            <?php endif; ?>
+                            <?php if ($current_role == 'Admin' && $user->status != 'banned'): ?>
+                                <td class="deactivate">
+                                    <!-- If the current user is a root and not the same user, show Deactivate button -->
+                                    <form action="deactivateUser.php?user_id=<?= $user->user_id ?>&search=<?= urlencode($search_query) ?>
+                                    &page=<?= $page - 1 ?>&sort_by=<?= urlencode($sort_by) ?>&sort_order=<?= urlencode($sort_order) ?>
+                                    &status=<?= urlencode($status_filter) ?>&role=<?= urlencode($role_filter) ?>" method="post" style="display:inline;">
+                                        <input type="hidden" name="id" value="<?= $user->user_id ?>">
+                                        <button type="submit" onclick="return confirm('Are you sure you want to deactivate this user?');">Deactivate</button>
+                                    </form>
+                                </td>
+                            <?php endif; ?>
                         </tr>
                     <?php endforeach; ?>
                 </tbody>
