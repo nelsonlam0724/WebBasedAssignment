@@ -89,7 +89,7 @@ include '../_head.php';
     <label for="photo">Product Photo</label><br>
     <label class="upload" tabindex="0">
         <?= html_file('photo', 'image/*', 'hidden') ?>
-        <img src="/images/photo.jpg">
+        <img src="../images/photo.jpg">
     </label>
     <?= err('photo') ?>
     <br>
@@ -115,6 +115,8 @@ include '../_head.php';
     <br>
     <button type="submit">Submit</button>
 </form>
+
+<script src="../js/product.js"></script>
 
 <?php
 include '../_foot.php';
