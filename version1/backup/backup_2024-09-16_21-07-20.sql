@@ -63,13 +63,22 @@ INSERT INTO user (user_id, name, email, password, gender, birthday, photo, role,
 INSERT INTO user (user_id, name, email, password, gender, birthday, photo, role, status, failed_attempts, last_failed_attempt, banned_until, last_login_time, login_count, last_login_event_time, deactivated_at, remember_token, remember_token_expiry) VALUES ('25', 'Emily King', 'emily.k@gmail.com', '7c4a8d09ca3762af61e59520943dc26494f8941b', 'Female', '2001-11-20', '66e164f231f73.jpg', 'Member', 'Banned', '0', '2024-09-10 08:33:18', '0000-00-00 00:00:00', '2024-09-12 10:00:22', '1', '2024-09-12 10:00:22', '0000-00-00 00:00:00', '', '0000-00-00 00:00:00');
 
 CREATE TABLE `bank` (
-  `id` int(11) NOT NULL AUTO_INCREMENT,
-  `balance` decimal(10,0) NOT NULL,
+  `id` int(11) NOT NULL,
+  `balance` decimal(10,2) NOT NULL,
   `name` varchar(255) NOT NULL,
   `ccv` varchar(255) NOT NULL,
   `phone` varchar(255) NOT NULL,
-  PRIMARY KEY (`id`)
+  `card` varchar(50) NOT NULL,
+  `expires` varchar(50) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `bank`
+--
+
+INSERT INTO `bank` (`id`, `balance`, `name`, `ccv`, `phone`, `card`, `expires`) VALUES
+(1, '901.00', 'Sun Wu Kong ', '258', '010-7890123', '4010101010101010', '09/21'),
+(2, '3500.25', 'Lee Wen Hao ', '217', '018-3535893', '4999969938799999', '09/23');
 
 
 CREATE TABLE `carts` (
@@ -147,66 +156,67 @@ CREATE TABLE `order_details` (
   `price` decimal(10,0) NOT NULL,
   `unit` int(11) NOT NULL,
   `subtotal` decimal(10,0) NOT NULL,
+  `order_status` ENUM('Pending', 'Cancelled', 'Delivered', 'Shipped') NOT NULL DEFAULT 'Pending',
   PRIMARY KEY (`order_id`,`product_id`),
   KEY `product_id` (`product_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
-INSERT INTO order_details (order_id, product_id, price, unit, subtotal) VALUES ('11', '6', '12', '3', '36');
-INSERT INTO order_details (order_id, product_id, price, unit, subtotal) VALUES ('11', '7', '12', '4', '48');
-INSERT INTO order_details (order_id, product_id, price, unit, subtotal) VALUES ('12', '6', '12', '3', '36');
-INSERT INTO order_details (order_id, product_id, price, unit, subtotal) VALUES ('12', '7', '12', '4', '48');
-INSERT INTO order_details (order_id, product_id, price, unit, subtotal) VALUES ('13', '6', '12', '3', '36');
-INSERT INTO order_details (order_id, product_id, price, unit, subtotal) VALUES ('13', '7', '12', '5', '60');
-INSERT INTO order_details (order_id, product_id, price, unit, subtotal) VALUES ('14', '6', '12', '3', '36');
-INSERT INTO order_details (order_id, product_id, price, unit, subtotal) VALUES ('14', '7', '12', '5', '60');
-INSERT INTO order_details (order_id, product_id, price, unit, subtotal) VALUES ('15', '6', '12', '1', '12');
-INSERT INTO order_details (order_id, product_id, price, unit, subtotal) VALUES ('16', '6', '12', '3', '36');
-INSERT INTO order_details (order_id, product_id, price, unit, subtotal) VALUES ('17', '6', '12', '1', '12');
-INSERT INTO order_details (order_id, product_id, price, unit, subtotal) VALUES ('17', '7', '12', '2', '24');
-INSERT INTO order_details (order_id, product_id, price, unit, subtotal) VALUES ('17', '8', '1000', '2', '2000');
-INSERT INTO order_details (order_id, product_id, price, unit, subtotal) VALUES ('18', '8', '1000', '3', '3000');
-INSERT INTO order_details (order_id, product_id, price, unit, subtotal) VALUES ('19', '6', '12', '4', '48');
-INSERT INTO order_details (order_id, product_id, price, unit, subtotal) VALUES ('19', '8', '1000', '3', '3000');
-INSERT INTO order_details (order_id, product_id, price, unit, subtotal) VALUES ('20', '6', '12', '4', '48');
-INSERT INTO order_details (order_id, product_id, price, unit, subtotal) VALUES ('20', '7', '12', '3', '36');
-INSERT INTO order_details (order_id, product_id, price, unit, subtotal) VALUES ('20', '8', '1000', '3', '3000');
-INSERT INTO order_details (order_id, product_id, price, unit, subtotal) VALUES ('21', '6', '12', '4', '48');
-INSERT INTO order_details (order_id, product_id, price, unit, subtotal) VALUES ('21', '8', '1000', '3', '3000');
-INSERT INTO order_details (order_id, product_id, price, unit, subtotal) VALUES ('22', '8', '1000', '10', '10000');
-INSERT INTO order_details (order_id, product_id, price, unit, subtotal) VALUES ('23', '6', '12', '5', '60');
-INSERT INTO order_details (order_id, product_id, price, unit, subtotal) VALUES ('23', '8', '1000', '5', '5000');
-INSERT INTO order_details (order_id, product_id, price, unit, subtotal) VALUES ('24', '6', '12', '5', '60');
-INSERT INTO order_details (order_id, product_id, price, unit, subtotal) VALUES ('24', '8', '1000', '6', '6000');
-INSERT INTO order_details (order_id, product_id, price, unit, subtotal) VALUES ('25', '6', '12', '5', '60');
-INSERT INTO order_details (order_id, product_id, price, unit, subtotal) VALUES ('25', '8', '1000', '6', '6000');
-INSERT INTO order_details (order_id, product_id, price, unit, subtotal) VALUES ('26', '6', '12', '5', '60');
-INSERT INTO order_details (order_id, product_id, price, unit, subtotal) VALUES ('27', '6', '12', '5', '60');
-INSERT INTO order_details (order_id, product_id, price, unit, subtotal) VALUES ('28', '6', '12', '5', '60');
-INSERT INTO order_details (order_id, product_id, price, unit, subtotal) VALUES ('29', '6', '12', '5', '60');
-INSERT INTO order_details (order_id, product_id, price, unit, subtotal) VALUES ('29', '8', '1000', '6', '6000');
-INSERT INTO order_details (order_id, product_id, price, unit, subtotal) VALUES ('30', '6', '12', '5', '60');
-INSERT INTO order_details (order_id, product_id, price, unit, subtotal) VALUES ('30', '8', '1000', '6', '6000');
-INSERT INTO order_details (order_id, product_id, price, unit, subtotal) VALUES ('31', '6', '12', '5', '60');
-INSERT INTO order_details (order_id, product_id, price, unit, subtotal) VALUES ('32', '6', '12', '5', '60');
-INSERT INTO order_details (order_id, product_id, price, unit, subtotal) VALUES ('32', '8', '1000', '1', '1000');
-INSERT INTO order_details (order_id, product_id, price, unit, subtotal) VALUES ('33', '6', '12', '5', '60');
-INSERT INTO order_details (order_id, product_id, price, unit, subtotal) VALUES ('34', '6', '12', '5', '60');
-INSERT INTO order_details (order_id, product_id, price, unit, subtotal) VALUES ('34', '8', '1000', '2', '2000');
-INSERT INTO order_details (order_id, product_id, price, unit, subtotal) VALUES ('35', '6', '12', '5', '60');
-INSERT INTO order_details (order_id, product_id, price, unit, subtotal) VALUES ('36', '8', '1000', '2', '2000');
-INSERT INTO order_details (order_id, product_id, price, unit, subtotal) VALUES ('37', '8', '1000', '2', '2000');
-INSERT INTO order_details (order_id, product_id, price, unit, subtotal) VALUES ('38', '8', '1000', '2', '2000');
-INSERT INTO order_details (order_id, product_id, price, unit, subtotal) VALUES ('39', '6', '12', '4', '48');
-INSERT INTO order_details (order_id, product_id, price, unit, subtotal) VALUES ('41', '6', '12', '16', '192');
-INSERT INTO order_details (order_id, product_id, price, unit, subtotal) VALUES ('42', '6', '12', '5', '60');
-INSERT INTO order_details (order_id, product_id, price, unit, subtotal) VALUES ('42', '7', '12', '1', '12');
-INSERT INTO order_details (order_id, product_id, price, unit, subtotal) VALUES ('42', '8', '1000', '2', '2000');
-INSERT INTO order_details (order_id, product_id, price, unit, subtotal) VALUES ('43', '7', '12', '3', '36');
-INSERT INTO order_details (order_id, product_id, price, unit, subtotal) VALUES ('43', '8', '1000', '4', '4000');
-INSERT INTO order_details (order_id, product_id, price, unit, subtotal) VALUES ('44', '8', '1000', '2', '2000');
-INSERT INTO order_details (order_id, product_id, price, unit, subtotal) VALUES ('44', '13', '45', '1', '45');
-INSERT INTO order_details (order_id, product_id, price, unit, subtotal) VALUES ('45', '8', '1000', '5', '5000');
-INSERT INTO order_details (order_id, product_id, price, unit, subtotal) VALUES ('45', '13', '45', '1', '45');
+INSERT INTO order_details (order_id, product_id, price, unit, subtotal, order_status) VALUES ('11', '6', '12', '3', '36', 'Pending');
+INSERT INTO order_details (order_id, product_id, price, unit, subtotal, order_status) VALUES ('11', '7', '12', '4', '48', 'Shipped');
+INSERT INTO order_details (order_id, product_id, price, unit, subtotal, order_status) VALUES ('12', '6', '12', '3', '36', 'Delivered');
+INSERT INTO order_details (order_id, product_id, price, unit, subtotal, order_status) VALUES ('12', '7', '12', '4', '48', 'Pending');
+INSERT INTO order_details (order_id, product_id, price, unit, subtotal, order_status) VALUES ('13', '6', '12', '3', '36', 'Shipped');
+INSERT INTO order_details (order_id, product_id, price, unit, subtotal, order_status) VALUES ('13', '7', '12', '5', '60', 'Cancelled');
+INSERT INTO order_details (order_id, product_id, price, unit, subtotal, order_status) VALUES ('14', '6', '12', '3', '36', 'Delivered');
+INSERT INTO order_details (order_id, product_id, price, unit, subtotal, order_status) VALUES ('14', '7', '12', '5', '60', 'Shipped');
+INSERT INTO order_details (order_id, product_id, price, unit, subtotal, order_status) VALUES ('15', '6', '12', '1', '12', 'Pending');
+INSERT INTO order_details (order_id, product_id, price, unit, subtotal, order_status) VALUES ('16', '6', '12', '3', '36', 'Delivered');
+INSERT INTO order_details (order_id, product_id, price, unit, subtotal, order_status) VALUES ('17', '6', '12', '1', '12', 'Cancelled');
+INSERT INTO order_details (order_id, product_id, price, unit, subtotal, order_status) VALUES ('17', '7', '12', '2', '24', 'Pending');
+INSERT INTO order_details (order_id, product_id, price, unit, subtotal, order_status) VALUES ('17', '8', '1000', '2', '2000', 'Shipped');
+INSERT INTO order_details (order_id, product_id, price, unit, subtotal, order_status) VALUES ('18', '8', '1000', '3', '3000', 'Delivered');
+INSERT INTO order_details (order_id, product_id, price, unit, subtotal, order_status) VALUES ('19', '6', '12', '4', '48', 'Cancelled');
+INSERT INTO order_details (order_id, product_id, price, unit, subtotal, order_status) VALUES ('19', '8', '1000', '3', '3000', 'Pending');
+INSERT INTO order_details (order_id, product_id, price, unit, subtotal, order_status) VALUES ('20', '6', '12', '4', '48', 'Shipped');
+INSERT INTO order_details (order_id, product_id, price, unit, subtotal, order_status) VALUES ('20', '7', '12', '3', '36', 'Delivered');
+INSERT INTO order_details (order_id, product_id, price, unit, subtotal, order_status) VALUES ('20', '8', '1000', '3', '3000', 'Pending');
+INSERT INTO order_details (order_id, product_id, price, unit, subtotal, order_status) VALUES ('21', '6', '12', '4', '48', 'Shipped');
+INSERT INTO order_details (order_id, product_id, price, unit, subtotal, order_status) VALUES ('21', '8', '1000', '3', '3000', 'Pending');
+INSERT INTO order_details (order_id, product_id, price, unit, subtotal, order_status) VALUES ('22', '8', '1000', '10', '10000', 'Cancelled');
+INSERT INTO order_details (order_id, product_id, price, unit, subtotal, order_status) VALUES ('23', '6', '12', '5', '60', 'Delivered');
+INSERT INTO order_details (order_id, product_id, price, unit, subtotal, order_status) VALUES ('23', '8', '1000', '5', '5000', 'Pending');
+INSERT INTO order_details (order_id, product_id, price, unit, subtotal, order_status) VALUES ('24', '6', '12', '5', '60', 'Shipped');
+INSERT INTO order_details (order_id, product_id, price, unit, subtotal, order_status) VALUES ('24', '8', '1000', '6', '6000', 'Delivered');
+INSERT INTO order_details (order_id, product_id, price, unit, subtotal, order_status) VALUES ('25', '6', '12', '5', '60', 'Pending');
+INSERT INTO order_details (order_id, product_id, price, unit, subtotal, order_status) VALUES ('25', '8', '1000', '6', '6000', 'Shipped');
+INSERT INTO order_details (order_id, product_id, price, unit, subtotal, order_status) VALUES ('26', '6', '12', '5', '60', 'Pending');
+INSERT INTO order_details (order_id, product_id, price, unit, subtotal, order_status) VALUES ('27', '6', '12', '5', '60', 'Cancelled');
+INSERT INTO order_details (order_id, product_id, price, unit, subtotal, order_status) VALUES ('28', '6', '12', '5', '60', 'Shipped');
+INSERT INTO order_details (order_id, product_id, price, unit, subtotal, order_status) VALUES ('29', '6', '12', '5', '60', 'Delivered');
+INSERT INTO order_details (order_id, product_id, price, unit, subtotal, order_status) VALUES ('29', '8', '1000', '6', '6000', 'Shipped');
+INSERT INTO order_details (order_id, product_id, price, unit, subtotal, order_status) VALUES ('30', '6', '12', '5', '60', 'Pending');
+INSERT INTO order_details (order_id, product_id, price, unit, subtotal, order_status) VALUES ('30', '8', '1000', '6', '6000', 'Delivered');
+INSERT INTO order_details (order_id, product_id, price, unit, subtotal, order_status) VALUES ('31', '6', '12', '5', '60', 'Cancelled');
+INSERT INTO order_details (order_id, product_id, price, unit, subtotal, order_status) VALUES ('32', '6', '12', '5', '60', 'Shipped');
+INSERT INTO order_details (order_id, product_id, price, unit, subtotal, order_status) VALUES ('32', '8', '1000', '1', '1000', 'Pending');
+INSERT INTO order_details (order_id, product_id, price, unit, subtotal, order_status) VALUES ('33', '6', '12', '5', '60', 'Delivered');
+INSERT INTO order_details (order_id, product_id, price, unit, subtotal, order_status) VALUES ('34', '6', '12', '5', '60', 'Shipped');
+INSERT INTO order_details (order_id, product_id, price, unit, subtotal, order_status) VALUES ('34', '8', '1000', '2', '2000', 'Pending');
+INSERT INTO order_details (order_id, product_id, price, unit, subtotal, order_status) VALUES ('35', '6', '12', '5', '60', 'Cancelled');
+INSERT INTO order_details (order_id, product_id, price, unit, subtotal, order_status) VALUES ('36', '8', '1000', '2', '2000', 'Delivered');
+INSERT INTO order_details (order_id, product_id, price, unit, subtotal, order_status) VALUES ('37', '8', '1000', '2', '2000', 'Shipped');
+INSERT INTO order_details (order_id, product_id, price, unit, subtotal, order_status) VALUES ('38', '8', '1000', '2', '2000', 'Pending');
+INSERT INTO order_details (order_id, product_id, price, unit, subtotal, order_status) VALUES ('39', '6', '12', '4', '48', 'Delivered');
+INSERT INTO order_details (order_id, product_id, price, unit, subtotal, order_status) VALUES ('41', '6', '12', '16', '192', 'Cancelled');
+INSERT INTO order_details (order_id, product_id, price, unit, subtotal, order_status) VALUES ('42', '6', '12', '5', '60', 'Shipped');
+INSERT INTO order_details (order_id, product_id, price, unit, subtotal, order_status) VALUES ('42', '7', '12', '1', '12', 'Pending');
+INSERT INTO order_details (order_id, product_id, price, unit, subtotal, order_status) VALUES ('42', '8', '1000', '2', '2000', 'Delivered');
+INSERT INTO order_details (order_id, product_id, price, unit, subtotal, order_status) VALUES ('43', '7', '12', '3', '36', 'Cancelled');
+INSERT INTO order_details (order_id, product_id, price, unit, subtotal, order_status) VALUES ('43', '8', '1000', '4', '4000', 'Shipped');
+INSERT INTO order_details (order_id, product_id, price, unit, subtotal, order_status) VALUES ('44', '8', '1000', '2', '2000', 'Pending');
+INSERT INTO order_details (order_id, product_id, price, unit, subtotal, order_status) VALUES ('44', '13', '45', '1', '45', 'Delivered');
+INSERT INTO order_details (order_id, product_id, price, unit, subtotal, order_status) VALUES ('45', '8', '1000', '5', '5000', 'Shipped');
+INSERT INTO order_details (order_id, product_id, price, unit, subtotal, order_status) VALUES ('45', '13', '45', '1', '45', 'Cancelled');
 
 CREATE TABLE `orders` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
@@ -257,15 +267,15 @@ INSERT INTO orders (id, user_id, datetime, total, ship_id, count, status) VALUES
 INSERT INTO orders (id, user_id, datetime, total, ship_id, count, status) VALUES ('45', '7', '2024-09-15 20:26:54', '4898.25', '47', '2', 'Pending');
 
 CREATE TABLE `payment_record` (
-  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `id` int(11) NOT NULL,
   `user_id` int(11) NOT NULL,
   `datetime` datetime NOT NULL,
-  `amount` decimal(10,0) NOT NULL,
+  `amount` decimal(10,2) NOT NULL,
   `method` varchar(55) NOT NULL,
-  `order_id` int(11) NOT NULL,
-  PRIMARY KEY (`id`),
-  KEY `order_id` (`order_id`)
+  `order_id` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+
 
 
 CREATE TABLE `product` (
