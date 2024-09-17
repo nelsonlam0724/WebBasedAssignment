@@ -173,7 +173,7 @@ $recordResult = $getPayRecord->fetch();
       html2pdf().from(container).set(options).save();
     }
     
-   history.pushState(null, null, location.href);
+  history.pushState(null, null, location.href);
   window.onpopstate = function () {
     history.go(1);
   };

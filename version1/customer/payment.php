@@ -25,5 +25,12 @@ if($result == 0){
 </div>
 
 </body>
-<script>document.querySelector("link[href='../css/header.css']").removeAttribute('disabled');</script>
+<script>
+document.querySelector("link[href='../css/header.css']").removeAttribute('disabled');
+history.pushState(null, null, location.href);
+  window.onpopstate = function () {
+    history.go(1);
+  }
+
+</script>
 </html>
