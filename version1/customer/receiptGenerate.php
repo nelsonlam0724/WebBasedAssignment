@@ -1,4 +1,6 @@
+@ -0,0 +1,187 @@
 <?php
+
 include '../_base.php';
 $cartSelect =  $_SESSION['cartSelection'];
 $total = 0;
@@ -21,14 +23,9 @@ if (!empty($productIds)) {
 $getShip = $_db->prepare('
 SELECT * FROM `shippers` WHERE ship_id = ?
 ');
+
 $getShip->execute([$_SESSION['ship_id'] ]);
 $resultss = $getShip->fetch();
-
-$getPayRecord = $_db->prepare('
-SELECT * FROM `payment_record` WHERE order_id = ?
-');
-$getPayRecord->execute([$_SESSION['order_id'] ]);
-$recordResult = $getPayRecord->fetch();
 ?>
 
 ?>
@@ -53,10 +50,11 @@ $recordResult = $getPayRecord->fetch();
     <h1>Online Payment Receipt</h1>
   <div class="receipt-info">
     <p><strong>Order Id : </strong> <?=  $_SESSION['order_id'] ?></p>
-    <p><strong>Date/Time : </strong>Paid at <?=  $recordResult->datetime ?></p>
-    <p><strong>Payment Method : </strong><?= $recordResult->method ?></p>
-    <p><strong>Delivery name : <?= $resultss->company_name ?></strong></p>
-    <p><strong>Destination : <?= $resultss->address ?></strong></p>
+    <p><strong>Date/Time :</strong></p>
+  <p>
+    <strong>Payment Method :</strong>
+</p>
+    <p><strong>Delivery method :</strong></p>
   </div>
  
   
@@ -130,11 +128,16 @@ $recordResult = $getPayRecord->fetch();
                 <tr>
                     <?php
                     $tax = ($subtotal * 0.02);
+
                     ?>
                     <td>Service Tax (2%) </td>
+
                     <td>RM <?= number_format($tax, 2, '.', '') ?></td>
-                </tr>     
-                <?php             
+                </tr>
+
+              
+                <?php 
+               
                if(isset($resultss->ship_method) && $resultss->ship_method == "pick"){ 
                      $fee =1.60;
                      $totalpay += $fee;
@@ -151,7 +154,7 @@ $recordResult = $getPayRecord->fetch();
 
       <tr>
         <td><strong>Total Payment:</strong></td>
-        <td><strong style="color:red">RM <?= number_format($totalpay = $subtotal - $discount + $tax + $fee, 2, '.', '') ?> </strong></td>
+        <td><strong style="color:red">RM <?= $totalpay = $subtotal - $discount + $tax ?> </strong></td>
       </tr>
     </table>
   </div>
@@ -177,6 +180,8 @@ $recordResult = $getPayRecord->fetch();
   window.onpopstate = function () {
     history.go(1);
   };
+  
+  
   </script>
   
 </body>
