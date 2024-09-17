@@ -1,0 +1,106 @@
+/* Form styling */
+form label {
+    font-weight: bold;
+    display: block;
+    margin-bottom: 5px;
+}
+
+form div {
+    margin-bottom: 15px;
+    font-size: 1.1em;
+}
+
+/* Table styling */
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 20px 0;
+    font-size: 1em;
+    text-align: left;
+}
+
+table th, table td {
+    padding: 12px 15px;
+}
+
+table th {
+    background-color: #934c8a;
+    color: white;
+}
+
+table tr:nth-child(even) {
+    background-color: #f2f2f2;
+}
+
+table tr:nth-child(odd) {
+    background-color: #ffffff;
+}
+
+table td {
+    text-align: center;
+}
+
+table th, table td {
+    border: 1px solid #ddd;
+}
+
+/* Button styling */
+button {
+    background-color: #904382;
+    color: white;
+    padding: 10px 20px;
+    border: none;
+    cursor: pointer;
+    border-radius: 25px;
+    transition: background-color 0.3s;
+}
+
+button:hover {
+    background-color: #7b3b70;
+}
+
+button:disabled {
+    background-color: #904882;
+    cursor: not-allowed;
+}
+
+/* Action buttons container */
+.action-buttons {
+    margin-top: 20px;
+    text-align: center;
+}
+
+.action-buttons button {
+    padding: 10px 15px;
+    border-radius: 25px;
+    background-color: #853f6a;
+    color: white;
+    border: none;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+.action-buttons button:hover {
+    background-color: #723170;
+}
+
+.order-details {
+    width: 30%;
+    border-collapse: collapse;
+    margin: 20px 0;
+}
+
+.order-details th, .order-details td {
+    padding: 10px;
+    border: 1px solid #ddd;
+    text-align: left;
+}
+
+.order-details th {
+    background-color: #4b26b0;
+    font-weight: bold;
+}
+
+.order-details td {
+    background-color: #ffffff;
+}

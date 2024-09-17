@@ -1,9 +1,11 @@
 @import url('https://fonts.googleapis.com/css?family=Source+Sans+Pro:400,400i,700,700i');
 @import url('https://fonts.googleapis.com/css?family=Bree+Serif');
+
 * {
   box-sizing: border-box;
   user-select: none;
 }
+
 body {
   display: flex;
   justify-content: center;
@@ -15,16 +17,19 @@ body {
   background-size: cover;
   background-repeat: no-repeat;
 }
+
 @media (min-width: 600px) {
   body {
     padding: 60px 10px;
   }
 }
+
 h1 {
   margin: 0;
   font-family: 'Bree Serif', serif;
   font-size: 36px;
 }
+
 p {
   margin-top: 20px;
   margin-bottom: 0;
@@ -32,147 +37,159 @@ p {
   font-size: 20px;
   line-height: 1.5;
 }
+
 .tabs {
   display: flex;
   flex-wrap: wrap;
-  background-color: rgba(0,0,106,0.8);
-  box-shadow: 0 48px 80px -32px rgba(0,0,0,0.3);
+  background-color: rgba(0, 0, 106, 0.8);
+  box-shadow: 0 48px 80px -32px rgba(0, 0, 0, 0.3);
   width: 100%;
-  top:200px;
+  top: 200px;
   position: absolute;
 }
+
 .input {
   position: absolute;
   opacity: 0;
 }
+
 .label {
   width: 100%;
   padding: 20px 30px;
-  background-color: rgba(0,0,106,0.8);
-    color: #fff;
+  background-color: rgba(0, 0, 106, 0.8);
+  color: #fff;
   cursor: pointer;
   font-weight: bold;
   font-size: 18px;
   color: white;
   transition: background 0.1s, color 0.1s;
 }
+
 .label:hover {
   background: #d8d8d8;
 }
+
 .label:active {
   background: #ccc;
 }
-.input:focus + .label {
+
+.input:focus+.label {
   z-index: 1;
 }
-.input:checked + .label {
+
+.input:checked+.label {
   background: #fff;
   color: #000;
 }
+
 @media (min-width: 600px) {
   .label {
     width: auto;
   }
 }
+
 .panel {
   display: none;
   padding: 20px 30px 30px;
   background: hsl(0, 19%, 95%);
   width: 100%;
 }
+
 @media (min-width: 600px) {
   .panel {
     order: 99;
   }
 }
-.input:checked + .label + .panel {
+
+.input:checked+.label+.panel {
   display: block;
 }
 
 .product-container {
-    display: flex;
-    align-items: center;
-    background-color: #fff;
-    border-radius: 8px;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-    margin-bottom: 20px;
-    overflow: hidden;
-    transition: box-shadow 0.3s ease;
-    padding: 15px; 
-  }
+  display: flex;
+  align-items: center;
+  background-color: #fff;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  margin-bottom: 20px;
+  overflow: hidden;
+  transition: box-shadow 0.3s ease;
+  padding: 15px;
+}
 
-  .product-container:hover {
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-  }
+.product-container:hover {
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
 
-  .product-image {
-    flex: 0 0 auto;
-    width: 120px;
-    height: auto;
-    border-radius: 8px 0 0 8px;
-  }
+.product-image {
+  flex: 0 0 auto;
+  width: 120px;
+  height: auto;
+  border-radius: 8px 0 0 8px;
+}
 
-  .product-details {
-    flex: 1 1 auto;
-    padding-left: 20px; 
-  }
+.product-details {
+  flex: 1 1 auto;
+  padding-left: 20px;
+}
 
-  .product-title {
-    font-weight: bold;
-    font-size: 1.2em;
-    margin-bottom: 5px;
-    color: #333;
-  }
+.product-title {
+  font-weight: bold;
+  font-size: 1.2em;
+  margin-bottom: 5px;
+  color: #333;
+}
 
-  .product-description {
-    margin-bottom: 10px;
-    color: #666;
-  }
+.product-description {
+  margin-bottom: 10px;
+  color: #666;
+}
 
-  .product-price {
-    font-size: 1.2em;
-    color: #27ae60;
-  }
+.product-price {
+  font-size: 1.2em;
+  color: #27ae60;
+}
 
-  .shipID{
-    font-size: x-large;
-    padding: 10px;
-  }
-
-
-  .item-container {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    border: 1px solid #ccc;
-    padding: 30px;
-    margin-bottom: 20px; 
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); 
-    border-radius: 8px; 
-
-  }
+.shipID {
+  font-size: x-large;
+  padding: 10px;
+}
 
 
-  .item-details {
-    display: flex;
-    align-items: center;
-  }
+.item-container {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border: 1px solid #ccc;
+  padding: 30px;
+  margin-bottom: 20px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  border-radius: 8px;
 
- 
-  .item-image {
-    margin-right: 20px;
-    border-radius: 8px; 
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-  }
+}
 
-  .item-text {
-    font-size: 18px;
-    color: #333;
-  }
 
-  
+.item-details {
+  display: flex;
+  align-items: center;
+}
 
- .rate-button,.check-button {
+
+.item-image {
+  margin-right: 20px;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.item-text {
+  font-size: 18px;
+  color: #333;
+}
+
+
+
+.rate-button,
+.check-button {
   background-color: initial;
   background-image: linear-gradient(-180deg, #FF7E31, #E62C03);
   border-radius: 6px;
@@ -180,7 +197,7 @@ p {
   color: #FFFFFF;
   cursor: pointer;
   display: inline-block;
-  font-family: Inter,-apple-system,system-ui,Roboto,"Helvetica Neue",Arial,sans-serif;
+  font-family: Inter, -apple-system, system-ui, Roboto, "Helvetica Neue", Arial, sans-serif;
   height: 40px;
   line-height: 40px;
   outline: 0;
@@ -200,6 +217,85 @@ p {
   transition: box-shadow .2s;
 }
 
-.rate-button:hover,.check-button:hover {
+.rate-button:hover,
+.check-button:hover {
   box-shadow: rgba(253, 76, 0, 0.5) 0 3px 8px;
+}
+
+
+
+
+
+/* Order Page Styles */
+.order-count {
+  font-size: 18px;
+  font-weight: bold;
+  margin-bottom: 20px;
+}
+
+/* Table Styles */
+.order-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 20px;
+}
+
+.order-table th,
+.order-table td {
+  padding: 12px;
+  text-align: left;
+  border-bottom: 1px solid #ddd;
+}
+
+.order-table th {
+  background-color: #f4f4f4;
+  color: #333;
+  font-weight: bold;
+}
+
+.order-table tr:nth-child(even) {
+  background-color: #f9f9f9;
+}
+
+.order-table tr:hover {
+  background-color: #f1f1f1;
+}
+
+/* Button Styles */
+.details-button {
+  display: inline-block;
+  padding: 8px 16px;
+  background-color: #007bff;
+  color: white;
+  text-decoration: none;
+  border-radius: 4px;
+  font-size: 14px;
+  transition: background-color 0.3s ease, transform 0.2s ease;
+}
+
+.details-button:hover {
+  background-color: #0056b3;
+  transform: scale(1.05);
+}
+
+.details-button:active {
+  background-color: #003d7a;
+}
+
+.pagination {
+  margin-top: 20px;
+  text-align: center;
+}
+
+.pagination a {
+  margin: 0 5px;
+  padding: 8px 16px;
+  text-decoration: none;
+  color: #333;
+  border: 1px solid #ddd;
+  background-color: #fff;
+}
+
+.pagination a:hover {
+  background-color: #ddd;
 }

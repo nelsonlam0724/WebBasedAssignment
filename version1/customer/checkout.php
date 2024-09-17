@@ -58,7 +58,6 @@ if (is_post()) {
 
     $stm->execute([$address, $shopnameOption, $phone, $shipMethod]);
     $ship_id = $_db->lastInsertId();
-    $_SESSION['ship_id'] = $ship_id;
 
     $_db->commit();
 

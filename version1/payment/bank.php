@@ -1,20 +1,16 @@
 <?php
 $order = $_SESSION['order_id'];
+
+
 if (is_post()) {
     $name = req('name');
     $card = req('card');
     $cvv = req('cvv');
     $date = req('date');
 
-   
-    $validations = $_db->prepare('SELECT * FROM `bank` 
-    WHERE ccv = ? 
-    AND card = ? 
-    AND name= ?
-    AND expires = ?');
-   $validations->execute([$cvv,$card,$name,$date]);
-   $validResult = $validations->fetch();
-
+    $validations = $_db->prepare('SELECT * FROM `bank` WHERE ccv = ? AND expires = ? AND card = ? AND name= ?');
+        $validations->execute([$cvv,$date,$card,$name]);
+        $validResult = $validations->fetch();
 
     if (!$name) {
         $_err['name'] = '  **Name is required  ';
@@ -43,6 +39,7 @@ if (is_post()) {
     if (!$_err) {
         
 
+
      if($validResult===false){      
         $_err['valid_card']="Invalid card details. Please check and try again.";
        
@@ -56,16 +53,20 @@ if (is_post()) {
 
         redirect("../message/thanks.php");
      } 
-        }
+
+        
     }
+}
+
 
 
 ?>
 
 
+
 <form id="card-form" method="post" class="hidden">
     <div class="form-group">
-        <label for="name">Name on Card <span style="color:red;"><?= err('name')?> </span></label>
+        <label for="name">Name on Card <span style="color:red;"><?= err('name')  ?></span></label>
         <?= html_text('name', 'placeholder="E.g Kim Ho"')  ?>
     </div>
     <div class="form-group">
