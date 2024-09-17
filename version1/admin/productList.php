@@ -110,7 +110,7 @@ include '../_head.php';
 
     <div class="table-wrapper">
     <!-- Product Table with Checkboxes -->
-    <form method="post" action="deleteProducts.php">
+    <form method="post" action="deleteProduct.php">
         <?php if ($product): ?>
             <table>
                 <thead>
