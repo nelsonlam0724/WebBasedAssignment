@@ -3,9 +3,13 @@ include '../_base.php';
 include '../include/header.php';
 
 
+
 $getPending = $_db->prepare('
-    SELECT * FROM `orders` WHERE user_id = ? AND status = ?
+    SELECT * FROM `orders` 
+    WHERE user_id = ? AND status = ?
+    ORDER BY id DESC
 ');
+
 
 $getPending->execute([$userID, "Pending"]);
 $results = $getPending->fetchAll();

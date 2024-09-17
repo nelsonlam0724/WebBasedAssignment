@@ -1,13 +1,10 @@
 <?php
-
-
-
+$order = $_SESSION['order_id'];
 if (is_post()) {
     $name = req('name');
     $card = req('card');
     $cvv = req('cvv');
     $date = req('date');
-
 
    
     $validations = $_db->prepare('SELECT * FROM `bank` 
@@ -48,12 +45,17 @@ if (is_post()) {
 
      if($validResult===false){      
         $_err['valid_card']="Invalid card details. Please check and try again.";
-        temp('info','Invalid card details. Please check and try again.');
        
      }else{
+
+        $stm = $_db->prepare('UPDATE `payment_record` SET datetime = NOW() WHERE  order_id = ?');
+        $stm->execute([$order]);
+
+        $stm = $_db->prepare('UPDATE `orders` SET status = ? WHERE  id = ?');
+        $stm->execute(["Paid",$order]);
+
         redirect("../message/thanks.php");
-     }
-       
+     } 
         }
     }
 

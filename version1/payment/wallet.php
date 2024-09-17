@@ -1,3 +1,5 @@
+
+
 <form id="paypal-form" class="hidden">
             <div class="form-group">
                 <label for="paypal-email">PayPal Email</label>
