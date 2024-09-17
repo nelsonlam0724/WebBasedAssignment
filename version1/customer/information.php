@@ -2,6 +2,9 @@
 include '../_base.php';
 include '../include/header.php';
 
+auth('Role', 'Admin', 'Member');
+// Fetch user profile information
+$user = $_SESSION['user'];
 
 $getPending = $_db->prepare('
     SELECT * FROM `orders` WHERE user_id = ? AND status = ?
@@ -15,7 +18,8 @@ $results = $getPending->fetchAll();
 ?>
 
 <link rel="stylesheet" href="../css/information.css">
-
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="../js/orders.js"></script>
 </head>
 
 <body>
@@ -102,36 +106,83 @@ $results = $getPending->fetchAll();
                WHERE o.status = ? AND o.user_id = ?
                ');
 
-            $getPaid->execute(["Paid",$userID]);
+            $getPaid->execute(["Paid", $userID]);
             $results = $getPaid->fetchAll();
 
 
 
             ?>
 
-          <?php $count = 0;
+            <?php $count = 0;
             foreach ($results as $o): ?>
-            <div class="item-container">
+                <div class="item-container">
 
-                <div class="item-details">
-                    <img src="<?= $o->photo ?>" alt="" class="item-image" width="100" height="100">
-                    <div class="item-text">
-                        <h2>Product ID :<?= $o->product_id ?></h2>
-                        <h3><?= $o->product_name  ?></h3>
-                        <h3>unit : <?= $o->unit ?></h3>
-                        <h3>price : <?= $o->odPrice ?></h3>
-                        <p style="color:orangered">Subtotal :RM <?= $o->subtotal ?></p>
+                    <div class="item-details">
+                        <img src="<?= $o->photo ?>" alt="" class="item-image" width="100" height="100">
+                        <div class="item-text">
+                            <h2>Product ID :<?= $o->product_id ?></h2>
+                            <h3><?= $o->product_name  ?></h3>
+                            <h3>unit : <?= $o->unit ?></h3>
+                            <h3>price : <?= $o->odPrice ?></h3>
+                            <p style="color:orangered">Subtotal :RM <?= $o->subtotal ?></p>
+                        </div>
+
                     </div>
 
+                    <a href="comment.php?id=<?= $o->product_id ?>"><button class="rate-button" style="width:150px">Rate</button></a>
                 </div>
-
-                <a href="comment.php?id=<?= $o->product_id ?>"><button class="rate-button" style="width:150px">Rate</button></a>
-            </div>
             <?php endforeach; ?>
 
         </div>
 
+        <input class="input" name="tabs" type="radio" id="tab-5" />
+        <label class="label" for="tab-5">Order</label>
+        <div class="panel">
+            <?php
+            $stm = $_db->prepare('
+                SELECT * FROM orders
+                WHERE user_id = ?
+            ');
+            $stm->execute([$user->user_id]);
+            $arr = $stm->fetchAll();
+            ?>
+
+            <h1>Order</h1>
+
+            <p>There has <?= count($arr) ?> orders(s)</p>
+
+            <table border="1">
+                <tr>
+                    <th></th>
+                    <th>Order DateTime</th>
+                    <th>Order Status</th>
+                    <th>Total Amount</th>
+                    <th>Total Quantity</th>
+                    <th></th>
+                </tr>
+
+                <?php foreach ($arr as $i => $order): ?>
+                    <tr>
+                        <th><?php echo $i + 1; ?></th>
+                        <td><?= $order->datetime ?></td>
+                        <td><?= $order->status ?></td>
+                        <td><?= $order->total ?></td>
+                        <td><?= $order->count ?></td>
+                        <td>
+                            <button data-get="orderDetails.php?order_id=<?= $order->id ?>&user_id=<?= $order->user_id ?>">Detail</button>
+                        </td>
+                    </tr>
+                <?php endforeach ?>
+            </table>
+
+
+
+
+        </div>
+
     </div>
+
+
 </body>
 <script>
 
