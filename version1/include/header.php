@@ -21,38 +21,75 @@ if ($userID != '0') {
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
     <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <link rel="stylesheet" href="/css/image.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.js"></script>
-    
     <link rel="stylesheet" href="../css/header.css">
 </head>
+<style>
+    #info {
+        position: fixed;
+        color: #fff;
+        background: #666;
+        border: 1px solid #333;
+        border-radius: 5px;
+        padding: 10px 20px;
+        left: 50%;
+        translate: -50% 0;
+        z-index: 999;
 
-<body>
+        top: -50px;
+        opacity: 0;
+    }
 
+    #info:not(:empty) {
+        animation: fade 5s;
+    }
 
-    <header>
-
-        <div class="first-row">
-
-   
-  <form class="search-bar" method="get" action="../customer/product.php" onsubmit="return searchProduct()">
-    <button id="search-button" type="submit"><i class='bx bx-search' style="font-size:15px;"></i> search</button>
-    <?= html_text("search")  ?>
-   </form>
-<script>
-    function searchProduct() {
-        var search = $("#search").val();
-
-        if (search === "") {
-            return false;
+    @keyframes fade {
+        0% {
+            top: -100px;
+            opacity: 0;
         }
 
-        return true;
+        10% {
+            top: 100px;
+            opacity: 1;
+        }
+
+        90% {
+            top: 100px;
+            opacity: 1;
+        }
+
+        100% {
+            top: -100px;
+            opacity: 0;
+        }
     }
-</script>
+</style>
+
+<body>
+    <header>
+        <div class="first-row">
+            <form class="search-bar" method="get" action="../customer/product.php" onsubmit="return searchProduct()">
+                <button id="search-button" type="submit"><i class='bx bx-search' style="font-size:15px;"></i> search</button>
+                <?= html_text("search")  ?>
+            </form>
+            <script>
+                function searchProduct() {
+                    var search = $("#search").val();
+
+                    if (search === "") {
+                        return false;
+                    }
+
+                    return true;
+                }
+            </script>
 
 
             <div class="brand">
@@ -85,12 +122,11 @@ if ($userID != '0') {
         <div class="second-row">
 
             <ul>
-            <li><a href="customerProfile.php">Profile</a></li>
-            <li><a href="product.php">Product</a></li>
-            <li><a href="information.php">View Details</a></li>
-            <li><a href="../logout.php">Logout</a></li>
+                <li><a href="customerProfile.php">Profile</a></li>
+                <li><a href="product.php">Product</a></li>
+                <li><a href="information.php">View Details</a></li>
+                <li><a href="../logout.php">Logout</a></li>
             </ul>
 
         </div>
     </header>
-    
