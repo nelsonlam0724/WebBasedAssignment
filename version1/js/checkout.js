@@ -3,11 +3,23 @@ function pop_up_form_address() {
     $("#locationInput").val("");
     $("#receipent_namej").val("");
     $("#shippingPhonej").val("");
+    showMap();
 }
 
 function cancel() {
     $(".update-address-fill").hide();
 }
+
+function showMap() {
+    $('#maps').show();
+   
+    setTimeout(function() {
+        map.invalidateSize();
+    }, 100);
+
+    centerMapOnUserLocation();
+}
+
 
 //address form-----------------------------------------------------------------------------------------------
 function save_address() {
