@@ -12,7 +12,6 @@ if ($userID != '0') {
 }
 
 
-
 ?>
 
 <!DOCTYPE html>
@@ -98,7 +97,12 @@ if ($userID != '0') {
 
             <div class="userAcc-block">
                 <div class="user-icon">
-                    <img style="  object-fit: cover;" src="https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_960_720.png" width="40" height="40">
+                    <?php
+                    $img = ($_SESSION['user']->photo != null) ? "../uploads/".$_SESSION['user']->photo : "https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_960_720.png";
+ 
+
+?>
+                    <img style="  object-fit: cover;" src="<?=  $img ?>" width="40" height="40">
                 </div>
                 <div class="text">
                     <div class="text-first">

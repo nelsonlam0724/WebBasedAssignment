@@ -6,9 +6,13 @@ auth('Role', 'Admin', 'Member');
 // Fetch user profile information
 $user = $_SESSION['user'];
 
+
 $getPending = $_db->prepare('
-    SELECT * FROM `orders` WHERE user_id = ? AND status = ?
+    SELECT * FROM `orders` 
+    WHERE user_id = ? AND status = ?
+    ORDER BY id DESC
 ');
+
 
 $getPending->execute([$userID, "Pending"]);
 $results = $getPending->fetchAll();

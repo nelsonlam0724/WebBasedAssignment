@@ -67,7 +67,7 @@ if (is_post()) {
     ');
 
     $total = floatval($total);
-
+   
     $stm->execute([$userID, $ship_id, "Pending", $count, $total]);
     $id = $_db->lastInsertId();
 
