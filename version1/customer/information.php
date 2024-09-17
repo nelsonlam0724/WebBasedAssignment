@@ -29,8 +29,6 @@ $results = $getPending->fetchAll();
         <label class="label" onclick="back()"><i class="fa fa-angle-double-left" style="color:white"></i>Back</label>
         <input class="input" name="tabs" type="radio" id="tab-1" checked="checked" />
         <label class="label" for="tab-1">To Pay</label>
-        
-        
         <div class="panel">
 
             <?php $count = 0;
@@ -151,30 +149,33 @@ $results = $getPending->fetchAll();
 
             <h1>Order</h1>
 
-            <p>There has <?= count($arr) ?> orders(s)</p>
+            <p class="order-count">There has <?= count($arr) ?> orders(s)</p>
 
-            <table border="1">
-                <tr>
-                    <th></th>
-                    <th>Order DateTime</th>
-                    <th>Order Status</th>
-                    <th>Total Amount</th>
-                    <th>Total Quantity</th>
-                    <th></th>
-                </tr>
-
-                <?php foreach ($arr as $i => $order): ?>
+            <table class="order-table">
+                <thead>
                     <tr>
-                        <th><?php echo $i + 1; ?></th>
-                        <td><?= $order->datetime ?></td>
-                        <td><?= $order->status ?></td>
-                        <td><?= $order->total ?></td>
-                        <td><?= $order->count ?></td>
-                        <td>
-                            <button data-get="orderDetails.php?order_id=<?= $order->id ?>&user_id=<?= $order->user_id ?>">Detail</button>
-                        </td>
+                        <th></th>
+                        <th>Order DateTime</th>
+                        <th>Order Status</th>
+                        <th>Total Amount</th>
+                        <th>Total Quantity</th>
+                        <th></th>
                     </tr>
-                <?php endforeach ?>
+                </thead>
+                <tbody>
+                    <?php foreach ($arr as $i => $order): ?>
+                        <tr>
+                            <th><?php echo $i + 1; ?></th>
+                            <td><?= $order->datetime ?></td>
+                            <td><?= $order->status ?></td>
+                            <td><?= $order->total ?></td>
+                            <td><?= $order->count ?></td>
+                            <td>
+                                <button data-get="orderDetails.php?order_id=<?= $order->id ?>&user_id=<?= $order->user_id ?>" class="details-button">Detail</button>
+                            </td>
+                        </tr>
+                    <?php endforeach ?>
+                </tbody>
             </table>
 
 

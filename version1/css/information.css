@@ -203,3 +203,62 @@ p {
 .rate-button:hover,.check-button:hover {
   box-shadow: rgba(253, 76, 0, 0.5) 0 3px 8px;
 }
+
+
+
+
+
+/* Order Page Styles */
+.order-count {
+  font-size: 18px;
+  font-weight: bold;
+  margin-bottom: 20px;
+}
+
+/* Table Styles */
+.order-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 20px;
+}
+
+.order-table th, .order-table td {
+  padding: 12px;
+  text-align: left;
+  border-bottom: 1px solid #ddd;
+}
+
+.order-table th {
+  background-color: #f4f4f4;
+  color: #333;
+  font-weight: bold;
+}
+
+.order-table tr:nth-child(even) {
+  background-color: #f9f9f9;
+}
+
+.order-table tr:hover {
+  background-color: #f1f1f1;
+}
+
+/* Button Styles */
+.details-button {
+  display: inline-block;
+  padding: 8px 16px;
+  background-color: #007bff;
+  color: white;
+  text-decoration: none;
+  border-radius: 4px;
+  font-size: 14px;
+  transition: background-color 0.3s ease, transform 0.2s ease;
+}
+
+.details-button:hover {
+  background-color: #0056b3;
+  transform: scale(1.05);
+}
+
+.details-button:active {
+  background-color: #003d7a;
+}

@@ -34,64 +34,67 @@ $_title = 'Order Details -' . htmlspecialchars($user->name);
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <script src="../js/orders.js"></script>
-    <title>Order History</title>
+    <link rel="stylesheet" href="../css/orderItem.css">
+    <title>Order Items</title>
 </head>
 <br><br><br><br><br><br><br><br>
+
 <body>
     <h1>Order Details</h1>
-<form>
+    <form class="order-summary">
 
-    <label>Date</label>
-    <div><?= $order->datetime ?></div>
-    <br>
+        <label>Date</label>
+        <div><?= $order->datetime ?></div>
+        <br>
 
-    <label>Count</label>
-    <div><?= $order->count ?></div>
-    <br>
+        <label>Count</label>
+        <div><?= $order->count ?></div>
+        <br>
 
-    <label>Total</label>
-    <div><?= $order->total ?></div>
-    <br>
-</form>
+        <label>Total</label>
+        <div><?= $order->total ?></div>
+        <br>
+    </form>
 
-<p> <?= count($arr) ?> item(s)</p>
+    <p class="item-count"> <?= count($arr) ?> item(s)</p>
 
-<table border="1">
-    <tr>
-        <th></th>
-        <th>Product Name</th>
-        <th>Price (RM)</th>
-        <th>Unit</th>
-        <th>Subtotal (RM)</th>
-        <th>Status</th>
-        <th></th>
-    </tr>
-
-
-    <?php
-        $num = count($arr); 
-        foreach ($arr as $i => $item): 
-    ?>
+    <table class="order-items">
         <tr>
-            <td><?php echo $i + 1 ?></td>
-            <td><?= $item->name ?></td>
-            <td><?= $item->price ?></td>
-            <td><?= $item->unit ?></td>
-            <td><?= $item->subtotal ?></td>
-            <td><?= $item->order_status ?></td>
-            <td>
-                <form method="post" action="../function/cancel_order.php">
-                    <input type="hidden" name="order_ID" value="<?php echo $item->order_id; ?>">
-                    <input type="hidden" name="product_ID" value="<?php echo $item->product_id; ?>">
-                    <input type="hidden" name="num" value="<?php echo $num; ?>">
-                    <input type="submit" name="submit" value="Cancel Order" data-order>
-                </form>
-            </td>
+            <th></th>
+            <th>Product Name</th>
+            <th>Price (RM)</th>
+            <th>Unit</th>
+            <th>Subtotal (RM)</th>
+            <th>Status</th>
+            <th></th>
         </tr>
-    <?php endforeach; ?>
 
-</table>
 
-<button onclick="location.href='information.php'">Back</button>
+        <?php
+        $num = count($arr);
+        foreach ($arr as $i => $item):
+        ?>
+            <tr>
+                <td><?php echo $i + 1 ?></td>
+                <td><?= $item->name ?></td>
+                <td><?= $item->price ?></td>
+                <td><?= $item->unit ?></td>
+                <td><?= $item->subtotal ?></td>
+                <td><?= $item->order_status ?></td>
+                <td>
+                    <form method="post" action="../function/cancel_order.php">
+                        <input type="hidden" name="order_ID" value="<?php echo $item->order_id; ?>">
+                        <input type="hidden" name="product_ID" value="<?php echo $item->product_id; ?>">
+                        <input type="hidden" name="num" value="<?php echo $num; ?>">
+                        <input type="submit" name="submit" value="Cancel Order" data-order class="cancel-button">
+                    </form>
+                </td>
+            </tr>
+        <?php endforeach; ?>
+
+    </table>
+
+    <button class="back-button" onclick="location.href='information.php'">Back</button>
 </body>
+
 </html>

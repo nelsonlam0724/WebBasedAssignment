@@ -35,71 +35,80 @@ $_title = 'Order Details';
     <link rel="stylesheet" href="../css/userList.css">
     <title>Order List</title>
 </head>
-<form>
-    <label>Order Id</label>
-    <div><?= $order->id ?></div>
-    <br>
+<div class="container">
 
-    <label>Date</label>
-    <div><?= $order->datetime ?></div>
-    <br>
+    <form>
+        <table class="order-summary">
+            <tr>
+                <th>Order ID</th>
+                <td><?= $order->id ?></td>
+            </tr>
+            <tr>
+                <th>Date</th>
+                <td><?= $order->datetime ?></td>
+            </tr>
+            <tr>
+                <th>Count</th>
+                <td><?= $order->count ?></td>
+            </tr>
+            <tr>
+                <th>Total</th>
+                <td><?= $order->total ?></td>
+            </tr>
+        </table>
+    </form>
 
-    <label>Count</label>
-    <div><?= $order->count ?></div>
-    <br>
+    <p> <?= count($arr) ?> item(s)</p>
 
-    <label>Total</label>
-    <div><?= $order->total ?></div>
-    <br>
-</form>
+    <table class="items-table">
+        <thead>
+            <tr>
+                <th></th>
+                <th>Product Name</th>
+                <th>Price (RM)</th>
+                <th>Unit</th>
+                <th>Subtotal (RM)</th>
+                <th>Status</th>
+            </tr>
+        </thead>
+        <tbody>
 
-<p> <?= count($arr) ?> item(s)</p>
+            <?php
+            $shipped = 0;
+            $delivered = 0;
+            $num = count($arr);
+            foreach ($arr as $i => $item):
+            ?>
+                <tr>
+                    <td><?php echo $i + 1 ?></td>
+                    <td><?= $item->name ?></td>
+                    <td><?= $item->price ?></td>
+                    <td><?= $item->unit ?></td>
+                    <td><?= $item->subtotal ?></td>
+                    <td>
 
-<table border="1">
-    <tr>
-        <th></th>
-        <th>Product Name</th>
-        <th>Price (RM)</th>
-        <th>Unit</th>
-        <th>Subtotal (RM)</th>
-        <th>Status</th>
-        <th></th>
-    </tr>
+                        <form method="post" action="../function/update_status.php" class="status-form">
+                            <select name="status[<?= $item->product_id ?>]" class="status-select" onchange="document.getElementById('status_<?= $item->product_id ?>').value = this.value;">
+                                <option value="Pending" <?= $item->order_status == 'Pending' ? 'selected' : '' ?>>Pending</option>
+                                <option value="Shipped" <?= $item->order_status == 'Shipped' ? 'selected' : '' ?>>Shipped</option>
+                                <option value="Delivered" <?= $item->order_status == 'Delivered' ? 'selected' : '' ?>>Delivered</option>
+                            </select>
 
+                            <input type="hidden" name="product_ID" value="<?= $item->product_id ?>">
+                            <input type="hidden" name="order_ID" value="<?= $item->order_id ?>">
+                            <input type="hidden" name="user_ID" value="<?= $user_ID ?>">
+                            <input type="hidden" id="status_<?= $item->product_id ?>" name="status" value="<?= $item->order_status ?>">
+                            <input type="hidden" name="num" value="<?= $num ?>">
+                            <input type="hidden" name="delivered" value="<?= $delivered ?>">
+                            <input type="submit" name="submit" value="Update" data-updatestatus>
+                        </form>
+                    </td>
+                </tr>
+            <?php endforeach; ?>
+        </tbody>
+    </table>
 
-    <?php
-    $shipped = 0;
-    $delivered = 0;
-    $num = count($arr);
-    foreach ($arr as $i => $item):
-    ?>
-        <tr>
-            <td><?php echo $i + 1 ?></td>
-            <td><?= $item->name ?></td>
-            <td><?= $item->price ?></td>
-            <td><?= $item->unit ?></td>
-            <td><?= $item->subtotal ?></td>
-            <td>
-                <select name="status[<?= $item->product_id ?>]" onchange="document.getElementById('status_<?= $item->product_id ?>').value = this.value;">
-                    <option value="Pending" <?= $item->order_status == 'Pending' ? 'selected' : '' ?>>Pending</option>
-                    <option value="Shipped" <?= $item->order_status == 'Shipped' ? 'selected' : '' ?>>Shipped</option>
-                    <option value="Delivered" <?= $item->order_status == 'Delivered' ? 'selected' : '' ?>>Delivered</option>
-                </select>
-                <form method="post" action="../function/update_status.php">
-                    <input type="hidden" name="product_ID" value="<?= $item->product_id ?>">
-                    <input type="hidden" name="order_ID" value="<?= $item->order_id ?>">
-                    <input type="hidden" name="user_ID" value="<?= $user_ID ?>">
-                    <input type="hidden" id="status_<?= $item->product_id ?>" name="status" value="<?= $item->order_status ?>">
-                    <input type="hidden" name="num" value="<?= $num ?>">
-                    <input type="hidden" name="delivered" value="<?= $delivered ?>">
-                    <input type="submit" name="submit" value="Update" data-updatestatus>
-                </form>
-            </td>
-        </tr>
-    <?php endforeach; ?>
-
-</table>
-
-<div class="action-buttons">
-    <a href="orderList.php"><button>Back To Order List</button></a>
+    <div class="action-buttons">
+        <a href="orderList.php"><button>Back To Order List</button></a>
+    </div>
 </div>
