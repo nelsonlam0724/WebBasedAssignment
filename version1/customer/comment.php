@@ -3,6 +3,7 @@ include '../_base.php';
 include '../include/header.php'; 
 
 $id= req('id');
+$ordedsID = req('order_id');
 
 $getp = $_db->prepare('
 SELECT * FROM `product` WHERE product_id = ?
@@ -54,6 +55,12 @@ if (is_post()) {
         ');
 
         $stm->execute([$userID, $id, $commentText, $rating, $photoName]);
+
+        $updateStatus = $_db->prepare('
+        UPDATE `order_details` SET commment_status = ? WHERE product_id = ? AND order_id = ?
+        ');
+
+        $updateStatus->execute(["Rated",$id,$ordedsID]);
     }
 }
 ?>

@@ -19,11 +19,18 @@ $result = strcmp($resultss->method , "card");
 if($result == 0){                  
     include '../payment/bank.php';
  }else{  
-     include '../payment/wallet.php';
+    include '../payment/wallet.php';
   } ?>      
             
 </div>
 
 </body>
-<script>document.querySelector("link[href='../css/header.css']").removeAttribute('disabled');</script>
+<script>
+document.querySelector("link[href='../css/header.css']").removeAttribute('disabled');
+history.pushState(null, null, location.href);
+  window.onpopstate = function () {
+    history.go(1);
+  }
+
+</script>
 </html>

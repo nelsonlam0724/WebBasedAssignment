@@ -8,13 +8,13 @@ $product = $getProduct->fetch(PDO::FETCH_OBJ);
 
 
 $getComment = $_db->prepare('
-    SELECT c.* ,u.name AS user_name , p.name AS product_name 
+    SELECT c.* ,u.name AS user_name , p.name AS product_name , p.category_id
     FROM comment AS c 
     JOIN product AS p ON c.product_id = p.product_id
     JOIN user AS u ON c.user_id = u.user_id
     WHERE c.product_id = ?
 ');
-$getComment -> execute([$product_id]);
+$getComment->execute([$product_id]);
 $comment = $getComment->fetchAll();
 
 ?>
@@ -35,7 +35,9 @@ $comment = $getComment->fetchAll();
         <p><?= $product->description ?></p>
       </div>
       <div class="btn-field">
-        <a href="#"><div class="btn-buy">Buy Now</div></a>
+        <a href="#">
+          <div class="btn-buy">Buy Now</div>
+        </a>
         <div class="add-to-card" data-items="<?= $product->product_id ?>">Add to Cart</div>
       </div>
     </div>
@@ -44,30 +46,37 @@ $comment = $getComment->fetchAll();
     <h3>Reviews</h3>
 
 
-    <?php $count=0; foreach($comment as $c): ?>
-    <div class="comment-box">
+    <?php $count = 0;
+    foreach ($comment as $c): ?>
+      <div class="comment-box">
         <div class="user-review">
-            <div class="user-name" style="color:black;font-size:15px"><?= $c->user_name ?></div>
-            <div class="star-rating">
+          <div class="user-name" style="color:black;font-size:15px"><?= $c->user_name ?></div>
+          <div class="star-rating">
             <input type="hidden" name="rate" value="<?= $c->rate ?>" class="rate">
-                <p style="font-size:20px;color:yellowgreen;display:flex;" class="star-rating-display"></p>               
-            </div>
+            <p style="font-size:20px;color:yellowgreen;display:flex;" class="star-rating-display"></p>
+          </div>
         </div>
         <div class="review-content">
-            <div class="variation">Variation: <?= $c->product_name ?></div>
-            <div class="comment-text"><?= $c->comment ?></div>
-            <?php if($c->photo!= null){  ?>
+          <?php
+          $getCategory = $_db->prepare('SELECT * FROM category WHERE category_id = ?');
+          $getCategory->execute([$c->category_id]);
+          $category = $getCategory->fetch();
+          ?>
+          <div class="variation">Variation: <?= $category->category_name ?></div>
+          <div class="comment-text"><?= $c->comment ?></div>
+          <?php if ($c->photo != null) {  ?>
             <img src="../comment_img/<?= $c->photo ?>" alt="User Image" width="100" height="100">
-            <?php }  ?>
-            <div class="date"><?= $c->datetime ?></div>
+          <?php }  ?>
+          <div class="date"><?= $c->datetime ?></div>
         </div>
-    </div>
-<?php $count++; endforeach; 
+      </div>
+    <?php $count++;
+    endforeach;
 
-    
-    if($count==0){
+
+    if ($count == 0) {
       echo "<p style='padding:30px;'>Record Not Found</p>";
-    }  
+    }
     ?>
 
 

@@ -3,7 +3,6 @@ include '../_base.php';
 include '../_head.php';
 require_once '../lib/SimplePager.php'; // Include SimplePager class
 
-
 auth('Root', 'Admin');
 
 $arr = $_db->query('SELECT * FROM orders')->fetchAll();
@@ -18,7 +17,6 @@ $limit = 10; // Number of records per page
 // Start constructing the query
 $query = 'SELECT * FROM orders WHERE 1=1';
 $params = [];
-
 
 // Add status filter if provided
 if ($status_filter) {
@@ -49,29 +47,20 @@ $statuses = $statuses_stm->fetchAll(PDO::FETCH_COLUMN);
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="../js/orders.js"></script>
-    <link rel="stylesheet" href="../css/userList.css">
+    <link rel="stylesheet" href="../css/orderList.css"> <!-- Link the external CSS -->
     <title>Order List</title>
 </head>
 
 <body>
-    <div>
+    <div class="container">
         <h1>Order List</h1>
 
-        <p>There has <?= count($arr) ?> orders(s)</p>
-
-        <!-- Search Form -->
-        <form action="orderList.php" method="get">
-            <input type="hidden" name="status" value="<?= htmlspecialchars($status_filter) ?>">
-            <input type="hidden" name="sort_by" value="<?= htmlspecialchars($sort_by) ?>">
-            <input type="hidden" name="sort_order" value="<?= htmlspecialchars($sort_order) ?>">
-            <input type="hidden" name="page" value="1"> <!-- Always start at page 1 for new searches -->
-        </form>
+        <p>There has <?= count($arr) ?> order(s)</p>
 
         <!-- Filter and Sorting Options -->
         <div class="filter-sorting">
             <form action="orderList.php" method="get">
-                <input type="hidden" name="page" value="1"> <!-- Always start at page 1 for new filters and sorting -->
-
+                <input type="hidden" name="page" value="1">
 
                 <!-- Status Filter -->
                 <label for="status">Status:</label>
@@ -101,7 +90,8 @@ $statuses = $statuses_stm->fetchAll(PDO::FETCH_COLUMN);
             </form>
         </div>
 
-        <table border="1">
+        <!-- Order Table -->
+        <table class="order-table">
             <tr>
                 <th></th>
                 <th>Order ID</th>
@@ -110,9 +100,9 @@ $statuses = $statuses_stm->fetchAll(PDO::FETCH_COLUMN);
                 <th>Order Status</th>
                 <th>Total Amount</th>
                 <th>Count</th>
-                <th></th>
+                <th>Actions</th>
             </tr>
-            <?php foreach ($arr as $i => $order): ?>
+            <?php foreach ($orders as $i => $order): ?>
                 <tr>
                     <td><?= $i + 1 ?></td>
                     <td><?= $order->id ?></td>
@@ -128,55 +118,59 @@ $statuses = $statuses_stm->fetchAll(PDO::FETCH_COLUMN);
                         <?php endif; ?>
                     </td>
                 </tr>
-
             <?php endforeach; ?>
-
         </table>
 
-
-
-        <!-- Previous Page Link -->
-        <?php if ($page > 1): ?>
-            <a href="?page=<?= $page - 1 ?>&sort_by=<?= urlencode($sort_by) ?>&sort_order=<?= urlencode($sort_order) ?>&status=<?= urlencode($status_filter) ?>">Previous</a>
-        <?php endif; ?>
-
-        <!-- Page Numbers -->
-        <?php
-        $page_range = 2; // Number of pages to show before and after the current page
-        $start_page = max(1, $page - $page_range);
-        $end_page = min($total_pages, $page + $page_range);
-
-        if ($start_page > 1): ?>
-            <a href="?page=1&sort_by=<?= urlencode($sort_by) ?>&sort_order=<?= urlencode($sort_order) ?>&status=<?= urlencode($status_filter) ?>">1</a>
-            <?php if ($start_page > 2): ?>
-                <span>...</span>
+        <!-- Pagination Links -->
+        <div class="pagination">
+            <!-- Previous Page Link -->
+            <?php if ($page > 1): ?>
+                <a href="?page=<?= $page - 1 ?>&sort_by=<?= urlencode($sort_by) ?>&sort_order=<?= urlencode($sort_order) ?>&status=<?= urlencode($status_filter) ?>">Previous</a>
             <?php endif; ?>
-        <?php endif; ?>
 
-        <?php for ($i = $start_page; $i <= $end_page; $i++): ?>
-            <a href="?page=<?= $i ?>&sort_by=<?= urlencode($sort_by) ?>&sort_order=<?= urlencode($sort_order) ?>&status=<?= urlencode($status_filter) ?>" class="<?= $i == $page ? 'current-page' : '' ?>">
-                <?= $i ?>
-            </a>
-        <?php endfor; ?>
 
-        <?php if ($end_page < $total_pages): ?>
-            <?php if ($end_page < $total_pages - 1): ?>
-                <span>...</span>
+            <!-- Page Numbers -->
+            <?php
+            $page_range = 2; // Number of pages to show before and after the current page
+            $start_page = max(1, $page - $page_range);
+            $end_page = min($total_pages, $page + $page_range);
+
+
+            if ($start_page > 1): ?>
+                <a href="?page=1&sort_by=<?= urlencode($sort_by) ?>&sort_order=<?= urlencode($sort_order) ?>&status=<?= urlencode($status_filter) ?>">1</a>
+                <?php if ($start_page > 2): ?>
+                    <span>...</span>
+                <?php endif; ?>
             <?php endif; ?>
-            <a href="?page=<?= $total_pages ?>&sort_by=<?= urlencode($sort_by) ?>&sort_order=<?= urlencode($sort_order) ?>&status=<?= urlencode($status_filter) ?>">
-                <?= $total_pages ?>
-            </a>
-        <?php endif; ?>
 
-        <!-- Next Page Link -->
-        <?php if ($page < $total_pages): ?>
-            <a href="?page=<?= $page + 1 ?>&sort_by=<?= urlencode($sort_by) ?>&sort_order=<?= urlencode($sort_order) ?>&status=<?= urlencode($status_filter) ?>">Next</a>
-        <?php endif; ?>
+
+            <?php for ($i = $start_page; $i <= $end_page; $i++): ?>
+                <a href="?page=<?= $i ?>&sort_by=<?= urlencode($sort_by) ?>&sort_order=<?= urlencode($sort_order) ?>&status=<?= urlencode($status_filter) ?>" class="<?= $i == $page ? 'current-page' : '' ?>">
+                    <?= $i ?>
+                </a>
+            <?php endfor; ?>
+
+
+            <?php if ($end_page < $total_pages): ?>
+                <?php if ($end_page < $total_pages - 1): ?>
+                    <span>...</span>
+                <?php endif; ?>
+                <a href="?page=<?= $total_pages ?>&sort_by=<?= urlencode($sort_by) ?>&sort_order=<?= urlencode($sort_order) ?>&status=<?= urlencode($status_filter) ?>">
+                    <?= $total_pages ?>
+                </a>
+            <?php endif; ?>
+
+
+            <!-- Next Page Link -->
+            <?php if ($page < $total_pages): ?>
+                <a href="?page=<?= $page + 1 ?>&sort_by=<?= urlencode($sort_by) ?>&sort_order=<?= urlencode($sort_order) ?>&status=<?= urlencode($status_filter) ?>">Next</a>
+            <?php endif; ?>
+
+        </div>
+        <div class="action-buttons">
+            <a href="admin.php"><button>Back To Menu</button></a>
+        </div>
     </div>
-
-
-    <div class="action-buttons">
-        <a href="admin.php"><button>Back To Menu</button></a>
-    </div>
-
 </body>
+
+</html>

@@ -162,17 +162,18 @@ if (is_post()) {
             </td>
         </tr>
     </table>
-    <button type="submit" id="submit-button">Update Product</button>
+    <button type="submit" id="submit-button" style="display: none;">Update Product</button>
 </form>
 
 <script>
 document.getElementById('edit-button').addEventListener('click', function() {
     var formElements = document.querySelectorAll('#product-form input, #product-form select, #product-form textarea');
     formElements.forEach(function(element) {
-        element.disabled = false;
+        element.disabled = false; // Enable form inputs for editing
     });
 
-    document.getElementById('submit-button').style.display = 'inline';
+    // Show the "Update Product" and "Cancel" buttons, hide the "Edit" button
+    document.getElementById('submit-button').style.display = 'inline'; 
     document.getElementById('edit-button').style.display = 'none';
     document.getElementById('cancel-button').style.display = 'inline';
 });
@@ -180,36 +181,25 @@ document.getElementById('edit-button').addEventListener('click', function() {
 document.getElementById('cancel-button').addEventListener('click', function() {
     var formElements = document.querySelectorAll('#product-form input, #product-form select, #product-form textarea');
     formElements.forEach(function(element) {
-        element.disabled = true;
+        element.disabled = true; // Disable form inputs when canceling
     });
 
-    // Restore button visibility
+    // Hide the "Update Product" and "Cancel" buttons, show the "Edit" button
     document.getElementById('submit-button').style.display = 'none';
     document.getElementById('edit-button').style.display = 'inline';
     document.getElementById('cancel-button').style.display = 'none';
     
-    // Reset form fields to their original values
-    document.getElementById('product-form').querySelector('input[name="name"]').value = '<?= htmlspecialchars($product->name) ?>';
-    document.getElementById('product-form').querySelector('input[name="price"]').value = '<?= htmlspecialchars($product->price) ?>';
-    document.getElementById('product-form').querySelector('select[name="category_id"]').value = '<?= htmlspecialchars($product->category_id) ?>';
-    document.getElementById('product-form').querySelector('input[name="quantity"]').value = '<?= htmlspecialchars($product->quantity) ?>';
-    document.getElementById('product-form').querySelector('input[name="weight"]').value = '<?= htmlspecialchars($product->weight) ?>';
-    document.getElementById('product-form').querySelector('textarea[name="description"]').value = '<?= htmlspecialchars($product->description) ?>';
+    // Optional: reset form fields to original values
+    document.getElementById('product-form').reset();
     document.getElementById('product-photo').src = '../uploads/<?= htmlspecialchars($product->product_photo) ?>';
 });
 
-document.getElementById('photo').addEventListener('change', function() {
-    var reader = new FileReader();
-    reader.onload = function(e) {
-        document.getElementById('product-photo').src = e.target.result;
-    };
-    reader.readAsDataURL(this.files[0]);
-});
-
-// Initially, disable all input fields
+// Initially, disable all input fields and hide the "Update Product" button
 document.querySelectorAll('#product-form input, #product-form select, #product-form textarea').forEach(function(element) {
     element.disabled = true;
 });
+
+document.getElementById('submit-button').style.display = 'none'; // Hide the submit button by default
 
 </script>
 <?php

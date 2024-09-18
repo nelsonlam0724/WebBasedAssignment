@@ -2,7 +2,7 @@ body {
     font-family: Arial, sans-serif;
     margin: 0;
     padding: 0;
-     background-image: url(../Image/background.png);
+     background-color: #383838;
     background-size: cover;
     background-repeat: no-repeat;
     color: #333;
@@ -10,7 +10,7 @@ body {
   }
   
   .container {
-    max-width: 600px;
+    width: 900px;
     margin: 20px auto;
     background-color: #fff;
     padding: 20px;

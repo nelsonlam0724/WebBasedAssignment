@@ -2,6 +2,10 @@
 include '../_base.php';
 include '../include/header.php';
 
+auth('Role','Admin','Member');
+
+$user = $_SESSION['user'];
+
 $order_id = get('order_id');
 $ship_id = get('ship_id');
 
@@ -23,6 +27,10 @@ SELECT * FROM `shippers` WHERE ship_id = ?
 
 $getShip->execute([$ship_id]);
 $resultss = $getShip->fetch();
+
+
+$_SESSION['ship_id']=$ship_id;
+$_SESSION['order_id'] = $order_id;
 ?>
 
 
@@ -73,7 +81,9 @@ $resultss = $getShip->fetch();
             </thead>
             <tbody>
 
-                <?php $count = 0;
+                <?php 
+                $items_order =[];
+                $count = 0;
                 $subtotal = 0;
                 $discount = 0;
                 foreach ($results as $o): ?>
@@ -85,12 +95,17 @@ $resultss = $getShip->fetch();
                         <td>RM <?= $o['subtotal'] ?></td>
                         <?php $subtotal +=  $o['subtotal']; ?>
                     </tr>
-                <?php $count++;
+                <?php 
+                  $items_order[$o['product_id']] = $o['unit'];
+                $count++;
                 endforeach ?>
 
             </tbody>
             <tfoot>
-                <?php if ($subtotal > 2000) {
+                <?php 
+                $_SESSION['cartSelection']= $items_order;
+
+                if ($subtotal > 2000) {
                     $discount = ($subtotal * 0.05);
                 ?>
                     <tr>
@@ -122,18 +137,15 @@ $resultss = $getShip->fetch();
                     <td>RM <?= number_format($fee, 2, '.', '') ?></td>
                 </tr>
    
-
                 <tr>
                     <td colspan="4">Total:</td>
-
-   
                     <td> RM<?= number_format($totalpay, 2, '.', '') ?></td>
                 </tr>
             </tfoot>
         </table>
 
         <div class="payment-button">
-    <form action="payment-processing-page.php" method="post">
+    <form action="payment.php" method="get">
         <input type="hidden" name="order_id" value="<?= $order_id ?>">
         <input type="hidden" name="totalpay" value="<?= $totalpay ?>">
         <button type="submit">Pay Now (RM <?= number_format($totalpay, 2, '.', '') ?>)</button>

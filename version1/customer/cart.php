@@ -119,7 +119,7 @@ if(is_post()) {
                             <span id="subtotal">RM 0.00</span>
                         </li>
                         <li>
-                            <span>Tax (10%):</span>
+                            <span>Tax (5%):</span>
                             <span id="tax">RM 0.00</span>
                         </li>
                         <li>

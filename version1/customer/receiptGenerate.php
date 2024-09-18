@@ -1,5 +1,4 @@
 <?php
-
 include '../_base.php';
 $cartSelect =  $_SESSION['cartSelection'];
 $total = 0;
@@ -22,9 +21,14 @@ if (!empty($productIds)) {
 $getShip = $_db->prepare('
 SELECT * FROM `shippers` WHERE ship_id = ?
 ');
-
 $getShip->execute([$_SESSION['ship_id'] ]);
 $resultss = $getShip->fetch();
+
+$getPayRecord = $_db->prepare('
+SELECT * FROM `payment_record` WHERE order_id = ?
+');
+$getPayRecord->execute([$_SESSION['order_id'] ]);
+$recordResult = $getPayRecord->fetch();
 ?>
 
 ?>
@@ -49,11 +53,10 @@ $resultss = $getShip->fetch();
     <h1>Online Payment Receipt</h1>
   <div class="receipt-info">
     <p><strong>Order Id : </strong> <?=  $_SESSION['order_id'] ?></p>
-    <p><strong>Date/Time :</strong></p>
-  <p>
-    <strong>Payment Method :</strong>
-</p>
-    <p><strong>Delivery method :</strong></p>
+    <p><strong>Date/Time : </strong>Paid at <?=  $recordResult->datetime ?></p>
+    <p><strong>Payment Method : </strong><?= $recordResult->method ?></p>
+    <p><strong>Delivery name : <?= $resultss->company_name ?></strong></p>
+    <p><strong>Destination : <?= $resultss->address ?></strong></p>
   </div>
  
   
@@ -127,16 +130,11 @@ $resultss = $getShip->fetch();
                 <tr>
                     <?php
                     $tax = ($subtotal * 0.02);
-
                     ?>
                     <td>Service Tax (2%) </td>
-
                     <td>RM <?= number_format($tax, 2, '.', '') ?></td>
-                </tr>
-
-              
-                <?php 
-               
+                </tr>     
+                <?php             
                if(isset($resultss->ship_method) && $resultss->ship_method == "pick"){ 
                      $fee =1.60;
                      $totalpay += $fee;
@@ -153,7 +151,7 @@ $resultss = $getShip->fetch();
 
       <tr>
         <td><strong>Total Payment:</strong></td>
-        <td><strong style="color:red">RM <?= $totalpay = $subtotal - $discount + $tax ?> </strong></td>
+        <td><strong style="color:red">RM <?= number_format($totalpay = $subtotal - $discount + $tax + $fee, 2, '.', '') ?> </strong></td>
       </tr>
     </table>
   </div>
@@ -161,7 +159,7 @@ $resultss = $getShip->fetch();
 
 </div>
 <a href="#" id="downloadBtn" class="download-btn" onclick="downloadAsPDF() ">Download PDF</a>
-<a href="#" id="downloadBtn" class="download-btn" onclick="home()">done</a>
+<a href="customer.php" id="downloadBtn" class="download-btn" >done</a>
 </div>
 <script>
     function downloadAsPDF() {
@@ -175,12 +173,10 @@ $resultss = $getShip->fetch();
       html2pdf().from(container).set(options).save();
     }
     
-   history.pushState(null, null, location.href);
+  history.pushState(null, null, location.href);
   window.onpopstate = function () {
     history.go(1);
   };
-  
-  
   </script>
   
 </body>

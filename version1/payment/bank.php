@@ -1,5 +1,5 @@
 <?php
-
+$order = $_SESSION['order_id'];
 
 
 if (is_post()) {
@@ -8,16 +8,9 @@ if (is_post()) {
     $cvv = req('cvv');
     $date = req('date');
 
-
-   
-    $validations = $_db->prepare('SELECT * FROM `bank` 
-    WHERE ccv = ? 
-    AND card = ? 
-    AND name= ?
-    AND expires = ?');
-   $validations->execute([$cvv,$card,$name,$date]);
-   $validResult = $validations->fetch();
-
+    $validations = $_db->prepare('SELECT * FROM `bank` WHERE ccv = ? AND expires = ? AND card = ? AND name= ?');
+        $validations->execute([$cvv,$date,$card,$name]);
+        $validResult = $validations->fetch();
 
     if (!$name) {
         $_err['name'] = '  **Name is required  ';
@@ -46,24 +39,34 @@ if (is_post()) {
     if (!$_err) {
         
 
+
      if($validResult===false){      
         $_err['valid_card']="Invalid card details. Please check and try again.";
-        temp('info','Invalid card details. Please check and try again.');
        
      }else{
+
+        $stm = $_db->prepare('UPDATE `payment_record` SET datetime = NOW() WHERE  order_id = ?');
+        $stm->execute([$order]);
+
+        $stm = $_db->prepare('UPDATE `orders` SET status = ? WHERE  id = ?');
+        $stm->execute(["Paid",$order]);
+
         redirect("../message/thanks.php");
-     }
-       
-        }
+     } 
+
+        
     }
+}
+
 
 
 ?>
 
 
+
 <form id="card-form" method="post" class="hidden">
     <div class="form-group">
-        <label for="name">Name on Card <span style="color:red;"><?= err('name')?> </span></label>
+        <label for="name">Name on Card <span style="color:red;"><?= err('name')  ?></span></label>
         <?= html_text('name', 'placeholder="E.g Kim Ho"')  ?>
     </div>
     <div class="form-group">

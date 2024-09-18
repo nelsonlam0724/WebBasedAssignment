@@ -53,10 +53,10 @@ if (is_post()) {
     $_db->beginTransaction();
 
     $stm = $_db->prepare('
-    INSERT INTO `shippers` (address,company_name,phone,ship_method) VALUES (?, ? ,? , ?)
+    INSERT INTO `shippers` (address,company_name,phone,ship_method,status) VALUES (?, ? ,? , ?,?)
     ');
 
-    $stm->execute([$address, $shopnameOption, $phone, $shipMethod]);
+    $stm->execute([$address, $shopnameOption, $phone, $shipMethod,"Pending"]);
     $ship_id = $_db->lastInsertId();
     $_SESSION['ship_id'] = $ship_id;
 
@@ -68,17 +68,17 @@ if (is_post()) {
     ');
 
     $total = floatval($total);
-
+   
     $stm->execute([$userID, $ship_id, "Pending", $count, $total]);
     $id = $_db->lastInsertId();
 
     $stm = $_db->prepare('
-    INSERT INTO order_details (order_id,product_id,price,unit,subtotal)
-    VALUES (?,?,(SELECT price FROM product WHERE product_id = ?),?,price * unit)
+    INSERT INTO order_details (order_id,product_id,price,unit,subtotal,commment_status)
+    VALUES (?,?,(SELECT price FROM product WHERE product_id = ?),?,price * unit,?)
     ');
 
     foreach ($cartSelect as $product_id => $unit) {
-      $stm->execute([$id, $product_id, $product_id, $unit]);
+      $stm->execute([$id, $product_id, $product_id, $unit,"Panding"]);
     }
 
     $_db->commit();
@@ -100,7 +100,8 @@ if (is_post()) {
 
 <link rel="stylesheet" href="../css/checkout.css">
 <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
-<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+
+<link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
 </head>
 
 
@@ -368,7 +369,8 @@ if (is_post()) {
 
     </div>
   </form>
-  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+  
+  <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
   <script src="../js/checkout.js"></script>
   <script src="../js/map.js"></script>
   <script>

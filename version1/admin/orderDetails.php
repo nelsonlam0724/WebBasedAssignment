@@ -31,26 +31,30 @@ $_title = 'Order Details';
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="../js/orders.js"></script>
-    <link rel="stylesheet" href="../css/userList.css">
+    <link rel="stylesheet" href="../css/orderDetails.css">
     <title>Order List</title>
 </head>
 <form>
-    <label>Order Id</label>
-    <div><?= $order->id ?></div>
-    <br>
-
-    <label>Date</label>
-    <div><?= $order->datetime ?></div>
-    <br>
-
-    <label>Count</label>
-    <div><?= $order->count ?></div>
-    <br>
-
-    <label>Total</label>
-    <div><?= $order->total ?></div>
-    <br>
+    <table class="order-details">
+        <tr>
+            <th>Order ID</th>
+            <td><?= $order->id ?></td>
+        </tr>
+        <tr>
+            <th>Date</th>
+            <td><?= $order->datetime ?></td>
+        </tr>
+        <tr>
+            <th>Count</th>
+            <td><?= $order->count ?></td>
+        </tr>
+        <tr>
+            <th>Total</th>
+            <td><?= $order->total ?></td>
+        </tr>
+    </table>
 </form>
+
 
 <p> <?= count($arr) ?> item(s)</p>
 
