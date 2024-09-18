@@ -19,7 +19,7 @@ $result = strcmp($resultss->method , "card");
 if($result == 0){                  
     include '../payment/bank.php';
  }else{  
-     include '../payment/wallet.php';
+    include '../payment/wallet.php';
   } ?>      
             
 </div>

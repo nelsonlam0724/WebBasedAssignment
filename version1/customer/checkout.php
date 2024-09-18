@@ -100,7 +100,8 @@ if (is_post()) {
 
 <link rel="stylesheet" href="../css/checkout.css">
 <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
-<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+
+<link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
 </head>
 
 
@@ -368,7 +369,8 @@ if (is_post()) {
 
     </div>
   </form>
-  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+  
+  <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
   <script src="../js/checkout.js"></script>
   <script src="../js/map.js"></script>
   <script>
