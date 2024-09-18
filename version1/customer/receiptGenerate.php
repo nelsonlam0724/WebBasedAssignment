@@ -7,16 +7,19 @@ $productIds = array_keys($cartSelect);
 $products = [];
 
 if (!empty($productIds)) {
-  $ids = implode(',', array_map('intval', $productIds));
+  $ids = implode(',', array_map(function($id) {
+      return "'" . htmlspecialchars($id, ENT_QUOTES) . "'";
+  }, $productIds));
 
   $stmt = $_db->prepare("
-        SELECT product_id, name, price, product_photo 
-        FROM product 
-        WHERE product_id IN ($ids)
-    ");
+      SELECT product_id, name, price, product_photo 
+      FROM product 
+      WHERE product_id IN ($ids)
+  ");
   $stmt->execute();
   $products = $stmt->fetchAll(PDO::FETCH_ASSOC);
 }
+
 
 $getShip = $_db->prepare('
 SELECT * FROM `shippers` WHERE ship_id = ?

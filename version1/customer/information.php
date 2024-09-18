@@ -35,16 +35,17 @@ $results = $getPending->fetchAll();
 
             <?php
             $current_time = time();
-            $stm = $_db->prepare("SELECT id FROM orders WHERE status = ? AND ?");
-            $stm->execute(['Pending','created_at < NOW() - INTERVAL 1 MINUTE']);
-            $orderss = $stm->fetchAll(PDO::FETCH_ASSOC);
 
+            $stm = $_db->prepare("SELECT id FROM orders WHERE status = ? AND created_at < NOW() - INTERVAL 1 MINUTE");
+            
+            $stm->execute(['Pending']);
+            $orderss = $stm->fetchAll(PDO::FETCH_ASSOC);
+            
             foreach ($orderss as $order) {
                 $stm = $_db->prepare("UPDATE orders SET status = 'Cancel' WHERE id = :id");
-                $stm->bindParam(':id', $order['id']);
+                $stm->bindParam(':id', $order['id'], PDO::PARAM_STR);
                 $stm->execute();
             }
-
             $count = 0;
             foreach ($results as $o): ?>
                 <div class="item-container">
@@ -63,8 +64,6 @@ $results = $getPending->fetchAll();
 
 
         </div>
-
-
 
         <input class="input" name="tabs" type="radio" id="tab-3" />
         <label class="label" for="tab-3">Shipping details</label>
