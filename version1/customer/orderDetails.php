@@ -65,8 +65,6 @@ $_title = 'Order Details -' . htmlspecialchars($user->name);
             <th>Price (RM)</th>
             <th>Unit</th>
             <th>Subtotal (RM)</th>
-            <th>Status</th>
-            <th></th>
         </tr>
 
 
@@ -80,19 +78,16 @@ $_title = 'Order Details -' . htmlspecialchars($user->name);
                 <td><?= $item->price ?></td>
                 <td><?= $item->unit ?></td>
                 <td><?= $item->subtotal ?></td>
-                <td><?= $item->order_status ?></td>
-                <td>
-                    <form method="post" action="../function/cancel_order.php">
-                        <input type="hidden" name="order_ID" value="<?php echo $item->order_id; ?>">
-                        <input type="hidden" name="product_ID" value="<?php echo $item->product_id; ?>">
-                        <input type="hidden" name="num" value="<?php echo $num; ?>">
-                        <input type="submit" name="submit" value="Cancel Order" data-order class="cancel-button">
-                    </form>
-                </td>
             </tr>
         <?php endforeach; ?>
 
     </table>
+    <form method="post" action="../function/cancel_order.php">
+        <input type="hidden" name="order_ID" value="<?php echo $item->order_id; ?>">
+        <input type="hidden" name="user_ID" value="<?php echo $user->user_id; ?>">
+        <input type="hidden" name="product_ID" value="<?php $item->product_id ?>">
+        <input type="submit" name="submit" value="Cancel Order" data-order class="cancel-button">
+    </form>
 
     <button class="back-button" onclick="location.href='information.php?tab=5'">Back</button>
 </body>
