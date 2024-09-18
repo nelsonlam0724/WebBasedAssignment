@@ -71,35 +71,35 @@ $results = $getPending->fetchAll();
         <div class="panel">
             <?php
 
-
-
-            $getPending = $_db->prepare('
-                SELECT * FROM `orders` WHERE user_id = ? AND status = ?
+            $getShip = $_db->prepare('
+                SELECT s.* , o.* , s.status AS ship_status
+                FROM `shippers` AS s 
+                JOIN `orders` AS o ON s.ship_id = o.ship_id
+                WHERE o.user_id = ? AND o.status = ?
             ');
 
-            $getPending->execute([$userID, "Pending"]);
-            $results = $getPending->fetchAll();
-
-
+            $getShip->execute([$userID,"Paid"]);
+            $shipResults = $getShip->fetchAll();
 
             ?>
 
 
 
-
+<?php $counts = 0;
+            foreach ($shipResults as $o): ?>
             <div class="product-container" style="padding:28px">
                 <div class="product-details">
-                    <div class="product-title"><%= r %>. Shipping ID : <%= ship[0] %></div>
-                    <div class="product-description">Item will be arrived within <i style="color:green;text-decoration:underline;"> <%= ship[5] %></i> </div>
-                    <div class="product-description">Address : <%= ship[4] %></div>
-                    <div class="product-description">Recipient name : <%= ship[6] %></div>
-                    <div class="product-description">Status : <%= ship[3] %></div>
-                    <div class="product-description">Company : <%= ship[1] %></div>
-                    <div class="product-description" style="color:rgb(77, 130, 24)">Fee:RM <%= ship[5] %></div>
+                    <div class="product-title"><?= $counts+1 ?>.Shipping ID : <?= $o->ship_id ?></div>
+                    <div class="product-description">Address : <?= $o->address ?></div>
+                    <!-- <div class="product-description">Recipient name : <?= $o->name ?></div> -->
+                    <div class="product-description">Status : <?= $o->ship_status ?> </div>
+                    <div class="product-description">Company : <?= $o->company_name ?>  </div>
+                    <div class="product-description" style="color:rgb(77, 130, 24)">Ship Method : <?= $o->ship_method ?> </div>
                     <button class="rate-button" onclick="view_detail('<%= ship[0] %>', '<%= ship[5] %>')">View detail</button>
                 </div>
 
             </div>
+            <?php $counts++; endforeach  ?>
 
 
         </div>
@@ -110,20 +110,17 @@ $results = $getPending->fetchAll();
 
             <?php
 
-
-
             $getPaid = $_db->prepare('
                SELECT od.* ,o.* , p.product_id , p.name AS product_name ,od.price AS odPrice
                FROM order_details AS od 
                JOIN orders AS o ON od.order_id = o.id
                JOIN product AS p ON od.product_id = p.product_id
-               WHERE o.status = ? AND o.user_id = ?
+               JOIN shippers AS s ON o.ship_id = s.ship_id
+               WHERE o.status = ? AND o.user_id = ? AND od.commment_status = ? AND s.status = ?
                ');
 
-            $getPaid->execute(["Paid", $userID]);
+            $getPaid->execute(["Paid", $userID ,"Panding","Arrive"]);
             $results = $getPaid->fetchAll();
-
-
 
             ?>
 
@@ -143,7 +140,7 @@ $results = $getPending->fetchAll();
 
                     </div>
 
-                    <a href="comment.php?id=<?= $o->product_id ?>"><button class="rate-button" style="width:150px">Rate</button></a>
+                    <a href="comment.php?id=<?= $o->product_id ?>&order_id=<?= $o->order_id ?>"><button class="rate-button" style="width:150px">Rate</button></a>
                 </div>
             <?php endforeach; ?>
 
