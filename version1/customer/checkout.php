@@ -78,7 +78,7 @@ if (is_post()) {
     ');
 
     foreach ($cartSelect as $product_id => $unit) {
-      $stm->execute([$id, $product_id, $product_id, $unit,"Panding"]);
+      $stm->execute([$id, $product_id, $product_id, $unit,"Pending"]);
     }
 
     $_db->commit();
