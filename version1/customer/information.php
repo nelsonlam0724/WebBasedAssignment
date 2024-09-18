@@ -17,8 +17,6 @@ $getPending = $_db->prepare('
 $getPending->execute([$userID, "Pending"]);
 $results = $getPending->fetchAll();
 
-
-
 ?>
 
 <link rel="stylesheet" href="../css/information.css">
@@ -35,7 +33,19 @@ $results = $getPending->fetchAll();
         <label class="label" for="tab-1">To Pay</label>
         <div class="panel">
 
-            <?php $count = 0;
+            <?php
+            $current_time = time();
+            $stm = $_db->prepare("SELECT id FROM orders WHERE status = 'Pending' AND created_at < NOW() - INTERVAL 1 MINUTE");
+            $stm->execute();
+            $orderss = $stm->fetchAll(PDO::FETCH_ASSOC);
+
+            foreach ($orderss as $order) {
+                $stm = $_db->prepare("UPDATE orders SET status = 'Cancel' WHERE id = :id");
+                $stm->bindParam(':id', $order['id']);
+                $stm->execute();
+            }
+
+            $count = 0;
             foreach ($results as $o): ?>
                 <div class="item-container">
                     <div class="item-details">
@@ -139,7 +149,7 @@ $results = $getPending->fetchAll();
 
         </div>
 
-        <input class="input" name="tabs" type="radio" id="tab-5" <?= isset($_GET['tab']) && $_GET['tab'] == '5' ? 'checked' : '' ?>/>
+        <input class="input" name="tabs" type="radio" id="tab-5" <?= isset($_GET['tab']) && $_GET['tab'] == '5' ? 'checked' : '' ?> />
         <label class="label" for="tab-5" id="tab-label-5">Order</label>
         <div class="panel">
             <?php

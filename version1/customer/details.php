@@ -2,6 +2,10 @@
 include '../_base.php';
 include '../include/header.php';
 
+auth('Role','Admin','Member');
+
+$user = $_SESSION['user'];
+
 $order_id = get('order_id');
 $ship_id = get('ship_id');
 

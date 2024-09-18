@@ -159,7 +159,7 @@ $recordResult = $getPayRecord->fetch();
 
 </div>
 <a href="#" id="downloadBtn" class="download-btn" onclick="downloadAsPDF() ">Download PDF</a>
-<a href="#" id="downloadBtn" class="download-btn" onclick="home()">done</a>
+<a href="customer.php" id="downloadBtn" class="download-btn" >done</a>
 </div>
 <script>
     function downloadAsPDF() {
