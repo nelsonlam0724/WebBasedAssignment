@@ -1,7 +1,6 @@
 <?php
 // Include necessary files
 include '../_base.php';
-include '../_auth.php';
 
 // Ensure only authorized users (Admin/Root) can deactivate a user
 auth('Root', 'Admin'); 
