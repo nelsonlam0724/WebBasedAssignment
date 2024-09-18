@@ -12,7 +12,7 @@ CREATE TABLE `bank` (
   `card` varchar(50) NOT NULL,
   `expires` varchar(50) NOT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 INSERT INTO bank (id, balance, name, ccv, phone, card, expires) VALUES ('1', '901.00', 'Sun Wu Kong ', '258', '010-7890123', '4010101010101010', '09/21');
 INSERT INTO bank (id, balance, name, ccv, phone, card, expires) VALUES ('2', '3500.25', 'Lee Wen Hao ', '217', '018-3535893', '4999969938799999', '09/23');
@@ -27,16 +27,16 @@ CREATE TABLE `carts` (
   KEY `user_id` (`user_id`),
   KEY `product_id` (`product_id`),
   KEY `category_id` (`category_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=64 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
-INSERT INTO carts (id, user_id, product_id, unit, category_id) VALUES ('C0031', 'U0003', 'P0007', '1', 'CT0002');
-INSERT INTO carts (id, user_id, product_id, unit, category_id) VALUES ('C0055', 'U0004', 'P0007', '1', 'CT0002');
-INSERT INTO carts (id, user_id, product_id, unit, category_id) VALUES ('C0056', 'U0005', 'P0006', '1', 'CT0002');
-INSERT INTO carts (id, user_id, product_id, unit, category_id) VALUES ('C0059', 'U0007', 'P00010', '2', 'CT0002');
-INSERT INTO carts (id, user_id, product_id, unit, category_id) VALUES ('C0060', 'U0008', 'P0007', '1', 'CT0002');
-INSERT INTO carts (id, user_id, product_id, unit, category_id) VALUES ('C0061', 'U00026', 'P0008', '8', 'CT0002');
-INSERT INTO carts (id, user_id, product_id, unit, category_id) VALUES ('C0062', 'U00026', 'P0009', '2', 'CT0002');
-INSERT INTO carts (id, user_id, product_id, unit, category_id) VALUES ('C0063', 'U00026', 'P00010', '1', 'CT0002');
+INSERT INTO carts (id, user_id, product_id, unit, category_id) VALUES ('C0031', 'U0003', 'P', '1', 'CT0002');
+INSERT INTO carts (id, user_id, product_id, unit, category_id) VALUES ('C0055', 'U0004', 'P', '1', 'CT0002');
+INSERT INTO carts (id, user_id, product_id, unit, category_id) VALUES ('C0056', 'U0005', 'P', '1', 'CT0002');
+INSERT INTO carts (id, user_id, product_id, unit, category_id) VALUES ('C0059', 'U0007', 'P', '2', 'CT0002');
+INSERT INTO carts (id, user_id, product_id, unit, category_id) VALUES ('C0060', 'U0008', 'P', '1', 'CT0002');
+INSERT INTO carts (id, user_id, product_id, unit, category_id) VALUES ('C0061', 'U00026', 'P', '8', 'CT0002');
+INSERT INTO carts (id, user_id, product_id, unit, category_id) VALUES ('C0062', 'U00026', 'P', '2', 'CT0002');
+INSERT INTO carts (id, user_id, product_id, unit, category_id) VALUES ('C0063', 'U00026', 'P', '1', 'CT0002');
 
 CREATE TABLE `category` (
   `category_id` varchar(10) NOT NULL,
@@ -44,7 +44,7 @@ CREATE TABLE `category` (
   `product_id` varchar(10) NOT NULL,
   PRIMARY KEY (`category_id`),
   KEY `product_id` (`product_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 INSERT INTO category (category_id, category_name, product_id) VALUES ('CT0002', 'keyboard train', 'P0001');
 
@@ -59,7 +59,7 @@ CREATE TABLE `comment` (
   PRIMARY KEY (`comment_id`),
   KEY `user_id` (`user_id`),
   KEY `product_id` (`product_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=26 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 INSERT INTO comment (comment_id, user_id, product_id, datetime, comment, rate, photo) VALUES ('CM0004', 'U0006', 'P0007', '2024-09-09 13:11:35', 'Good', '2', 'fefwef');
 INSERT INTO comment (comment_id, user_id, product_id, datetime, comment, rate, photo) VALUES ('CM0005', 'U0010', 'P0006', '2024-09-09 13:12:01', 'rubish!!!', '0', 'we');
@@ -91,7 +91,7 @@ CREATE TABLE `favorite` (
   PRIMARY KEY (`id`),
   KEY `product_id` (`product_id`),
   KEY `user_id` (`user_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=197 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 INSERT INTO favorite (id, product_id, user_id) VALUES ('F0192', 'P0008', 'U0007');
 INSERT INTO favorite (id, product_id, user_id) VALUES ('F0193', 'P0013', 'U0007');
@@ -111,8 +111,8 @@ CREATE TABLE `order_details` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 INSERT INTO order_details (order_id, product_id, price, unit, subtotal, order_status, commment_status) VALUES ('O0011', 'P0006', '12', '3', '36', 'Pending', 'Pending');
-INSERT INTO order_details (order_id, product_id, price, unit, subtotal, order_status, commment_status) VALUES ('O0012', 'P0006', '12', '3', '36', 'Delivered', 'Pending');
 INSERT INTO order_details (order_id, product_id, price, unit, subtotal, order_status, commment_status) VALUES ('O0011', 'P0007', '12', '4', '48', 'Shipped', 'Pending');
+INSERT INTO order_details (order_id, product_id, price, unit, subtotal, order_status, commment_status) VALUES ('O0012', 'P0006', '12', '3', '36', 'Delivered', 'Pending');
 INSERT INTO order_details (order_id, product_id, price, unit, subtotal, order_status, commment_status) VALUES ('O0012', 'P0007', '12', '4', '48', 'Pending', 'Pending');
 INSERT INTO order_details (order_id, product_id, price, unit, subtotal, order_status, commment_status) VALUES ('O0013', 'P0006', '12', '3', '36', 'Shipped', 'Pending');
 INSERT INTO order_details (order_id, product_id, price, unit, subtotal, order_status, commment_status) VALUES ('O0013', 'P0007', '12', '5', '60', 'Cancelled', 'Pending');
@@ -188,7 +188,7 @@ CREATE TABLE `orders` (
   `created_at` timestamp NOT NULL DEFAULT current_timestamp(),
   PRIMARY KEY (`id`),
   KEY `ship_id` (`ship_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=56 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 INSERT INTO orders (id, user_id, datetime, total, ship_id, count, status, created_at) VALUES ('O0011', 'U0007', '2024-09-07 22:37:17', '0.00', '13', '0', '', '2024-09-18 08:40:11');
 INSERT INTO orders (id, user_id, datetime, total, ship_id, count, status, created_at) VALUES ('O0012', 'U0007', '2024-09-07 22:37:57', '0.00', '14', '0', '', '2024-09-18 08:40:11');
@@ -246,7 +246,7 @@ CREATE TABLE `payment_record` (
   PRIMARY KEY (`id`),
   KEY `order_id` (`order_id`),
   CONSTRAINT `payment_record_ibfk_1` FOREIGN KEY (`order_id`) REFERENCES `orders` (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=11 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 INSERT INTO payment_record (id, user_id, datetime, amount, method, order_id) VALUES ('PR0001', 'U0007', '2024-09-17 17:27:19', '27.10', 'card', 'O0046');
 INSERT INTO payment_record (id, user_id, datetime, amount, method, order_id) VALUES ('PR0002', 'U0007', '2024-09-17 17:31:05', '52.60', 'card', 'O0047');
@@ -270,7 +270,7 @@ CREATE TABLE `product` (
   `weight` decimal(10,2) NOT NULL,
   PRIMARY KEY (`product_id`),
   KEY `category_id` (`category_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=30 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 INSERT INTO product (product_id, name, price, category_id, quantity, product_photo, description, weight) VALUES ('P0006', 'Keyboard', '12.00', 'CT0002', '0', '12', '122dd', '2.00');
 INSERT INTO product (product_id, name, price, category_id, quantity, product_photo, description, weight) VALUES ('P0007', 'speaker', '12.00', 'CT0002', '1', '12', '122dd', '2.00');
@@ -305,7 +305,7 @@ CREATE TABLE `shippers` (
   `ship_method` varchar(50) NOT NULL,
   `status` varchar(12) NOT NULL,
   PRIMARY KEY (`ship_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=58 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 INSERT INTO shippers (ship_id, address, company_name, phone, ship_method, status) VALUES ('S0008', 'werf', 'werwer', 'wer', 'werewr', 'Pending');
 INSERT INTO shippers (ship_id, address, company_name, phone, ship_method, status) VALUES ('S0011', 'sdf Kuala Lumpur,Wilayah Persekutuan', 'NINJA VAN', '0122323232', 'on', 'Pending');
@@ -356,20 +356,14 @@ INSERT INTO shippers (ship_id, address, company_name, phone, ship_method, status
 INSERT INTO shippers (ship_id, address, company_name, phone, ship_method, status) VALUES ('S0057', 'Jalan Pantai Permai 12, Taman Desa Kerinchi, Pantai Dalam, Kuala Lumpur, 59200, Malaysia Sarawak', 'NINJA VAN', 'ss', 'pick', 'Pending');
 
 CREATE TABLE `token` (
-  `id` varchar(11) NOT NULL,
+  `id` int(11) NOT NULL AUTO_INCREMENT,
   `email` varchar(255) NOT NULL,
   `verification_code` char(6) NOT NULL,
   `expire` datetime NOT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `email` (`email`,`verification_code`)
-) ENGINE=InnoDB AUTO_INCREMENT=51 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
-INSERT INTO token (id, email, verification_code, expire) VALUES ('T0045', '2@gmail.com', '822996', '2024-09-17 21:37:15');
-INSERT INTO token (id, email, verification_code, expire) VALUES ('T0046', 'codeqiangod@gmail.com', '917203', '2024-09-17 22:05:36');
-INSERT INTO token (id, email, verification_code, expire) VALUES ('T0047', 'codeqiangod@gmail.com', '478797', '2024-09-17 22:08:15');
-INSERT INTO token (id, email, verification_code, expire) VALUES ('T0048', 'codeqiangod@gmail.com', '357530', '2024-09-17 22:08:18');
-INSERT INTO token (id, email, verification_code, expire) VALUES ('T0049', 'codeqiangod@gmail.com', '349297', '2024-09-17 22:08:21');
-INSERT INTO token (id, email, verification_code, expire) VALUES ('T0050', 'codeqiangod@gmail.com', '488409', '2024-09-17 22:12:03');
 
 CREATE TABLE `user` (
   `user_id` varchar(5) NOT NULL,
@@ -394,7 +388,7 @@ CREATE TABLE `user` (
   UNIQUE KEY `email` (`email`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
-INSERT INTO user (user_id, name, email, password, gender, birthday, photo, role, status, failed_attempts, last_failed_attempt, banned_until, last_login_time, login_count, last_login_event_time, deactivated_at, remember_token, remember_token_expiry) VALUES ('U0001', 'Root', '1@gmail.com', '7c4a8d09ca3762af61e59520943dc26494f8941b', 'Female', '2024-09-11', '66e16e9f590ec.jpg', 'Root', 'Active', '0', '2024-09-10 12:49:23', '', '2024-09-18 14:24:49', '1', '2024-09-18 14:24:49', '0000-00-00 00:00:00', '', '0000-00-00 00:00:00');
+INSERT INTO user (user_id, name, email, password, gender, birthday, photo, role, status, failed_attempts, last_failed_attempt, banned_until, last_login_time, login_count, last_login_event_time, deactivated_at, remember_token, remember_token_expiry) VALUES ('U0001', 'Root', '1@gmail.com', '7c4a8d09ca3762af61e59520943dc26494f8941b', 'Female', '2024-09-11', '66e16e9f590ec.jpg', 'Root', 'Active', '0', '2024-09-10 12:49:23', '0000-00-00 00:00:00', '2024-09-18 14:24:49', '1', '2024-09-18 14:24:49', '0000-00-00 00:00:00', '', '0000-00-00 00:00:00');
 INSERT INTO user (user_id, name, email, password, gender, birthday, photo, role, status, failed_attempts, last_failed_attempt, banned_until, last_login_time, login_count, last_login_event_time, deactivated_at, remember_token, remember_token_expiry) VALUES ('U0002', 'William Jones', 'william.j@gmail.com', '7c4a8d09ca3762af61e59520943dc26494f8941b', 'Male', '1997-09-30', '66e164f231f73.jpg', 'Member', 'Active', '0', '2024-09-06 13:20:11', '0000-00-00 00:00:00', '2024-09-07 14:45:09', '1', '2024-09-07 14:45:09', '0000-00-00 00:00:00', '', '0000-00-00 00:00:00');
 INSERT INTO user (user_id, name, email, password, gender, birthday, photo, role, status, failed_attempts, last_failed_attempt, banned_until, last_login_time, login_count, last_login_event_time, deactivated_at, remember_token, remember_token_expiry) VALUES ('U0003', 'Ava Garcia', 'ava.g@gmail.com', '7c4a8d09ca3762af61e59520943dc26494f8941b', 'Female', '2000-01-21', '66e164f231f73.jpg', 'Member', 'Active', '0', '2024-09-08 16:24:47', '0000-00-00 00:00:00', '2024-09-10 11:02:54', '1', '2024-09-10 11:02:54', '0000-00-00 00:00:00', '', '0000-00-00 00:00:00');
 INSERT INTO user (user_id, name, email, password, gender, birthday, photo, role, status, failed_attempts, last_failed_attempt, banned_until, last_login_time, login_count, last_login_event_time, deactivated_at, remember_token, remember_token_expiry) VALUES ('U0004', 'James Martinez', 'james.m@gmail.com', '7c4a8d09ca3762af61e59520943dc26494f8941b', 'Male', '1994-08-17', '66e164f231f73.jpg', 'Member', 'Active', '0', '2024-09-14 08:22:13', '0000-00-00 00:00:00', '2024-09-15 17:00:10', '1', '2024-09-15 17:00:10', '0000-00-00 00:00:00', '', '0000-00-00 00:00:00');
@@ -405,14 +399,14 @@ INSERT INTO user (user_id, name, email, password, gender, birthday, photo, role,
 INSERT INTO user (user_id, name, email, password, gender, birthday, photo, role, status, failed_attempts, last_failed_attempt, banned_until, last_login_time, login_count, last_login_event_time, deactivated_at, remember_token, remember_token_expiry) VALUES ('U0009', 'Ella Rodriguez', 'ella.r@gmail.com', '7c4a8d09ca3762af61e59520943dc26494f8941b', 'Female', '2001-12-12', '66e164f231f73.jpg', 'Member', 'Active', '0', '2024-09-09 13:00:20', '0000-00-00 00:00:00', '2024-09-10 14:32:43', '1', '2024-09-10 14:32:43', '0000-00-00 00:00:00', '', '0000-00-00 00:00:00');
 INSERT INTO user (user_id, name, email, password, gender, birthday, photo, role, status, failed_attempts, last_failed_attempt, banned_until, last_login_time, login_count, last_login_event_time, deactivated_at, remember_token, remember_token_expiry) VALUES ('U0010', 'Henry Walker', 'henry.w@gmail.com', '7c4a8d09ca3762af61e59520943dc26494f8941b', 'Male', '1995-11-27', '66e164f231f73.jpg', 'Member', 'Active', '0', '2024-09-11 14:45:13', '0000-00-00 00:00:00', '2024-09-14 11:30:15', '1', '2024-09-14 11:30:15', '0000-00-00 00:00:00', '', '0000-00-00 00:00:00');
 INSERT INTO user (user_id, name, email, password, gender, birthday, photo, role, status, failed_attempts, last_failed_attempt, banned_until, last_login_time, login_count, last_login_event_time, deactivated_at, remember_token, remember_token_expiry) VALUES ('U0011', 'Amelia Young', 'amelia.y@gmail.com', '7c4a8d09ca3762af61e59520943dc26494f8941b', 'Female', '1998-08-14', '66e164f231f73.jpg', 'Member', 'Active', '0', '2024-09-12 20:02:16', '0000-00-00 00:00:00', '2024-09-15 17:55:32', '1', '2024-09-15 17:55:32', '0000-00-00 00:00:00', '', '0000-00-00 00:00:00');
-INSERT INTO user (user_id, name, email, password, gender, birthday, photo, role, status, failed_attempts, last_failed_attempt, banned_until, last_login_time, login_count, last_login_event_time, deactivated_at, remember_token, remember_token_expiry) VALUES ('U0012', 'Admin', '2@gmail.com', '7c4a8d09ca3762af61e59520943dc26494f8941b', 'Female', '2024-09-11', '66e164f231f73.jpg', 'Admin', 'Active', '0', '2024-09-18 12:09:10', '', '2024-09-18 14:33:59', '1', '2024-09-18 14:33:59', '2024-09-10 12:11:54', '', '0000-00-00 00:00:00');
+INSERT INTO user (user_id, name, email, password, gender, birthday, photo, role, status, failed_attempts, last_failed_attempt, banned_until, last_login_time, login_count, last_login_event_time, deactivated_at, remember_token, remember_token_expiry) VALUES ('U0012', 'Admin', '2@gmail.com', '7c4a8d09ca3762af61e59520943dc26494f8941b', 'Female', '2024-09-11', '66e164f231f73.jpg', 'Admin', 'Active', '0', '2024-09-18 12:09:10', '0000-00-00 00:00:00', '2024-09-18 14:33:59', '1', '2024-09-18 14:33:59', '2024-09-10 12:11:54', '', '0000-00-00 00:00:00');
 INSERT INTO user (user_id, name, email, password, gender, birthday, photo, role, status, failed_attempts, last_failed_attempt, banned_until, last_login_time, login_count, last_login_event_time, deactivated_at, remember_token, remember_token_expiry) VALUES ('U0013', 'Ethan Harris', 'ethan.h@gmail.com', '7c4a8d09ca3762af61e59520943dc26494f8941b', 'Male', '1994-07-07', '66e164f231f73.jpg', 'Member', 'Active', '0', '2024-09-07 16:33:10', '0000-00-00 00:00:00', '2024-09-08 17:21:50', '1', '2024-09-08 17:21:50', '0000-00-00 00:00:00', '', '0000-00-00 00:00:00');
 INSERT INTO user (user_id, name, email, password, gender, birthday, photo, role, status, failed_attempts, last_failed_attempt, banned_until, last_login_time, login_count, last_login_event_time, deactivated_at, remember_token, remember_token_expiry) VALUES ('U0014', 'Harper Green', 'harper.g@gmail.com', '7c4a8d09ca3762af61e59520943dc26494f8941b', 'Female', '1999-12-05', '66e164f231f73.jpg', 'Member', 'Banned', '0', '2024-09-06 10:12:00', '0000-00-00 00:00:00', '2024-09-07 09:11:20', '1', '2024-09-07 09:11:20', '0000-00-00 00:00:00', '', '0000-00-00 00:00:00');
 INSERT INTO user (user_id, name, email, password, gender, birthday, photo, role, status, failed_attempts, last_failed_attempt, banned_until, last_login_time, login_count, last_login_event_time, deactivated_at, remember_token, remember_token_expiry) VALUES ('U0015', 'Alexander Lee', 'alexander.l@gmail.com', '7c4a8d09ca3762af61e59520943dc26494f8941b', 'Female', '2000-03-08', '66e164f231f73.jpg', 'Member', 'Active', '0', '2024-09-13 11:00:15', '0000-00-00 00:00:00', '2024-09-14 13:05:44', '1', '2024-09-14 13:05:44', '0000-00-00 00:00:00', '', '0000-00-00 00:00:00');
 INSERT INTO user (user_id, name, email, password, gender, birthday, photo, role, status, failed_attempts, last_failed_attempt, banned_until, last_login_time, login_count, last_login_event_time, deactivated_at, remember_token, remember_token_expiry) VALUES ('U0016', 'Isabella Scott', 'isabella.s@gmail.com', '7c4a8d09ca3762af61e59520943dc26494f8941b', 'Female', '1996-10-23', '66e164f231f73.jpg', 'Member', 'Active', '0', '2024-09-11 12:15:11', '0000-00-00 00:00:00', '2024-09-13 15:02:55', '1', '2024-09-13 15:02:55', '0000-00-00 00:00:00', '', '0000-00-00 00:00:00');
 INSERT INTO user (user_id, name, email, password, gender, birthday, photo, role, status, failed_attempts, last_failed_attempt, banned_until, last_login_time, login_count, last_login_event_time, deactivated_at, remember_token, remember_token_expiry) VALUES ('U0017', 'Daniel Carter', 'daniel.c@gmail.com', '7c4a8d09ca3762af61e59520943dc26494f8941b', 'Female', '1995-02-18', '66e164f231f73.jpg', 'Member', 'Active', '0', '2024-09-12 09:40:23', '0000-00-00 00:00:00', '2024-09-13 17:11:47', '1', '2024-09-13 17:11:47', '0000-00-00 00:00:00', '', '0000-00-00 00:00:00');
 INSERT INTO user (user_id, name, email, password, gender, birthday, photo, role, status, failed_attempts, last_failed_attempt, banned_until, last_login_time, login_count, last_login_event_time, deactivated_at, remember_token, remember_token_expiry) VALUES ('U0018', 'Emily King', 'emily.k@gmail.com', '7c4a8d09ca3762af61e59520943dc26494f8941b', 'Female', '2001-11-20', '66e164f231f73.jpg', 'Member', 'Active', '0', '2024-09-10 08:33:18', '0000-00-00 00:00:00', '2024-09-12 10:00:22', '1', '2024-09-12 10:00:22', '0000-00-00 00:00:00', '', '0000-00-00 00:00:00');
-INSERT INTO user (user_id, name, email, password, gender, birthday, photo, role, status, failed_attempts, last_failed_attempt, banned_until, last_login_time, login_count, last_login_event_time, deactivated_at, remember_token, remember_token_expiry) VALUES ('U0019', 'Emily Johnson', '3@gmail.com', '7c4a8d09ca3762af61e59520943dc26494f8941b', 'Female', '1992-12-05', '66dfc553b0989.jpg', 'Admin', 'Active', '0', '2024-09-18 12:06:06', '', '2024-09-18 12:07:53', '1', '2024-09-18 12:07:53', '2024-09-07 17:05:09', '', '0000-00-00 00:00:00');
+INSERT INTO user (user_id, name, email, password, gender, birthday, photo, role, status, failed_attempts, last_failed_attempt, banned_until, last_login_time, login_count, last_login_event_time, deactivated_at, remember_token, remember_token_expiry) VALUES ('U0019', 'Emily Johnson', '3@gmail.com', '7c4a8d09ca3762af61e59520943dc26494f8941b', 'Female', '1992-12-05', '66dfc553b0989.jpg', 'Admin', 'Active', '0', '2024-09-18 12:06:06', '0000-00-00 00:00:00', '2024-09-18 12:07:53', '1', '2024-09-18 12:07:53', '2024-09-07 17:05:09', '', '0000-00-00 00:00:00');
 INSERT INTO user (user_id, name, email, password, gender, birthday, photo, role, status, failed_attempts, last_failed_attempt, banned_until, last_login_time, login_count, last_login_event_time, deactivated_at, remember_token, remember_token_expiry) VALUES ('U0020', 'Micky Way', '4@gmail.com', '7c4a8d09ca3762af61e59520943dc26494f8941b', 'Female', '1991-10-16', '66e017b2e5a89.jpg', 'Admin', 'Active', '0', '2024-09-10 12:44:20', '0000-00-00 00:00:00', '2024-09-11 16:02:55', '1', '2024-09-11 16:02:55', '0000-00-00 00:00:00', '', '0000-00-00 00:00:00');
 INSERT INTO user (user_id, name, email, password, gender, birthday, photo, role, status, failed_attempts, last_failed_attempt, banned_until, last_login_time, login_count, last_login_event_time, deactivated_at, remember_token, remember_token_expiry) VALUES ('U0021', 'Sophia Davis', '5@gmail.com', '7c4a8d09ca3762af61e59520943dc26494f8941b', 'Female', '1995-09-10', '66e92306b357a.jpg', 'Member', 'Banned', '0', '2024-09-10 12:43:33', '0000-00-00 00:00:00', '2024-09-10 12:46:10', '1', '2024-09-10 12:46:10', '2024-09-18 11:59:48', '', '0000-00-00 00:00:00');
 INSERT INTO user (user_id, name, email, password, gender, birthday, photo, role, status, failed_attempts, last_failed_attempt, banned_until, last_login_time, login_count, last_login_event_time, deactivated_at, remember_token, remember_token_expiry) VALUES ('U0022', 'Liam Brown', 'liam.b@gmail.com', '7c4a8d09ca3762af61e59520943dc26494f8941b', 'Male', '1993-05-18', '66e82a2818964.jpg', 'Member', 'Banned', '0', '2024-09-07 14:20:10', '0000-00-00 00:00:00', '2024-09-10 10:01:23', '1', '2024-09-10 10:01:23', '2024-09-18 11:57:41', '', '0000-00-00 00:00:00');
