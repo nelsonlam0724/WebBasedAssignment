@@ -49,14 +49,17 @@ if (is_post()) {
         $_err['quantity'] = 'Required';
     }
 
-    if (!empty($new_product_photo['name']) && $new_product_photo['error'] === UPLOAD_ERR_OK) {
-        if (!in_array($new_product_photo['type'], ['image/jpeg', 'image/png'])) {
-            $_err['photo'] = 'Invalid file type. Only JPEG and PNG are allowed.';
-        } elseif ($new_product_photo['size'] > 2 * 1024 * 1024) { // 2MB max size
-            $_err['photo'] = 'File size exceeds 2MB.';
+    // Validation: photo (file)
+    if (!empty($new_product_photo->name) && $new_product_photo->error === UPLOAD_ERR_OK) {
+        // If a new file is uploaded, validate it
+        if (!in_array($new_product_photo->type, ['image/jpeg', 'image/png'])) {
+            $_err['photo'] = 'Must be a JPEG or PNG';
+        } else if ($new_product_photo->size > 1 * 1024 * 1024) {
+            $_err['photo'] = 'Maximum 1MB';
         }
     } else {
-        $product_photo_name = $product->product_photo; // Retain the existing photo
+        // No new photo uploaded, retain the current photo
+        $product_photo_name = $product->product_photo;
     }
 
     if (!$new_category) {
@@ -77,8 +80,8 @@ if (is_post()) {
 
     // Update the product if there are no validation errors
     if (empty($_err)) {
-        if (!empty($new_product_photo['name']) && $new_product_photo['error'] == UPLOAD_ERR_OK) {
-            $product_photo_name = save_photo($new_product_photo);
+        if (!empty($new_product_photo->name) && $new_product_photo->error == UPLOAD_ERR_OK) {
+            $product_photo_name = save_photo_admin($new_product_photo);
         } else {
             $product_photo_name = $product->product_photo;
         }
@@ -165,43 +168,8 @@ if (is_post()) {
     <button type="submit" id="submit-button" style="display: none;">Update Product</button>
 </form>
 
-<script>
-document.getElementById('edit-button').addEventListener('click', function() {
-    var formElements = document.querySelectorAll('#product-form input, #product-form select, #product-form textarea');
-    formElements.forEach(function(element) {
-        element.disabled = false; // Enable form inputs for editing
-    });
+<script src="../js/productEdit.js"></script>
 
-    // Show the "Update Product" and "Cancel" buttons, hide the "Edit" button
-    document.getElementById('submit-button').style.display = 'inline'; 
-    document.getElementById('edit-button').style.display = 'none';
-    document.getElementById('cancel-button').style.display = 'inline';
-});
-
-document.getElementById('cancel-button').addEventListener('click', function() {
-    var formElements = document.querySelectorAll('#product-form input, #product-form select, #product-form textarea');
-    formElements.forEach(function(element) {
-        element.disabled = true; // Disable form inputs when canceling
-    });
-
-    // Hide the "Update Product" and "Cancel" buttons, show the "Edit" button
-    document.getElementById('submit-button').style.display = 'none';
-    document.getElementById('edit-button').style.display = 'inline';
-    document.getElementById('cancel-button').style.display = 'none';
-    
-    // Optional: reset form fields to original values
-    document.getElementById('product-form').reset();
-    document.getElementById('product-photo').src = '../uploads/<?= htmlspecialchars($product->product_photo) ?>';
-});
-
-// Initially, disable all input fields and hide the "Update Product" button
-document.querySelectorAll('#product-form input, #product-form select, #product-form textarea').forEach(function(element) {
-    element.disabled = true;
-});
-
-document.getElementById('submit-button').style.display = 'none'; // Hide the submit button by default
-
-</script>
 <?php
 include '../_foot.php';
 ?>

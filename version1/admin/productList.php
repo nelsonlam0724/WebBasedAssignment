@@ -179,14 +179,7 @@ include '../_head.php';
     </div>
 </div>
 
-<script>
-    document.getElementById('select-all').addEventListener('click', function() {
-        let checkboxes = document.querySelectorAll('.product-checkbox');
-        for (let checkbox of checkboxes) {
-            checkbox.checked = this.checked;
-        }
-    });
-</script>
+<script src="../js/productList.js"></script>
 
 <?php
 include '../_foot.php';
