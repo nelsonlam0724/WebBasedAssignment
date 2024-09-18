@@ -2,8 +2,8 @@ $(document).ready(function(){
     $('.wishlist').on("click",function(){
   
         let $this = $(this);  
-        let userID = $('.text-first h6').data('user');
-        let productID = $this.data('productid');             
+        let userID = parseInt( $('.text-first h6').data('user'));
+        let productID = parseInt($this.data('productid'));             
         $.ajax({
             url: '../function/add_favorite.php',
             type: 'POST',
@@ -20,11 +20,11 @@ $(document).ready(function(){
     });
    
     fetchWishList();
-    function fetchWishList() { 
-        let userID =$('.text-first h6').data('user');
+    function fetchWishList() {
+        let userID = parseInt($('.text-first h6').data('user'));
         $('.wishlist').each(function() {
             let $this = $(this);  
-            let productID =$this.data('productid');
+            let productID = parseInt($this.data('productid'));
             $.ajax({
                 url: '../function/fetch_wishlist.php',
                 type: 'POST',
@@ -32,7 +32,7 @@ $(document).ready(function(){
                 success: function(response) {
                     var records = JSON.parse(response);
                     records.forEach(function(record) {
-                        if ( record.product_id ==  productID) {
+                        if ( parseInt(record.product_id) ==  productID) {
                             $this.find('p i').css("color", "red");
                         }
                     });
@@ -43,8 +43,8 @@ $(document).ready(function(){
     
     $('.add_card').on("click", function() {     
         let $this = $(this);  
-        let userID = $('.text-first h6').data('user');
-        let productID = $this.data('add');             
+        let userID = parseInt($('.text-first h6').data('user'));
+        let productID = parseInt($this.data('add'));             
         $.ajax({
             url: '../function/add_to_cart.php',
             type: 'POST',
@@ -58,8 +58,8 @@ $(document).ready(function(){
 
     $('.delete').on("click", function() {     
         let $this = $(this);  
-        let userID =$('.text-first h6').data('user');
-        let cartID = $this.data('del');             
+        let userID = parseInt($('.text-first h6').data('user'));
+        let cartID = parseInt($this.data('del'));             
         $.ajax({
             url: '../function/delete_cart.php',
             type: 'POST',
@@ -73,7 +73,7 @@ $(document).ready(function(){
 
     
     function fetchCart() {
-       let userID = $('.text-first h6').data('user');
+       let userID = parseInt($('.text-first h6').data('user'));
     $.ajax({
         url: '../function/fetch_cart.php',
         type: 'POST',
@@ -88,8 +88,8 @@ $(document).ready(function(){
 
 $('.likes').on("click", function() {     
     let $this = $(this);  
-    let userID = $('.text-first h6').data('user');
-    let commentID = $this.data('comment');             
+    let userID = parseInt($('.text-first h6').data('user'));
+    let commentID = parseInt($this.data('comment'));             
     $.ajax({
         url: '../function/updateLikes.php',
         type: 'POST',
@@ -163,67 +163,5 @@ $(document).ready(function() {
             const star = $('<span>').addClass('star').html('☆'); 
             starContainer.append(star);
         }
-    }
-});
-
-$(document).ready(function () {
-    $('label.upload input[type=file]').on('change', e => {
-        const f = e.target.files[0];
-        const img = $(e.target).siblings('img')[0];
-
-        if (!img) return;
-
-        img.dataset.src ??= img.src;
-
-        if (f?.type.startsWith('image/')) {
-            img.src = URL.createObjectURL(f);
-        } else {
-            img.src = img.dataset.src;
-            e.target.value = '';
-        }
-    });
-    photo_value
-
-});
-
-document.getElementById('edit-button').addEventListener('click', function() {
-    var formElements = document.querySelectorAll('#product-form input, #product-form select, #product-form textarea');
-    formElements.forEach(function(element) {
-        element.disabled = false; // Enable form inputs for editing
-    });
-
-    // Show the "Update Product" and "Cancel" buttons, hide the "Edit" button
-    document.getElementById('submit-button').style.display = 'inline'; 
-    document.getElementById('edit-button').style.display = 'none';
-    document.getElementById('cancel-button').style.display = 'inline';
-});
-
-document.getElementById('cancel-button').addEventListener('click', function() {
-    var formElements = document.querySelectorAll('#product-form input, #product-form select, #product-form textarea');
-    formElements.forEach(function(element) {
-        element.disabled = true; // Disable form inputs when canceling
-    });
-
-    // Hide the "Update Product" and "Cancel" buttons, show the "Edit" button
-    document.getElementById('submit-button').style.display = 'none';
-    document.getElementById('edit-button').style.display = 'inline';
-    document.getElementById('cancel-button').style.display = 'none';
-    
-    // Optional: reset form fields to original values
-    document.getElementById('product-form').reset();
-    document.getElementById('product-photo').src = '../uploads/<?= htmlspecialchars($product->product_photo) ?>';
-});
-
-// Initially, disable all input fields and hide the "Update Product" button
-document.querySelectorAll('#product-form input, #product-form select, #product-form textarea').forEach(function(element) {
-    element.disabled = true;
-});
-
-document.getElementById('submit-button').style.display = 'none'; // Hide the submit button by default
-
-document.getElementById('select-all').addEventListener('click', function() {
-    let checkboxes = document.querySelectorAll('.product-checkbox');
-    for (let checkbox of checkboxes) {
-        checkbox.checked = this.checked;
     }
 });
