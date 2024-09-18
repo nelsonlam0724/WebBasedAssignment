@@ -93,7 +93,7 @@ if (is_post()) {
 ?>
 
 <link rel="stylesheet" href="../css/product.css">
-<a href="productList.php"><button type="button">Back to Product List</button></a>
+<a href="productList.php"><button type="button">⬅️ Back to Product List</button></a>
 <h1>Product Details</h1>
 
 <button type="button" id="edit-button">Edit</button>
