@@ -185,12 +185,9 @@ $_title = 'User List';
                             </td>
                             <?php if ($current_role == 'Root'): ?>
                                 <td class="delete">
-                                    <form action="deleteUser.php?user_id=<?= $user->user_id ?>&search=<?= urlencode($search_query) ?>
-                                    &page=<?= $page - 1 ?>&sort_by=<?= urlencode($sort_by) ?>&sort_order=<?= urlencode($sort_order) ?>
-                                    &status=<?= urlencode($status_filter) ?>&role=<?= urlencode($role_filter) ?>" method="post" style="display:inline;">
-                                        <input type="hidden" name="id" value="<?= $user->user_id ?>">
-                                        <button type="submit" onclick="return confirm('Are you sure you want to delete this user?');">Delete</button>
-                                    </form>
+                                    <button type="submit" onclick="return confirm('Are you sure you want to banned this user?');">Banned</button>
+                                        <?= temp('info','Cannot Banned Root User'); ?> 
+    
                                 </td>
                             <?php endif; ?>
                             <?php if ($current_role == 'Admin' && $user->status != 'banned'): ?>
