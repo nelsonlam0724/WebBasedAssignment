@@ -2,8 +2,8 @@ $(document).ready(function(){
     $('.wishlist').on("click",function(){
   
         let $this = $(this);  
-        let userID = parseInt( $('.text-first h6').data('user'));
-        let productID = parseInt($this.data('productid'));             
+        let userID = $('.text-first h6').data('user');
+        let productID = $this.data('productid');             
         $.ajax({
             url: '../function/add_favorite.php',
             type: 'POST',
@@ -20,11 +20,11 @@ $(document).ready(function(){
     });
    
     fetchWishList();
-    function fetchWishList() {
-        let userID = parseInt($('.text-first h6').data('user'));
+    function fetchWishList() { 
+        let userID =$('.text-first h6').data('user');
         $('.wishlist').each(function() {
             let $this = $(this);  
-            let productID = parseInt($this.data('productid'));
+            let productID =$this.data('productid');
             $.ajax({
                 url: '../function/fetch_wishlist.php',
                 type: 'POST',
@@ -32,7 +32,7 @@ $(document).ready(function(){
                 success: function(response) {
                     var records = JSON.parse(response);
                     records.forEach(function(record) {
-                        if ( parseInt(record.product_id) ==  productID) {
+                        if ( record.product_id ==  productID) {
                             $this.find('p i').css("color", "red");
                         }
                     });
@@ -43,8 +43,8 @@ $(document).ready(function(){
     
     $('.add_card').on("click", function() {     
         let $this = $(this);  
-        let userID = parseInt($('.text-first h6').data('user'));
-        let productID = parseInt($this.data('add'));             
+        let userID = $('.text-first h6').data('user');
+        let productID = $this.data('add');             
         $.ajax({
             url: '../function/add_to_cart.php',
             type: 'POST',
@@ -58,8 +58,8 @@ $(document).ready(function(){
 
     $('.delete').on("click", function() {     
         let $this = $(this);  
-        let userID = parseInt($('.text-first h6').data('user'));
-        let cartID = parseInt($this.data('del'));             
+        let userID =$('.text-first h6').data('user');
+        let cartID = $this.data('del');             
         $.ajax({
             url: '../function/delete_cart.php',
             type: 'POST',
@@ -73,7 +73,7 @@ $(document).ready(function(){
 
     
     function fetchCart() {
-       let userID = parseInt($('.text-first h6').data('user'));
+       let userID = $('.text-first h6').data('user');
     $.ajax({
         url: '../function/fetch_cart.php',
         type: 'POST',
@@ -88,8 +88,8 @@ $(document).ready(function(){
 
 $('.likes').on("click", function() {     
     let $this = $(this);  
-    let userID = parseInt($('.text-first h6').data('user'));
-    let commentID = parseInt($this.data('comment'));             
+    let userID = $('.text-first h6').data('user');
+    let commentID = $this.data('comment');             
     $.ajax({
         url: '../function/updateLikes.php',
         type: 'POST',

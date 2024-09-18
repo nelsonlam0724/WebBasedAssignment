@@ -49,12 +49,13 @@ if (is_post()) {
 
 
     if (!$_err) {
+        $commentid = generateID('comment', 'comment_id', 'CM', 4);
         $stm = $_db->prepare('
-        INSERT INTO `comment` (user_id, product_id, comment, rate, photo, datetime) 
-        VALUES (?, ?, ?, ?, ?, NOW())
+        INSERT INTO `comment` (comment_id ,user_id, product_id, comment, rate, photo, datetime) 
+        VALUES (?,?, ?, ?, ?, ?, NOW())
         ');
 
-        $stm->execute([$userID, $id, $commentText, $rating, $photoName]);
+        $stm->execute([$commentid,$userID, $id, $commentText, $rating, $photoName]);
 
         $updateStatus = $_db->prepare('
         UPDATE `order_details` SET commment_status = ? WHERE product_id = ? AND order_id = ?

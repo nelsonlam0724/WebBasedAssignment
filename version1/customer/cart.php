@@ -12,9 +12,11 @@ $getUserID = $_db->prepare('
 
 $getUserID->execute([$userID]);
 $results = $getUserID->fetchAll(PDO::FETCH_ASSOC);
+
 $cart = [];
 foreach ($results as $c) {
     $cart[$c['product_id']] = $c['unit'];
+  
 }
 
 if(is_post()) {

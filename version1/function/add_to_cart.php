@@ -10,8 +10,9 @@ $stm->execute([$product, $user]);
 $existingUnit = $stm->fetchColumn();
 
 if ($existingUnit === false) {
-    $stm = $_db->prepare('INSERT INTO carts (user_id, product_id, unit, category_id) VALUES (?, ?, ?, ?)');
-    $stm->execute([$user, $product, "1", null]);
+    $cartId = generateID('carts', 'id', 'C', 4);
+    $stm = $_db->prepare('INSERT INTO carts (id,user_id, product_id, unit) VALUES (?,?, ?, ?)');
+    $stm->execute([$cartId,$user, $product, "1"]);
 } else {
 
     $stm = $_db->prepare('UPDATE carts SET unit = unit + 1 WHERE product_id = ? AND user_id = ?');
