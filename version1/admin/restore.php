@@ -1,7 +1,6 @@
 <?php
 include '../_base.php';
 auth('Root', 'Admin');
-$user = $_SESSION['user'];
 
 if (is_post()) {
     if (isset($_FILES['backupFile']) && $_FILES['backupFile']['error'] == UPLOAD_ERR_OK) {

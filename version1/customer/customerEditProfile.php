@@ -2,9 +2,7 @@
 include '../_base.php';
 include '../_head.php';
 
-auth('Role','Admin','Member');
-
-$user = $_SESSION['user'];
+auth('Role', 'Admin', 'Member');
 
 // Initialize error array
 $_err = [];
@@ -26,8 +24,8 @@ if (is_post()) {
         $_err['email'] = 'Maximum 100 characters';
     } else if (!is_email($email)) {
         $_err['email'] = 'Invalid email';
-    } else if ($email !== $user->email) { // Check for uniqueness only if email has changed
-        $stmt = $conn->prepare("SELECT COUNT(*) FROM users WHERE email = :email");
+    } else if ($email !== $_user->email) { // Check for uniqueness only if email has changed
+        $stmt = $conn->prepare("SELECT COUNT(*) FROM user WHERE email = :email");
         $stmt->execute(['email' => $email]);
         $emailCount = $stmt->fetchColumn();
 
@@ -51,7 +49,7 @@ if (is_post()) {
         }
     } else {
         // No new password provided, retain the current password
-        $hashed_password = $user->password; // Assuming you store the hashed password in session
+        $hashed_password = $_user->password; // Assuming you store the hashed password in session
     }
 
     // Validation: name
@@ -102,7 +100,7 @@ if (is_post()) {
         }
     } else {
         // No new photo uploaded, retain the current photo
-        $photo_name = $user->photo;
+        $photo_name = $_user->photo;
     }
 
     if (empty($_err)) {
@@ -113,16 +111,17 @@ if (is_post()) {
 
         // Update query with photo
         $stm = $_db->prepare('UPDATE user SET email = ?, name = ?, password = ?, birthday = ?, gender = ?, photo = ? WHERE user_id = ?');
-        $stm->execute([$email, $name, $hashed_password, $birthday, $gender, $photo_name, $user->user_id]);
+        $stm->execute([$email, $name, $hashed_password, $birthday, $gender, $photo_name, $_user->user_id]);
 
-        // Update session data
-        $_SESSION['user'] = (object) array_merge((array)$_SESSION['user'], [
+        // Update the session data
+        $_SESSION['user'] = array_merge((array)$_SESSION['user'], [
             'email' => $email,
             'name' => $name,
             'birthday' => $birthday,
             'gender' => $gender,
-            'photo' => $photo_name, // Update session with the new or existing photo
+            'photo' => $photo_name,
         ]);
+
 
         temp('info', 'Profile updated successfully');
         redirect('customer.php');
@@ -153,13 +152,13 @@ $_title = 'Edit Customer Profile';
             <div class="form-left">
                 <div class="form-group">
                     <label for="email">Email:</label>
-                    <input type="email" name="email" maxlength="100" required value="<?= htmlspecialchars($user->email) ?>">
+                    <input type="email" name="email" maxlength="100" required value="<?= htmlspecialchars($_user->email) ?>">
                     <?= err('email') ?>
                 </div>
 
                 <div class="form-group">
                     <label for="name">Name:</label>
-                    <input type="text" name="name" maxlength="100" required value="<?= htmlspecialchars($user->name) ?>">
+                    <input type="text" name="name" maxlength="100" required value="<?= htmlspecialchars($_user->name) ?>">
                     <?= err('name') ?>
                 </div>
 
@@ -178,8 +177,8 @@ $_title = 'Edit Customer Profile';
                 <div class="form-group">
                     <label for="gender">Gender:</label>
                     <select name="gender">
-                        <option value="Male" <?= $user->gender == 'Male' ? 'selected' : '' ?>>Male</option>
-                        <option value="Female" <?= $user->gender == 'Female' ? 'selected' : '' ?>>Female</option>
+                        <option value="Male" <?= $_user->gender == 'Male' ? 'selected' : '' ?>>Male</option>
+                        <option value="Female" <?= $_user->gender == 'Female' ? 'selected' : '' ?>>Female</option>
                     </select>
                     <?= err('gender') ?>
                 </div>
@@ -188,7 +187,7 @@ $_title = 'Edit Customer Profile';
             <div class="form-right">
                 <div class="form-group">
                     <label for="birthday">Birthday:</label>
-                    <input type="date" name="birthday" required value="<?= htmlspecialchars($user->birthday) ?>">
+                    <input type="date" name="birthday" required value="<?= htmlspecialchars($_user->birthday) ?>">
                     <?= err('birthday') ?>
                 </div>
 
@@ -196,7 +195,7 @@ $_title = 'Edit Customer Profile';
                 <div class="form-group upload">
                     <label class="upload">
                         <?= html_file('photo', 'image/*', 'hidden') ?>
-                        <img src="../uploads/<?= htmlspecialchars($user->photo) ?>" alt="Profile Photo">
+                        <img src="../uploads/<?= htmlspecialchars($_user->photo) ?>" alt="Profile Photo">
                     </label>
 
                     <?= err('photo') ?>

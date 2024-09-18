@@ -5,8 +5,8 @@ include '../_head.php';
 auth('Root', 'Admin'); // Allow both Root and Admin to access
 
 // Determine the logged-in user's role
-$current_role = $_SESSION['user']->role;
-$current_user_id = $_SESSION['user']->user_id;
+$current_role = $_user->role;
+$current_user_id = $_user->user_id;
 
 // Handle form submission
 if (is_post()) {

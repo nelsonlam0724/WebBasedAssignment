@@ -19,8 +19,8 @@ $stm->execute([$user_id]);
 $user = $stm->fetch(PDO::FETCH_OBJ);
 
 // Determine the current user's role
-$current_role = $_SESSION['user']->role;
-$current_user_id = $_SESSION['user']->user_id;
+$current_role = $_user->role;
+$current_user_id = $_user->user_id;
 
 // Handle form submission
 if (is_post()) {

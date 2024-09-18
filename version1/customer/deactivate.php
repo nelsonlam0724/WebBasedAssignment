@@ -4,12 +4,10 @@ include '../_head.php';
 
 auth('Role','Admin','Member');
 
-$user = $_SESSION['user'];
-
 if (is_post()) {
     $deactivated_at = date('Y-m-d H:i:s'); // Get current time
     $stm = $_db->prepare('UPDATE user SET status = ?, deactivated_at = ? WHERE user_id = ?');
-    $result = $stm->execute(['Deactivate', $deactivated_at, $user->user_id]);
+    $result = $stm->execute(['Deactivate', $deactivated_at, $_user->user_id]);
     
     temp('info', 'Your account has been deactivated. You can recover it within 1 minute.');
     logout('../login.php');

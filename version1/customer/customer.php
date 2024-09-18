@@ -5,9 +5,7 @@ include '../_head.php';
 
 auth('Role','Admin','Member');
 // Fetch user profile information
-$user = $_SESSION['user'];
-
-$_title = 'Customer Dashboard - ' . htmlspecialchars($user->name);
+$_title = 'Customer Dashboard - ' . htmlspecialchars($_user->name);
 ?>
 <!DOCTYPE html>
 <html lang="en">

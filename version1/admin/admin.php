@@ -4,9 +4,8 @@ include '../_head.php';
 
 auth('Root', 'Admin');
 // Fetch user profile information
-$user = $_SESSION['user'];
 
-$_title = 'Admin Dashboard - ' . htmlspecialchars($user->name);
+$_title = 'Admin Dashboard - ' . htmlspecialchars($_user->name);
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -68,7 +67,7 @@ $_title = 'Admin Dashboard - ' . htmlspecialchars($user->name);
 </style>
 
 <body>
-    <h1>Welcome, <?= htmlspecialchars($user->name) ?> to the Admin Dashboard</h1>
+    <h1>Welcome, <?= htmlspecialchars($_user->name) ?> to the Admin Dashboard</h1>
     <nav>
         <ul>
             <li><a href="profile.php"><button>Admin Profile</button></a></li>

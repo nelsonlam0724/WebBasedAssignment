@@ -3,7 +3,6 @@ include '../_base.php';
 include '../_head.php';
 
 auth('Root','Admin');
-$user = $_SESSION['user'];
 
 // Initialize error array
 $_err = [];
@@ -25,8 +24,8 @@ if (is_post()) {
         $_err['email'] = 'Maximum 100 characters';
     } else if (!is_email($email)) {
         $_err['email'] = 'Invalid email';
-    } else if ($email !== $user->email) { // Check for uniqueness only if email has changed
-        $stmt = $conn->prepare("SELECT COUNT(*) FROM users WHERE email = :email");
+    } else if ($email !== $_user->email) { // Check for uniqueness only if email has changed
+        $stmt = $conn->prepare("SELECT COUNT(*) FROM user WHERE email = :email");
         $stmt->execute(['email' => $email]);
         $emailCount = $stmt->fetchColumn();
 
@@ -50,7 +49,7 @@ if (is_post()) {
         }
     } else {
         // No new password provided, retain the current password
-        $hashed_password = $user->password; // Assuming you store the hashed password in session
+        $hashed_password = $_user->password; // Assuming you store the hashed password in session
     }
 
     // Validation: name
@@ -99,7 +98,7 @@ if (is_post()) {
         }
     } else {
         // No new photo uploaded, retain the current photo
-        $photo_name = $user->photo;
+        $photo_name = $_user->photo;
     }
 
     if (empty($_err)) {
@@ -110,7 +109,7 @@ if (is_post()) {
 
         // Update query with photo
         $stm = $_db->prepare('UPDATE user SET email = ?, name = ?, password = ?, birthday = ?, gender = ?, photo = ? WHERE user_id = ?');
-        $stm->execute([$email, $name, $hashed_password, $birthday, $gender, $photo_name, $user->user_id]);
+        $stm->execute([$email, $name, $hashed_password, $birthday, $gender, $photo_name, $_user->user_id]);
 
         // Update session data
         $_SESSION['user'] = (object) array_merge((array)$_SESSION['user'], [
@@ -149,13 +148,13 @@ $_title = 'Edit Profile';
                 <div class="form-left">
                     <div class="form-group">
                         <label for="email">Email:</label>
-                        <input type="email" name="email" id="email" maxlength="100" value="<?= htmlspecialchars($user->email) ?>" required>
+                        <input type="email" name="email" id="email" maxlength="100" value="<?= htmlspecialchars($_user->email) ?>" required>
                         <?= isset($_err['email']) ? "<span class='error'>{$_err['email']}</span>" : '' ?>
                     </div>
 
                     <div class="form-group">
                         <label for="name">Name:</label>
-                        <input type="text" name="name" id="name" maxlength="100" value="<?= htmlspecialchars($user->name) ?>" required>
+                        <input type="text" name="name" id="name" maxlength="100" value="<?= htmlspecialchars($_user->name) ?>" required>
                         <?= isset($_err['name']) ? "<span class='error'>{$_err['name']}</span>" : '' ?>
                     </div>
 
@@ -174,8 +173,8 @@ $_title = 'Edit Profile';
                     <div class="form-group">
                         <label for="gender">Gender:</label>
                         <select name="gender" id="gender" required>
-                            <option value="Male" <?= $user->gender == 'Male' ? 'selected' : '' ?>>Male</option>
-                            <option value="Female" <?= $user->gender == 'Female' ? 'selected' : '' ?>>Female</option>
+                            <option value="Male" <?= $_user->gender == 'Male' ? 'selected' : '' ?>>Male</option>
+                            <option value="Female" <?= $_user->gender == 'Female' ? 'selected' : '' ?>>Female</option>
                         </select>
                         <?= isset($_err['gender']) ? "<span class='error'>{$_err['gender']}</span>" : '' ?>
                     </div>
@@ -184,7 +183,7 @@ $_title = 'Edit Profile';
                 <div class="form-right">
                     <div class="form-group">
                         <label for="birthday">Birthday:</label>
-                        <input type="date" name="birthday" id="birthday" value="<?= htmlspecialchars($user->birthday) ?>" required>
+                        <input type="date" name="birthday" id="birthday" value="<?= htmlspecialchars($_user->birthday) ?>" required>
                         <?= isset($_err['birthday']) ? "<span class='error'>{$_err['birthday']}</span>" : '' ?>
                     </div>
 
@@ -192,7 +191,7 @@ $_title = 'Edit Profile';
                     <div class="form-group upload">
                         <label class="upload">
                             <?= html_file('photo', 'image/*', 'hidden') ?>
-                            <img src="../uploads/<?= htmlspecialchars($user->photo) ?>" alt="Profile Photo">
+                            <img src="../uploads/<?= htmlspecialchars($_user->photo) ?>" alt="Profile Photo">
                         </label>
                         <?= isset($_err['photo']) ? "<span class='error'>{$_err['photo']}</span>" : '' ?>
                     </div>

@@ -76,7 +76,7 @@ include '../_head.php';
 <a href="productList.php"><button type="button">⬅️ Back to Product List</button></a>
 <h1>Add New Product</h1>
 <form method="post" class="form" enctype="multipart/form-data">
-    
+
     <label for="name">Product Name</label><br>
     <?= html_text('name', 'maxlength="100"') ?>
     <?= err('name') ?>

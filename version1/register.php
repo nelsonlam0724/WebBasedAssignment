@@ -93,15 +93,17 @@ if (is_post()) {
         $_err['photo'] = 'Maximum 1MB';
     }
 
+    $user_id = generateID('user', 'user_id', 'U', 4);
+
     if (!$_err) {
         // Process registration
         $photo = save_photo($f);
 
         $stm = $_db->prepare('
-            INSERT INTO user (email, password, name, gender, birthday, photo, role, status)
-            VALUES (?, SHA1(?), ?, ?, ?, ?, "Member", "Active")
+            INSERT INTO user (user_id, email, password, name, gender, birthday, photo, role, status)
+            VALUES (?, ?, SHA1(?), ?, ?, ?, ?, "Member", "Active")
         ');
-        $stm->execute([$email, $password, $name, $gender, $birthday, $photo]);
+        $stm->execute([$user_id, $email, $password, $name, $gender, $birthday, $photo]);
 
         // Unset verification only after successful registration
         unset($_SESSION['verified']);

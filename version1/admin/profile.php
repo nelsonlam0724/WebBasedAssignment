@@ -3,7 +3,6 @@ include '../_base.php';
 include '../_head.php';
 
 auth('Root','Admin');
-$user = $_SESSION['user'];
 
 // Initialize error array
 $_err = [];
@@ -34,8 +33,8 @@ if (is_post()) {
                 } else {
                     // Proceed to update the email
                     $stm = $_db->prepare('UPDATE user SET email = ? WHERE user_id = ?');
-                    $stm->execute([$value, $user->user_id]);
-                    $_SESSION['user']->email = $value;
+                    $stm->execute([$value, $_user->user_id]);
+                    $_user->email = $value;
                 }
             }
             break;
@@ -46,8 +45,8 @@ if (is_post()) {
                 temp('info','Maximum 100 characters.');
             } else {
                 $stm = $_db->prepare('UPDATE user SET name = ? WHERE user_id = ?');
-                $stm->execute([$value, $user->user_id]);
-                $_SESSION['user']->name = $value;
+                $stm->execute([$value, $_user->user_id]);
+                $_user->name = $value;
             }
             break;
 
@@ -58,7 +57,7 @@ if (is_post()) {
             } else {
                 $hashed_password = password_hash($value, PASSWORD_DEFAULT);
                 $stm = $_db->prepare('UPDATE user SET password = ? WHERE user_id = ?');
-                $stm->execute([$hashed_password, $user->user_id]);
+                $stm->execute([$hashed_password, $_user->user_id]);
             }
             break;
 
@@ -84,8 +83,8 @@ if (is_post()) {
                         } else {
                             // Update the database if no errors
                             $stm = $_db->prepare('UPDATE user SET birthday = ? WHERE user_id = ?');
-                            $stm->execute([$value, $user->user_id]);
-                            $_SESSION['user']->birthday = $value;
+                            $stm->execute([$value, $_user->user_id]);
+                            $_user->birthday = $value;
                         }
                     }
                 }
@@ -97,8 +96,8 @@ if (is_post()) {
                 temp('info','Invalid gender.');
             } else {
                 $stm = $_db->prepare('UPDATE user SET gender = ? WHERE user_id = ?');
-                $stm->execute([$value, $user->user_id]);
-                $_SESSION['user']->gender = $value;
+                $stm->execute([$value, $_user->user_id]);
+                $_user->gender = $value;
             }
             break;
 
@@ -114,8 +113,8 @@ if (is_post()) {
             } else {
                 $photo_name = save_photo_admin($photo);
                 $stm = $_db->prepare('UPDATE user SET photo = ? WHERE user_id = ?');
-                $stm->execute([$photo_name, $user->user_id]);
-                $_SESSION['user']->photo = $photo_name;
+                $stm->execute([$photo_name, $_user->user_id]);
+                $_user->photo = $photo_name;
             }
             break;
     }
@@ -148,12 +147,12 @@ $_title = 'Admin Profile';
         <table>
             <tr>
                 <td><strong>Email:</strong></td>
-                <td><?= htmlspecialchars($user->email) ?></td>
+                <td><?= htmlspecialchars($_user->email) ?></td>
                 <td><span class="edit-icon" onclick="toggleEditForm('email', event)">&#9998;</span></td>
             </tr>
             <tr>
                 <td><strong>Name:</strong></td>
-                <td><?= htmlspecialchars($user->name) ?></td>
+                <td><?= htmlspecialchars($_user->name) ?></td>
                 <td><span class="edit-icon" onclick="toggleEditForm('name', event)">&#9998;</span></td>
             </tr>
             <tr>
@@ -163,17 +162,17 @@ $_title = 'Admin Profile';
             </tr>
             <tr>
                 <td><strong>Birthday:</strong></td>
-                <td><?= htmlspecialchars($user->birthday) ?></td>
+                <td><?= htmlspecialchars($_user->birthday) ?></td>
                 <td><span class="edit-icon" onclick="toggleEditForm('birthday', event)">&#9998;</span></td>
             </tr>
             <tr>
                 <td><strong>Gender:</strong></td>
-                <td><?= htmlspecialchars($user->gender) ?></td>
+                <td><?= htmlspecialchars($_user->gender) ?></td>
                 <td><span class="edit-icon" onclick="toggleEditForm('gender', event)">&#9998;</span></td>
             </tr>
             <tr>
                 <td><strong>Photo:</strong></td>
-                <td><img src="../uploads/<?= htmlspecialchars($user->photo) ?>" alt="User Photo"></td>
+                <td><img src="../uploads/<?= htmlspecialchars($_user->photo) ?>" alt="User Photo"></td>
                 <td><span class="edit-icon" onclick="toggleEditForm('photo', event)">&#9998;</span></td>
             </tr>
         </table>
@@ -183,7 +182,7 @@ $_title = 'Admin Profile';
                 <input type="hidden" name="update_part" value="true">
                 <input type="hidden" name="field" value="email">
                 <label for="email_value">New Email:</label>
-                <input type="text" name="value" id="email_value" value="<?= htmlspecialchars($user->email) ?>">
+                <input type="text" name="value" id="email_value" value="<?= htmlspecialchars($_user->email) ?>">
                 <button type="submit">Update</button>
                 <button type="button" class="cancel" onclick="hideEditForm('email')">Cancel</button>
             </form>
@@ -194,7 +193,7 @@ $_title = 'Admin Profile';
                 <input type="hidden" name="update_part" value="true">
                 <input type="hidden" name="field" value="name">
                 <label for="name_value">New Name:</label>
-                <input type="text" name="value" id="name_value" value="<?= htmlspecialchars($user->name) ?>">
+                <input type="text" name="value" id="name_value" value="<?= htmlspecialchars($_user->name) ?>">
                 <button type="submit">Update</button>
                 <button type="button" class="cancel" onclick="hideEditForm('name')">Cancel</button>
             </form>
@@ -216,7 +215,7 @@ $_title = 'Admin Profile';
                 <input type="hidden" name="update_part" value="true">
                 <input type="hidden" name="field" value="birthday">
                 <label for="birthday_value">New Birthday:</label>
-                <input type="date" name="value" id="birthday_value" value="<?= htmlspecialchars($user->birthday) ?>">
+                <input type="date" name="value" id="birthday_value" value="<?= htmlspecialchars($_user->birthday) ?>">
                 <button type="submit">Update</button>
                 <button type="button" class="cancel" onclick="hideEditForm('birthday')">Cancel</button>
             </form>
@@ -227,7 +226,7 @@ $_title = 'Admin Profile';
                 <input type="hidden" name="update_part" value="true">
                 <input type="hidden" name="field" value="gender">
                 <label for="gender_value">New Gender:</label>
-                <?= html_select('value', ['Male' => 'Male', 'Female' => 'Female'], $user->gender) ?>
+                <?= html_select('value', ['Male' => 'Male', 'Female' => 'Female'], $_user->gender) ?>
                 <button type="submit">Update</button>
                 <button type="button" class="cancel" onclick="hideEditForm('gender')">Cancel</button>
             </form>
