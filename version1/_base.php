@@ -15,12 +15,6 @@ function cleanup_deactivated_users() {
     $cleanup_stm->execute(['Banned', 'Deactivate']);
 }
 
-function getTableNameFromQuery($query) {
-    if (preg_match('/CREATE TABLE `?(\w+)`?/i', $query, $matches)) {
-        return $matches[1];
-    }
-    return null;
-}
 // Is GET request?
 function is_get()
 {
@@ -364,6 +358,47 @@ function is_exists($value, $table, $field) {
     $stm = $_db->prepare("SELECT COUNT(*) FROM $table WHERE $field = ?");
     $stm->execute([$value]);
     return $stm->fetchColumn() > 0;
+}
+
+/**
+ * Extract table name from CREATE TABLE query
+ */
+function getTableNameFromQuery($query) {
+    if (preg_match('/CREATE TABLE `?(\w+)`?/i', $query, $matches)) {
+        return $matches[1];
+    }
+    return null;
+}
+
+/**
+ * Extract table name from INSERT INTO query
+ */
+function getTableNameFromInsertQuery($query) {
+    if (preg_match('/INSERT INTO `?(\w+)`?/i', $query, $matches)) {
+        return $matches[1];
+    }
+    return null;
+}
+
+/**
+ * Extract values from INSERT INTO query
+ */
+function extractValuesFromInsertQuery($query) {
+    if (preg_match('/VALUES\s?\(([^)]+)\)/i', $query, $matches)) {
+        return explode(',', $matches[1]);
+    }
+    return null;
+}
+
+/**
+ * Get primary key column(s) for a table
+ */
+function getPrimaryKeyColumn($conn, $tableName) {
+    $query = "SHOW KEYS FROM `$tableName` WHERE Key_name = 'PRIMARY'";
+    $stmt = $conn->query($query);
+    $primaryKey = $stmt->fetch(PDO::FETCH_ASSOC);
+    
+    return $primaryKey ? $primaryKey['Column_name'] : null;
 }
 
 // ============================================================================
