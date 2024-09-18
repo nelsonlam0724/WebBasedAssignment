@@ -29,14 +29,14 @@ CREATE TABLE `carts` (
   KEY `category_id` (`category_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
-INSERT INTO carts (id, user_id, product_id, unit, category_id) VALUES ('C0031', 'U0003', 'P', '1', 'CT0002');
-INSERT INTO carts (id, user_id, product_id, unit, category_id) VALUES ('C0055', 'U0004', 'P', '1', 'CT0002');
-INSERT INTO carts (id, user_id, product_id, unit, category_id) VALUES ('C0056', 'U0005', 'P', '1', 'CT0002');
-INSERT INTO carts (id, user_id, product_id, unit, category_id) VALUES ('C0059', 'U0007', 'P', '2', 'CT0002');
-INSERT INTO carts (id, user_id, product_id, unit, category_id) VALUES ('C0060', 'U0008', 'P', '1', 'CT0002');
-INSERT INTO carts (id, user_id, product_id, unit, category_id) VALUES ('C0061', 'U00026', 'P', '8', 'CT0002');
-INSERT INTO carts (id, user_id, product_id, unit, category_id) VALUES ('C0062', 'U00026', 'P', '2', 'CT0002');
-INSERT INTO carts (id, user_id, product_id, unit, category_id) VALUES ('C0063', 'U00026', 'P', '1', 'CT0002');
+INSERT INTO carts (id, user_id, product_id, unit, category_id) VALUES ('C0031', 'U0003', 'P0007', '1', 'CT0002');
+INSERT INTO carts (id, user_id, product_id, unit, category_id) VALUES ('C0055', 'U0004', 'P0007', '1', 'CT0002');
+INSERT INTO carts (id, user_id, product_id, unit, category_id) VALUES ('C0056', 'U0005', 'P0006', '1', 'CT0002');
+INSERT INTO carts (id, user_id, product_id, unit, category_id) VALUES ('C0059', 'U0007', 'P0010', '2', 'CT0002');
+INSERT INTO carts (id, user_id, product_id, unit, category_id) VALUES ('C0060', 'U0008', 'P0007', '1', 'CT0002');
+INSERT INTO carts (id, user_id, product_id, unit, category_id) VALUES ('C0061', 'U00026', 'P0008', '8', 'CT0002');
+INSERT INTO carts (id, user_id, product_id, unit, category_id) VALUES ('C0062', 'U00026', 'P0009', '2', 'CT0002');
+INSERT INTO carts (id, user_id, product_id, unit, category_id) VALUES ('C0063', 'U00026', 'P0010', '1', 'CT0002');
 
 CREATE TABLE `category` (
   `category_id` varchar(10) NOT NULL,
