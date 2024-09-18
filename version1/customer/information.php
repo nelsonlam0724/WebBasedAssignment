@@ -247,7 +247,7 @@ $results = $getPending->fetchAll();
                             <td><?= $order->total ?></td>
                             <td><?= $order->count ?></td>
                             <td>
-                                <button data-get="information.php?order_id=<?= $order->id ?>&user_id=<?= $order->user_id ?>" class="details-button">Detail</button>
+                                <button data-get="orderDetails.php?order_id=<?= $order->id ?>&user_id=<?= $order->user_id ?>" class="details-button">Detail</button>
                             </td>
                         </tr>
                     <?php endforeach ?>

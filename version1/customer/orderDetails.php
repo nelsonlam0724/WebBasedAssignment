@@ -94,7 +94,7 @@ $_title = 'Order Details -' . htmlspecialchars($user->name);
 
     </table>
 
-    <button class="back-button" onclick="location.href='information.php'">Back</button>
+    <button class="back-button" onclick="location.href='information.php?tab=5'">Back</button>
 </body>
 
 </html>
