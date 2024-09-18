@@ -2,7 +2,8 @@
 include '../_base.php';
 include '../_head.php';
 
-auth('Root','Admin');
+auth('Root', 'Admin');
+
 // Retrieve the user ID from the query string
 $user_id = isset($_GET['user_id']) ? trim($_GET['user_id']) : '';
 if (!$user_id) {
@@ -13,6 +14,11 @@ if (!$user_id) {
 $stm = $_db->prepare('SELECT * FROM user WHERE user_id = ?');
 $stm->execute([$user_id]);
 $user = $stm->fetch(PDO::FETCH_OBJ);
+
+// Fetch the address details
+$stm = $_db->prepare('SELECT * FROM address WHERE user_id = ?');
+$stm->execute([$user_id]);
+$address = $stm->fetch(PDO::FETCH_OBJ);
 
 $page = isset($_GET['page']) ? (int)$_GET['page'] : 1;
 $search_query = isset($_GET['search']) ? trim($_GET['search']) : '';
@@ -62,6 +68,22 @@ $_title = 'User Details';
                     <th>Status</th>
                     <td><?= htmlspecialchars($user->status) ?></td>
                 </tr>
+                <tr>
+                    <th>Address Information</th>
+                <?php if ($address): ?>
+                    <td>
+                               
+                                <?= htmlspecialchars($address->street) ?>, 
+                                <?= htmlspecialchars($address->city) ?>, 
+                                <?= htmlspecialchars($address->state) ?>, 
+                                <?= htmlspecialchars($address->postal_code) ?>, 
+                                <?= htmlspecialchars($address->country) ?>
+                    </td>
+                <?php else: ?>
+                    
+                        <td>Address details not found.</td>
+            
+                <?php endif; ?>
                 <tr>
                     <th>Photo</th>
                     <td>

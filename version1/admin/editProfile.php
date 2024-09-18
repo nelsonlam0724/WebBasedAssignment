@@ -2,8 +2,10 @@
 include '../_base.php';
 include '../_head.php';
 
-auth('Root','Admin');
-
+auth('Root', 'Admin');
+$stm = $_db->prepare('SELECT * FROM address WHERE user_id = ?');
+$stm->execute([$_user->user_id]);
+$address = $stm->fetch(PDO::FETCH_OBJ);
 // Initialize error array
 $_err = [];
 
@@ -16,7 +18,11 @@ if (is_post()) {
     $birthday = req('birthday');
     $gender = req('gender');
     $photo = $_FILES['photo'];
-
+    $street = req('street');
+    $city = req('city');
+    $state = req('state');
+    $postal_code = req('postal_code');
+    $country = req('country');
     // Validation: email
     if (!$email) {
         $_err['email'] = 'Required';
@@ -110,7 +116,14 @@ if (is_post()) {
         // Update query with photo
         $stm = $_db->prepare('UPDATE user SET email = ?, name = ?, password = ?, birthday = ?, gender = ?, photo = ? WHERE user_id = ?');
         $stm->execute([$email, $name, $hashed_password, $birthday, $gender, $photo_name, $_user->user_id]);
-
+        if ($address) {
+            $stm = $_db->prepare('UPDATE address SET street = ?, city = ?, state = ?, postal_code = ?, country = ? WHERE user_id = ?');
+            $stm->execute([$street, $city, $state, $postal_code, $country, $_user->user_id]);
+        } else {
+            $address_id = generateID('address', 'address_id', 'A', 4);
+            $stm = $_db->prepare('INSERT INTO address (address_id ,user_id, street, city, state, postal_code, country) VALUES (?, ?, ?, ?, ?, ?, ?)');
+            $stm->execute([$address_id, $_user->user_id, $street, $city, $state, $postal_code, $country]);
+        }
         // Update session data
         $_SESSION['user'] = (object) array_merge((array)$_SESSION['user'], [
             'email' => $email,
@@ -160,13 +173,13 @@ $_title = 'Edit Profile';
 
                     <div class="form-group">
                         <label for="password">Password:</label>
-                        <input type="password" name="password" id="password" maxlength="100"  placeholder="Leave blank to keep current password">
+                        <input type="password" name="password" id="password" maxlength="100" placeholder="Leave blank to keep current password">
                         <?= isset($_err['password']) ? "<span class='error'>{$_err['password']}</span>" : '' ?>
                     </div>
 
                     <div class="form-group">
                         <label for="confirm">Confirm Password:</label>
-                        <input type="password" name="confirm" id="confirm" maxlength="100"  placeholder="Leave blank to keep current password">
+                        <input type="password" name="confirm" id="confirm" maxlength="100" placeholder="Leave blank to keep current password">
                         <?= isset($_err['confirm']) ? "<span class='error'>{$_err['confirm']}</span>" : '' ?>
                     </div>
 
@@ -180,7 +193,7 @@ $_title = 'Edit Profile';
                     </div>
                 </div>
 
-                <div class="form-right">
+                <div class="form-middle">
                     <div class="form-group">
                         <label for="birthday">Birthday:</label>
                         <input type="date" name="birthday" id="birthday" value="<?= htmlspecialchars($_user->birthday) ?>" required>
@@ -194,6 +207,38 @@ $_title = 'Edit Profile';
                             <img src="../uploads/<?= htmlspecialchars($_user->photo) ?>" alt="Profile Photo">
                         </label>
                         <?= isset($_err['photo']) ? "<span class='error'>{$_err['photo']}</span>" : '' ?>
+                    </div>
+                </div>
+
+                <div class="form-right">
+                    <div class="form-group">
+                        <label for="street">Street:</label>
+                        <input type="text" name="street" id="street" value="<?= htmlspecialchars($address->street ?? '') ?>" maxlength="255">
+                        <?= isset($_err['street']) ? "<span class='error'>{$_err['street']}</span>" : '' ?>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="city">City:</label>
+                        <input type="text" name="city" id="city" value="<?= htmlspecialchars($address->city ?? '') ?>" maxlength="100">
+                        <?= isset($_err['city']) ? "<span class='error'>{$_err['city']}</span>" : '' ?>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="state">State:</label>
+                        <input type="text" name="state" id="state" value="<?= htmlspecialchars($address->state ?? '') ?>" maxlength="100">
+                        <?= isset($_err['state']) ? "<span class='error'>{$_err['state']}</span>" : '' ?>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="postal_code">Postal Code:</label>
+                        <input type="text" name="postal_code" id="postal_code" value="<?= htmlspecialchars($address->postal_code ?? '') ?>" maxlength="20">
+                        <?= isset($_err['postal_code']) ? "<span class='error'>{$_err['postal_code']}</span>" : '' ?>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="country">Country:</label>
+                        <input type="text" name="country" id="country" value="<?= htmlspecialchars($address->country ?? '') ?>" maxlength="100">
+                        <?= isset($_err['country']) ? "<span class='error'>{$_err['country']}</span>" : '' ?>
                     </div>
                 </div>
             </div>

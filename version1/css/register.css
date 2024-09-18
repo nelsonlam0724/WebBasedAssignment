@@ -20,20 +20,28 @@ h1 {
 .form {
     background-color: white;
     padding: 20px;
+    margin-top: 20%;
     border-radius: 10px;
     box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
     width: 700px;
 }
 
+/* Basic styling for layout */
 .form-container {
-    display: flex;
-    justify-content: space-between;
-    gap: 20px;
+    display: grid;
+    grid-template-columns: 1fr 2fr 1fr;
+    gap: 10px;
 }
 
-.form-left, .form-right {
-    flex: 1;
+.form-left, .form-middle, .form-right {
+    padding: 10px;
+    border: 1px solid #ddd;
 }
+
+#addressFields {
+    display: none;
+}
+
 
 label {
     display: block;
