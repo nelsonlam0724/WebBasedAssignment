@@ -66,7 +66,9 @@ table {
     border-radius: 8px;
     overflow: hidden;
 }
-
+tr:hover{
+    background-color: yellow;
+}
 th, td {
     padding: 10px;
     text-align: center;
@@ -75,6 +77,35 @@ th, td {
 
 th {
     background-color: #f4f4f4;
+}
+
+table th a {
+    color: black; /* Set text color to black */
+    text-decoration: none; /* Remove underline from links */
+    display: inline-flex;
+    align-items: center;
+}
+
+table th a:hover {
+    text-decoration: underline; /* Optional: underline on hover */
+}
+
+table th a::after {
+    content: ''; /* Add empty content to place arrow after text */
+    display: inline-block;
+    width: 10px; /* Adjust width if needed */
+    height: 10px; /* Adjust height if needed */
+    background: no-repeat center center;
+    background-size: contain;
+    margin-left: 5px; /* Add space between text and arrow */
+}
+
+table th a[data-sort-order='ASC']::after {
+    content: '▲'; /* Unicode character for up arrow */
+}
+
+table th a[data-sort-order='DESC']::after {
+    content: '▼'; /* Unicode character for down arrow */
 }
 
 .actions, .delete, .deactivate {

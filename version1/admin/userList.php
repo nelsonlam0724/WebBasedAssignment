@@ -6,6 +6,13 @@ require_once '../lib/SimplePager.php'; // Include SimplePager class
 auth('Root', 'Admin');  // Ensure both Root and Admin roles can access this page
 $current_role = $_SESSION['user']->role;
 $current_user_id = $_SESSION['user']->user_id;
+if ($current_role == 'Root') {
+    $arr = $_db->query('SELECT * FROM user')->fetchAll();
+} elseif ($current_role == 'Admin') {
+    $arr = $_db->query('SELECT * FROM user WHERE role = "Member"')->fetchAll();
+} else {
+    redirect('../login.php');
+}
 
 // Initialize variables
 $search_query = isset($_GET['search']) ? trim($_GET['search']) : '';
@@ -118,40 +125,49 @@ $_title = 'User List';
                         </option>
                     <?php endforeach; ?>
                 </select>
-
-                <!-- Sorting Options -->
-                <label for="sort_by">Sort by:</label>
-                <select name="sort_by" id="sort_by" onchange="this.form.submit()">
-                    <option value="user_id" <?= $sort_by == 'user_id' ? 'selected' : '' ?>>ID</option>
-                    <option value="name" <?= $sort_by == 'name' ? 'selected' : '' ?>>Username</option>
-                    <option value="email" <?= $sort_by == 'email' ? 'selected' : '' ?>>Email</option>
-                    <option value="status" <?= $sort_by == 'status' ? 'selected' : '' ?>>Status</option>
-                </select>
-                <label for="sort_order">Order:</label>
-                <select name="sort_order" id="sort_order" onchange="this.form.submit()">
-                    <option value="ASC" <?= $sort_order == 'ASC' ? 'selected' : '' ?>>Ascending</option>
-                    <option value="DESC" <?= $sort_order == 'DESC' ? 'selected' : '' ?>>Descending</option>
-                </select>
             </form>
         </div>
 
 
         <!-- User Table -->
         <?php if ($users): ?>
+            <p>There has <?= count($arr) ?> record</p>
             <table>
                 <thead>
                     <tr>
-                        <th>ID</th>
-                        <th>Username</th>
-                        <th>Email</th>
-                        <th>Status</th>
-                        <th>Role</th>
+                        <th>No.</th>
+                        <th>
+                            <a href="?sort_by=user_id&sort_order=<?= $sort_order == 'ASC' ? 'DESC' : 'ASC' ?>&search=<?= urlencode($search_query) ?>&page=<?= $page ?>&role=<?= urlencode($role_filter) ?>&status=<?= urlencode($status_filter) ?>">
+                                ID <?= $sort_by == 'user_id' ? ($sort_order == 'ASC' ? '▲' : '▼') : '' ?>
+                            </a>
+                        </th>
+                        <th>
+                            <a href="?sort_by=name&sort_order=<?= $sort_order == 'ASC' ? 'DESC' : 'ASC' ?>&search=<?= urlencode($search_query) ?>&page=<?= $page ?>&role=<?= urlencode($role_filter) ?>&status=<?= urlencode($status_filter) ?>">
+                                Username <?= $sort_by == 'name' ? ($sort_order == 'ASC' ? '▲' : '▼') : '' ?>
+                            </a>
+                        </th>
+                        <th>
+                            <a href="?sort_by=email&sort_order=<?= $sort_order == 'ASC' ? 'DESC' : 'ASC' ?>&search=<?= urlencode($search_query) ?>&page=<?= $page ?>&role=<?= urlencode($role_filter) ?>&status=<?= urlencode($status_filter) ?>">
+                                Email <?= $sort_by == 'email' ? ($sort_order == 'ASC' ? '▲' : '▼') : '' ?>
+                            </a>
+                        </th>
+                        <th>
+                            <a href="?sort_by=status&sort_order=<?= $sort_order == 'ASC' ? 'DESC' : 'ASC' ?>&search=<?= urlencode($search_query) ?>&page=<?= $page ?>&role=<?= urlencode($role_filter) ?>&status=<?= urlencode($status_filter) ?>">
+                                Status <?= $sort_by == 'status' ? ($sort_order == 'ASC' ? '▲' : '▼') : '' ?>
+                            </a>
+                        </th>
+                        <th>
+                            <a href="?sort_by=role&sort_order=<?= $sort_order == 'ASC' ? 'DESC' : 'ASC' ?>&search=<?= urlencode($search_query) ?>&page=<?= $page ?>&role=<?= urlencode($role_filter) ?>&status=<?= urlencode($status_filter) ?>">
+                                Role <?= $sort_by == 'role' ? ($sort_order == 'ASC' ? '▲' : '▼') : '' ?>
+                            </a>
+                        </th>
                         <th colspan="3">Actions</th>
                     </tr>
                 </thead>
                 <tbody>
-                    <?php foreach ($users as $user): ?>
+                    <?php foreach ($users as $i => $user): ?>
                         <tr>
+                            <td><?= $i + 1 ?></td>
                             <td><?= htmlspecialchars($user->user_id) ?></td>
                             <td><?= htmlspecialchars($user->name) ?></td>
                             <td><?= htmlspecialchars($user->email) ?></td>
