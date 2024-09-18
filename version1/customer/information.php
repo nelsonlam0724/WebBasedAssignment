@@ -35,8 +35,8 @@ $results = $getPending->fetchAll();
 
             <?php
             $current_time = time();
-            $stm = $_db->prepare("SELECT id FROM orders WHERE status = 'Pending' AND created_at < NOW() - INTERVAL 1 MINUTE");
-            $stm->execute();
+            $stm = $_db->prepare("SELECT id FROM orders WHERE status = ? AND ?");
+            $stm->execute(['Pending','created_at < NOW() - INTERVAL 1 MINUTE']);
             $orderss = $stm->fetchAll(PDO::FETCH_ASSOC);
 
             foreach ($orderss as $order) {
@@ -166,7 +166,6 @@ $results = $getPending->fetchAll();
             // Initialize variables
             $status_filter = isset($_GET['status']) ? trim($_GET['status']) : '';
             $sort_by = isset($_GET['sort_by']) ? trim($_GET['sort_by']) : 'id';
-            $sort_order = isset($_GET['sort_order']) ? trim($_GET['sort_order']) : 'ASC';
             $page = isset($_GET['page']) ? (int)$_GET['page'] : 1;
             $limit = 10; // Number of records per page
 
@@ -181,7 +180,7 @@ $results = $getPending->fetchAll();
             }
 
             // Add sorting
-            $query .= " ORDER BY $sort_by $sort_order";
+            $query .= " ORDER BY $sort_by";
 
             // Initialize SimplePager with the query, parameters, limit, and current page
             $pager = new SimplePager($query, $params, $limit, $page);
@@ -222,11 +221,6 @@ $results = $getPending->fetchAll();
                         <option value="total" <?= $sort_by == 'total' ? 'selected' : '' ?>>Total Amount</option>
                         <option value="count" <?= $sort_by == 'count' ? 'selected' : '' ?>>Count</option>
                     </select>
-                    <label for="sort_order">Order:</label>
-                    <select name="sort_order" id="sort_order" onchange="this.form.submit()">
-                        <option value="ASC" <?= $sort_order == 'ASC' ? 'selected' : '' ?>>Ascending</option>
-                        <option value="DESC" <?= $sort_order == 'DESC' ? 'selected' : '' ?>>Descending</option>
-                    </select>
                     <input type="hidden" id="tab" name="tab" value="5">
                 </form>
             </div>
@@ -261,7 +255,7 @@ $results = $getPending->fetchAll();
             <div class="pagination">
                 <!-- Previous Page Link -->
                 <?php if ($page > 1): ?>
-                    <a href="?page=<?= $page - 1 ?>&sort_by=<?= urlencode($sort_by) ?>&sort_order=<?= urlencode($sort_order) ?>&status=<?= urlencode($status_filter) ?>">Previous</a>
+                    <a href="?page=<?= $page - 1 ?>&sort_by=<?= urlencode($sort_by) ?>&status=<?= urlencode($status_filter) ?>&tab=5">Previous</a>
                 <?php endif; ?>
 
 
@@ -273,7 +267,7 @@ $results = $getPending->fetchAll();
 
 
                 if ($start_page > 1): ?>
-                    <a href="?page=1&sort_by=<?= urlencode($sort_by) ?>&sort_order=<?= urlencode($sort_order) ?>&status=<?= urlencode($status_filter) ?>">1</a>
+                    <a href="?page=1&sort_by=<?= urlencode($sort_by) ?>&tab=5&status=<?= urlencode($status_filter) ?>">1</a>
                     <?php if ($start_page > 2): ?>
                         <span>...</span>
                     <?php endif; ?>
@@ -281,7 +275,7 @@ $results = $getPending->fetchAll();
 
 
                 <?php for ($i = $start_page; $i <= $end_page; $i++): ?>
-                    <a href="?page=<?= $i ?>&sort_by=<?= urlencode($sort_by) ?>&sort_order=<?= urlencode($sort_order) ?>&status=<?= urlencode($status_filter) ?>" class="<?= $i == $page ? 'current-page' : '' ?>">
+                    <a href="?page=<?= $i ?>&sort_by=<?= urlencode($sort_by) ?>&tab=5&status=<?= urlencode($status_filter) ?>" class="<?= $i == $page ? 'current-page' : '' ?>">
                         <?= $i ?>
                     </a>
                 <?php endfor; ?>
@@ -291,7 +285,7 @@ $results = $getPending->fetchAll();
                     <?php if ($end_page < $total_pages - 1): ?>
                         <span>...</span>
                     <?php endif; ?>
-                    <a href="?page=<?= $total_pages ?>&sort_by=<?= urlencode($sort_by) ?>&sort_order=<?= urlencode($sort_order) ?>&status=<?= urlencode($status_filter) ?>">
+                    <a href="?page=<?= $total_pages ?>&sort_by=<?= urlencode($sort_by) ?>&tab=5&status=<?= urlencode($status_filter) ?>">
                         <?= $total_pages ?>
                     </a>
                 <?php endif; ?>
@@ -299,7 +293,7 @@ $results = $getPending->fetchAll();
 
                 <!-- Next Page Link -->
                 <?php if ($page < $total_pages): ?>
-                    <a href="?page=<?= $page + 1 ?>&sort_by=<?= urlencode($sort_by) ?>&sort_order=<?= urlencode($sort_order) ?>&status=<?= urlencode($status_filter) ?>">Next</a>
+                    <a href="?page=<?= $page + 1 ?>&sort_by=<?= urlencode($sort_by) ?>&tab=5&status=<?= urlencode($status_filter) ?>">Next</a>
                 <?php endif; ?>
 
             </div>
