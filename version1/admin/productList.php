@@ -71,14 +71,15 @@ include '../_head.php';
     <?php endif; ?>
 
     <!-- Search Form -->
-    <form action="productList.php" method="get">
+    <form action="productList.php" method="get" class="search-form">
         <input type="text" name="search" placeholder="Search by product name" value="<?= htmlspecialchars($search_query) ?>">
         <button type="submit" class="form-button">Search</button>
     </form>
 
+
     <!-- Filter and Sorting Options -->
     <div class="filter-sorting">
-        <form action="productList.php" method="get">
+        <form action="productList.php" method="get" class="filter-form">
             <input type="hidden" name="search" value="<?= htmlspecialchars($search_query) ?>">
             <input type="hidden" name="page" value="<?= $page ?>">
 
@@ -100,6 +101,8 @@ include '../_head.php';
                 <option value="name" <?= $sort_by == 'name' ? 'selected' : '' ?>>Name</option>
                 <option value="category_id" <?= $sort_by == 'category_id' ? 'selected' : '' ?>>Category</option>
             </select>
+
+            <!-- Sort Order Options -->
             <label for="sort_order">Order:</label>
             <select name="sort_order" id="sort_order" onchange="this.form.submit()">
                 <option value="ASC" <?= $sort_order == 'ASC' ? 'selected' : '' ?>>Ascending</option>
@@ -109,71 +112,71 @@ include '../_head.php';
     </div>
 
     <div class="table-wrapper">
-    <!-- Product Table with Checkboxes -->
-    <form method="post" action="deleteProducts.php">
-        <?php if ($product): ?>
-            <table>
-                <thead>
-                    <tr>
-                        <th><input type="checkbox" id="select-all"></th> <!-- Select All Checkbox -->
-                        <th>Product ID</th>
-                        <th>Product Name</th>
-                        <th>Category</th>
-                        <th>Actions</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <?php foreach ($product as $p): ?>
+        <!-- Product Table with Checkboxes -->
+        <form method="post" action="deleteProducts.php">
+            <?php if ($product): ?>
+                <table>
+                    <thead>
                         <tr>
-                            <td><input type="checkbox" name="product_ids[]" value="<?= $p->product_id ?>" class="product-checkbox"></td> <!-- Product Checkbox -->
-                            <td><?= htmlspecialchars($p->product_id) ?></td>
-                            <td><?= htmlspecialchars($p->name) ?></td>
-                            <td><?= htmlspecialchars($p->category_name) ?></td>
-                            <td class="actions">
-                                <a href="productEdit.php?product_id=<?= $p->product_id ?>" class="edit-container">
-                                    <button type="button">Edit Details</button>
-                                </a>
-                            </td>
+                            <th><input type="checkbox" id="select-all"></th>
+                            <th>Product ID</th>
+                            <th>Product Name</th>
+                            <th>Category</th>
+                            <th>Actions</th>
                         </tr>
-                    <?php endforeach; ?>
-                </tbody>
-            </table>
+                    </thead>
+                    <tbody>
+                        <?php foreach ($product as $p): ?>
+                            <tr>
+                                <td><input type="checkbox" name="product_ids[]" value="<?= $p->product_id ?>" class="product-checkbox"></td> <!-- Product Checkbox -->
+                                <td><?= htmlspecialchars($p->product_id) ?></td>
+                                <td><?= htmlspecialchars($p->name) ?></td>
+                                <td><?= htmlspecialchars($p->category_name) ?></td>
+                                <td class="actions">
+                                    <a href="productEdit.php?product_id=<?= $p->product_id ?>" class="edit-container">
+                                        <button type="button">Edit Details</button>
+                                    </a>
+                                </td>
+                            </tr>
+                        <?php endforeach; ?>
+                    </tbody>
+                </table>
 
-            <div class="action-buttons">
-                <button type="submit" id="delete-selected" onclick="return confirm('Are you sure you want to delete the selected products?');">Delete Selected</button>
-            </div>
+                <div class="action-buttons">
+                    <button type="submit" id="delete-selected" onclick="return confirm('Are you sure you want to delete the selected products?');">Delete Selected</button>
+                </div>
 
-            <div class="pagination-container">
-                <!-- Previous Button -->
-                <?php if ($page > 1): ?>
-                    <a href="?search=<?= urlencode($search_query) ?>&page=<?= $page - 1 ?>&sort_by=<?= urlencode($sort_by) ?>&sort_order=<?= urlencode($sort_order) ?>&category=<?= urlencode($category_filter) ?>" class="pagination-button">Previous</a>
-                <?php endif; ?>
-
-                <!-- Page Numbers -->
-                <?php for ($i = 1; $i <= $total_pages; $i++): ?>
-                    <?php if ($i == $page): ?>
-                        <span class="current-page"><?= $i ?></span>
-                    <?php else: ?>
-                        <a href="?search=<?= urlencode($search_query) ?>&page=<?= $i ?>&sort_by=<?= urlencode($sort_by) ?>&sort_order=<?= urlencode($sort_order) ?>&category=<?= urlencode($category_filter) ?>" class="pagination-button"><?= $i ?></a>
+                <div class="pagination-container">
+                    <!-- Previous Button -->
+                    <?php if ($page > 1): ?>
+                        <a href="?search=<?= urlencode($search_query) ?>&page=<?= $page - 1 ?>&sort_by=<?= urlencode($sort_by) ?>&sort_order=<?= urlencode($sort_order) ?>&category=<?= urlencode($category_filter) ?>" class="pagination-button">Previous</a>
                     <?php endif; ?>
-                <?php endfor; ?>
 
-                <!-- Next Button -->
-                <?php if ($page < $total_pages): ?>
-                    <a href="?search=<?= urlencode($search_query) ?>&page=<?= $page + 1 ?>&sort_by=<?= urlencode($sort_by) ?>&sort_order=<?= urlencode($sort_order) ?>&category=<?= urlencode($category_filter) ?>" class="pagination-button">Next</a>
-                <?php endif; ?>
-            </div>
-        <?php else: ?>
-            <p class="no-results">No products found.</p>
-        <?php endif; ?>
-    </form>
+                    <!-- Page Numbers -->
+                    <?php for ($i = 1; $i <= $total_pages; $i++): ?>
+                        <?php if ($i == $page): ?>
+                            <span class="current-page"><?= $i ?></span>
+                        <?php else: ?>
+                            <a href="?search=<?= urlencode($search_query) ?>&page=<?= $i ?>&sort_by=<?= urlencode($sort_by) ?>&sort_order=<?= urlencode($sort_order) ?>&category=<?= urlencode($category_filter) ?>" class="pagination-button"><?= $i ?></a>
+                        <?php endif; ?>
+                    <?php endfor; ?>
 
-    <!-- "Add New Product" and "Back to Menu" Buttons -->
-    <div class="action-buttons">
-        <a href="newProduct.php"><button type="button" id="add-new">Add New Product</button></a>
-        <a href="admin.php"><button type="button" id="back-to-menu">Back To Menu</button></a>
+                    <!-- Next Button -->
+                    <?php if ($page < $total_pages): ?>
+                        <a href="?search=<?= urlencode($search_query) ?>&page=<?= $page + 1 ?>&sort_by=<?= urlencode($sort_by) ?>&sort_order=<?= urlencode($sort_order) ?>&category=<?= urlencode($category_filter) ?>" class="pagination-button">Next</a>
+                    <?php endif; ?>
+                </div>
+            <?php else: ?>
+                <p class="no-results">No products found.</p>
+            <?php endif; ?>
+        </form>
+
+        <!-- "Add New Product" and "Back to Menu" Buttons -->
+        <div class="action-buttons">
+            <a href="newProduct.php"><button type="button" id="add-new">Add New Product</button></a>
+            <a href="admin.php"><button type="button" id="back-to-menu">Back To Menu</button></a>
+        </div>
     </div>
-</div>
 </div>
 
 <script>

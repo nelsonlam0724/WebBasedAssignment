@@ -97,15 +97,17 @@ if (is_post()) {
         $_err['photo'] = 'Maximum 1MB';
     }
 
+    $user_id = generateID('user', 'user_id', 'U', 4);
+
     // DB operation
     if (!$_err) {
         $photo = save_photo_admin($f);
 
         $stm = $_db->prepare('
-            INSERT INTO user (email, password, name, gender, birthday, photo, role, status)
-            VALUES (?, SHA1(?), ?, ?, ?, ?, ?, "Active")
+            INSERT INTO user (user_id, email, password, name, gender, birthday, photo, role, status)
+            VALUES (?, ?, SHA1(?), ?, ?, ?, ?, ?, "Active")
         ');
-        $stm->execute([$email, $password, $name, $gender, $birthday, $photo, $role]);
+        $stm->execute([$user_id, $email, $password, $name, $gender, $birthday, $photo, $role]);
 
         temp('info', 'Record inserted');
         redirect();

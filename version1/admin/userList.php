@@ -4,6 +4,15 @@ include '../_head.php';
 require_once '../lib/SimplePager.php'; // Include SimplePager class
 
 auth('Root', 'Admin');  // Ensure both Root and Admin roles can access this page
+$current_role = $_SESSION['user']->role;
+$current_user_id = $_SESSION['user']->user_id;
+if ($current_role == 'Root') {
+    $arr = $_db->query('SELECT * FROM user')->fetchAll();
+} elseif ($current_role == 'Admin') {
+    $arr = $_db->query('SELECT * FROM user WHERE role = "Member"')->fetchAll();
+} else {
+    redirect('../login.php');
+}
 
 // Initialize variables
 $search_query = isset($_GET['search']) ? trim($_GET['search']) : '';
@@ -18,6 +27,10 @@ $limit = 5; // Number of records per page
 $query = 'SELECT * FROM user WHERE 1=1';
 $params = [];
 
+if ($current_role == 'Admin') {
+    $query .= ' AND role = ?';
+    $params[] = 'member';
+}
 // Add search condition if provided
 if ($search_query) {
     $query .= ' AND name LIKE ?';
@@ -88,15 +101,19 @@ $_title = 'User List';
                 <input type="hidden" name="page" value="1"> <!-- Always start at page 1 for new filters and sorting -->
 
                 <!-- Role Filter -->
-                <label for="role">Role:</label>
-                <select name="role" id="role" onchange="this.form.submit()">
-                    <option value="">All Roles</option>
-                    <?php foreach ($roles as $role): ?>
-                        <option value="<?= htmlspecialchars($role) ?>" <?= $role == $role_filter ? 'selected' : '' ?>>
-                            <?= htmlspecialchars($role) ?>
-                        </option>
-                    <?php endforeach; ?>
-                </select>
+                <?php if ($current_role == 'Root'): ?>
+                    <label for="role">Role:</label>
+                    <select name="role" id="role" onchange="this.form.submit()">
+                        <option value="">All Roles</option>
+                        <?php foreach ($roles as $role): ?>
+                            <option value="<?= htmlspecialchars($role) ?>" <?= $role == $role_filter ? 'selected' : '' ?>>
+                                <?= htmlspecialchars($role) ?>
+                            </option>
+                        <?php endforeach; ?>
+                    </select>
+                <?php elseif ($current_role == 'Admin'): ?>
+                    <input type="hidden" name="role" value="Member">
+                <?php endif; ?>
 
                 <!-- Status Filter -->
                 <label for="status">Status:</label>
@@ -108,40 +125,49 @@ $_title = 'User List';
                         </option>
                     <?php endforeach; ?>
                 </select>
-
-                <!-- Sorting Options -->
-                <label for="sort_by">Sort by:</label>
-                <select name="sort_by" id="sort_by" onchange="this.form.submit()">
-                    <option value="user_id" <?= $sort_by == 'user_id' ? 'selected' : '' ?>>ID</option>
-                    <option value="name" <?= $sort_by == 'name' ? 'selected' : '' ?>>Username</option>
-                    <option value="email" <?= $sort_by == 'email' ? 'selected' : '' ?>>Email</option>
-                    <option value="status" <?= $sort_by == 'status' ? 'selected' : '' ?>>Status</option>
-                </select>
-                <label for="sort_order">Order:</label>
-                <select name="sort_order" id="sort_order" onchange="this.form.submit()">
-                    <option value="ASC" <?= $sort_order == 'ASC' ? 'selected' : '' ?>>Ascending</option>
-                    <option value="DESC" <?= $sort_order == 'DESC' ? 'selected' : '' ?>>Descending</option>
-                </select>
             </form>
         </div>
 
 
         <!-- User Table -->
         <?php if ($users): ?>
+            <p>There has <?= count($arr) ?> record</p>
             <table>
                 <thead>
                     <tr>
-                        <th>ID</th>
-                        <th>Username</th>
-                        <th>Email</th>
-                        <th>Status</th>
-                        <th>Role</th>
+                        <th>No.</th>
+                        <th>
+                            <a href="?sort_by=user_id&sort_order=<?= $sort_order == 'ASC' ? 'DESC' : 'ASC' ?>&search=<?= urlencode($search_query) ?>&page=<?= $page ?>&role=<?= urlencode($role_filter) ?>&status=<?= urlencode($status_filter) ?>">
+                                ID <?= $sort_by == 'user_id' ? ($sort_order == 'ASC' ? '▲' : '▼') : '' ?>
+                            </a>
+                        </th>
+                        <th>
+                            <a href="?sort_by=name&sort_order=<?= $sort_order == 'ASC' ? 'DESC' : 'ASC' ?>&search=<?= urlencode($search_query) ?>&page=<?= $page ?>&role=<?= urlencode($role_filter) ?>&status=<?= urlencode($status_filter) ?>">
+                                Username <?= $sort_by == 'name' ? ($sort_order == 'ASC' ? '▲' : '▼') : '' ?>
+                            </a>
+                        </th>
+                        <th>
+                            <a href="?sort_by=email&sort_order=<?= $sort_order == 'ASC' ? 'DESC' : 'ASC' ?>&search=<?= urlencode($search_query) ?>&page=<?= $page ?>&role=<?= urlencode($role_filter) ?>&status=<?= urlencode($status_filter) ?>">
+                                Email <?= $sort_by == 'email' ? ($sort_order == 'ASC' ? '▲' : '▼') : '' ?>
+                            </a>
+                        </th>
+                        <th>
+                            <a href="?sort_by=status&sort_order=<?= $sort_order == 'ASC' ? 'DESC' : 'ASC' ?>&search=<?= urlencode($search_query) ?>&page=<?= $page ?>&role=<?= urlencode($role_filter) ?>&status=<?= urlencode($status_filter) ?>">
+                                Status <?= $sort_by == 'status' ? ($sort_order == 'ASC' ? '▲' : '▼') : '' ?>
+                            </a>
+                        </th>
+                        <th>
+                            <a href="?sort_by=role&sort_order=<?= $sort_order == 'ASC' ? 'DESC' : 'ASC' ?>&search=<?= urlencode($search_query) ?>&page=<?= $page ?>&role=<?= urlencode($role_filter) ?>&status=<?= urlencode($status_filter) ?>">
+                                Role <?= $sort_by == 'role' ? ($sort_order == 'ASC' ? '▲' : '▼') : '' ?>
+                            </a>
+                        </th>
                         <th colspan="3">Actions</th>
                     </tr>
                 </thead>
                 <tbody>
-                    <?php foreach ($users as $user): ?>
+                    <?php foreach ($users as $i => $user): ?>
                         <tr>
+                            <td><?= $i + 1 ?></td>
                             <td><?= htmlspecialchars($user->user_id) ?></td>
                             <td><?= htmlspecialchars($user->name) ?></td>
                             <td><?= htmlspecialchars($user->email) ?></td>
@@ -157,11 +183,26 @@ $_title = 'User List';
                                     <button>Edit</button>
                                 </a>
                             </td>
-                            <td class="actions">
-                                <a href="deleteUser.php?user_id=<?= urlencode($user->user_id) ?>&page=<?= $page ?>&search=<?= urlencode($search_query) ?>&sort_by=<?= urlencode($sort_by) ?>&sort_order=<?= urlencode($sort_order) ?>">
-                                    <button>Delete</button>
-                                </a>
-                            </td>
+                            <?php if ($current_role == 'Root'): ?>
+                                <td class="delete">
+                                    <form action="deleteUser.php?user_id=<?= $user->user_id ?>&search=<?= urlencode($search_query) ?>
+                                    &page=<?= $page - 1 ?>&sort_by=<?= urlencode($sort_by) ?>&sort_order=<?= urlencode($sort_order) ?>
+                                    &status=<?= urlencode($status_filter) ?>&role=<?= urlencode($role_filter) ?>" method="post" style="display:inline;">
+                                        <input type="hidden" name="id" value="<?= $user->user_id ?>">
+                                        <button type="submit" onclick="return confirm('Are you sure you want to delete this user?');">Delete</button>
+                                    </form>
+                                </td>
+                            <?php endif; ?>
+                            <?php if ($current_role == 'Admin' && $user->status != 'banned'): ?>
+                                <td class="deactivate">
+                                    <form action="bannedUser.php?user_id=<?= $user->user_id ?>&search=<?= urlencode($search_query) ?>
+                                    &page=<?= $page - 1 ?>&sort_by=<?= urlencode($sort_by) ?>&sort_order=<?= urlencode($sort_order) ?>
+                                    &status=<?= urlencode($status_filter) ?>&role=<?= urlencode($role_filter) ?>" method="post" style="display:inline;">
+                                        <input type="hidden" name="id" value="<?= $user->user_id ?>">
+                                        <button type="submit" onclick="return confirm('Are you sure you want to banned this user?');">Banned</button>
+                                    </form>
+                                </td>
+                            <?php endif; ?>
                         </tr>
                     <?php endforeach; ?>
                 </tbody>

@@ -18,10 +18,6 @@ $stm = $_db->prepare('SELECT * FROM user WHERE user_id = ?');
 $stm->execute([$user_id]);
 $user = $stm->fetch(PDO::FETCH_OBJ);
 
-if (!$user) {
-    redirect('userList.php');
-}
-
 // Determine the current user's role
 $current_role = $_SESSION['user']->role;
 $current_user_id = $_SESSION['user']->user_id;
@@ -111,6 +107,7 @@ if (is_post()) {
         // Additional check before updating
         if ($current_role == 'Root' && $is_editing_self && $new_status == 'Banned') {
             temp('info', 'You cannot banned yourself.');
+            redirect();
         } else {
             $stm = $_db->prepare('UPDATE user SET email = ?, name = ?, password = ?, role = ?, gender = ?, birthday = ?, photo = ?, status = ? WHERE user_id = ?');
             $stm->execute([$new_email, $new_name, $hashed_password, $new_role, $new_gender, $new_birthday, $photo_name, $new_status, $user_id]);

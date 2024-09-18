@@ -15,12 +15,37 @@ function cleanup_deactivated_users() {
     $cleanup_stm->execute(['Banned', 'Deactivate']);
 }
 
-function getTableNameFromQuery($query) {
-    if (preg_match('/CREATE TABLE `?(\w+)`?/i', $query, $matches)) {
-        return $matches[1];
+function generateID($table, $column, $prefix = '', $length) {
+    global $_db;
+    // Query to get the maximum ID currently in the specified column of the specified table
+    $query = "SELECT MAX($column) AS max_id FROM $table";
+    
+    try {
+        $stmt = $_db->prepare($query);
+        $stmt->execute();
+        $row = $stmt->fetch(PDO::FETCH_ASSOC);
+
+        // Extract the numeric part and increment it
+        if ($row && $row['max_id']) {
+            $max_id = $row['max_id'];
+            $numeric_part = intval(substr($max_id, strlen($prefix))); // Remove prefix and convert to integer
+            $new_numeric_part = $numeric_part + 1;
+        } else {
+            $new_numeric_part = 1; // If no records, start with 1
+        }
+
+        // Format the new ID with leading zeros
+        $new_id = $prefix . str_pad($new_numeric_part, $length, '0', STR_PAD_LEFT);
+
+        return $new_id;
+    } catch (PDOException $e) {
+        // Handle query failure
+        error_log("Error generating new ID: " . $e->getMessage());
+        return false;
     }
-    return null;
 }
+
+
 // Is GET request?
 function is_get()
 {
@@ -364,6 +389,47 @@ function is_exists($value, $table, $field) {
     $stm = $_db->prepare("SELECT COUNT(*) FROM $table WHERE $field = ?");
     $stm->execute([$value]);
     return $stm->fetchColumn() > 0;
+}
+
+/**
+ * Extract table name from CREATE TABLE query
+ */
+function getTableNameFromQuery($query) {
+    if (preg_match('/CREATE TABLE `?(\w+)`?/i', $query, $matches)) {
+        return $matches[1];
+    }
+    return null;
+}
+
+/**
+ * Extract table name from INSERT INTO query
+ */
+function getTableNameFromInsertQuery($query) {
+    if (preg_match('/INSERT INTO `?(\w+)`?/i', $query, $matches)) {
+        return $matches[1];
+    }
+    return null;
+}
+
+/**
+ * Extract values from INSERT INTO query
+ */
+function extractValuesFromInsertQuery($query) {
+    if (preg_match('/VALUES\s?\(([^)]+)\)/i', $query, $matches)) {
+        return explode(',', $matches[1]);
+    }
+    return null;
+}
+
+/**
+ * Get primary key column(s) for a table
+ */
+function getPrimaryKeyColumn($conn, $tableName) {
+    $query = "SHOW KEYS FROM `$tableName` WHERE Key_name = 'PRIMARY'";
+    $stmt = $conn->query($query);
+    $primaryKey = $stmt->fetch(PDO::FETCH_ASSOC);
+    
+    return $primaryKey ? $primaryKey['Column_name'] : null;
 }
 
 // ============================================================================

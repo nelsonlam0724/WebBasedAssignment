@@ -1,7 +1,8 @@
 <?php
 include '../_base.php';
-auth('Root','Admin');
+auth('Root', 'Admin');
 $user = $_SESSION['user'];
+
 if (is_post()) {
     if (isset($_FILES['backupFile']) && $_FILES['backupFile']['error'] == UPLOAD_ERR_OK) {
         $fileTmpPath = $_FILES['backupFile']['tmp_name'];
@@ -27,25 +28,50 @@ if (is_post()) {
                     $query = trim($query);
                     if ($query) {
                         if (stripos($query, 'CREATE TABLE') === 0) {
+                            // Check if the table exists
                             $tableName = getTableNameFromQuery($query);
                             if ($tableName) {
-                                // Check if the table exists
                                 $result = $conn->query("SHOW TABLES LIKE '$tableName'");
                                 if ($result->rowCount() == 0) {
-                                    // If the table doesn't exist, create it
+                                    // Create table if it doesn't exist
                                     $conn->exec($query);
                                     $actionTaken = true;
                                 }
                             }
+                        } elseif (stripos($query, 'INSERT INTO') === 0) {
+                            // Modify INSERT INTO queries to avoid duplicates
+                            $tableName = getTableNameFromInsertQuery($query);
+                            $values = extractValuesFromInsertQuery($query);
+
+                            if ($tableName && $values) {
+                                // Get primary key column(s)
+                                $primaryKey = getPrimaryKeyColumn($conn, $tableName);
+
+                                if ($primaryKey) {
+                                    // Assuming the primary key is the first value in the VALUES list
+                                    $primaryKeyValue = trim($values[0], " '");
+                                    $checkQuery = "SELECT COUNT(*) FROM $tableName WHERE $primaryKey = :primaryKeyValue";
+                                    $stmt = $conn->prepare($checkQuery);
+                                    $stmt->bindValue(':primaryKeyValue', $primaryKeyValue, PDO::PARAM_STR);
+                                    $stmt->execute();
+                                    $exists = $stmt->fetchColumn();
+
+                                    if ($exists == 0) {
+                                        // Insert the record if it doesn't exist
+                                        $conn->exec($query);
+                                        $actionTaken = true;
+                                    }
+                                }
+                            }
                         } else {
-                            // Execute non-`CREATE TABLE` queries
+                            // Execute other queries (e.g., ALTER, DROP, etc.)
                             $conn->exec($query);
                             $actionTaken = true;
                         }
                     }
                 }
 
-                // Commit the transaction if it was successful
+                // Commit the transaction if successful
                 if ($conn->inTransaction()) {
                     $conn->commit();
                 }
@@ -57,7 +83,7 @@ if (is_post()) {
                     temp('info', 'No action needed: All tables are already up to date.');
                 }
             } catch (PDOException $e) {
-                // Rollback the transaction if an error occurs
+                // Rollback if error occurs
                 if ($conn->inTransaction()) {
                     $conn->rollBack();
                 }

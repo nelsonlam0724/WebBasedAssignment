@@ -1,7 +1,6 @@
 <?php
 // Include necessary files
 include '../_base.php';
-include '../_auth.php';
 
 // Ensure only authorized users (Admin/Root) can deactivate a user
 auth('Root', 'Admin'); 
@@ -17,12 +16,12 @@ if ($user_id > 0) {
     
     if ($stm->execute([$user_id])) {
         // Redirect with a success message after deactivation
-        temp('info','User deactivated successfully!');
+        temp('info','User banned successfully!');
         redirect('userList.php');
         exit;
     } else {
         // If the deactivation fails, set an error message
-        temp('info','Failed to deactivate user.');
+        temp('info','Failed to banned user.');
         redirect('userList.php');
         exit;
     }

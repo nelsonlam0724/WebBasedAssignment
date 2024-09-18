@@ -64,27 +64,33 @@ if (is_post()) {
         $stm->execute([$name, $price, $category_id, $quantity, $photo, $desc, $weight]);
 
         temp('info', 'Record inserted');
+        redirect('productList.php');
     }
 }
 
-$_title = 'Product | List';
+$_title = 'Add New Product';
 include '../_head.php';
 ?>
 
 <link rel="stylesheet" href="../css/product.css">
+<a href="productList.php"><button type="button">⬅️ Back to Product List</button></a>
+<h1>Add New Product</h1>
 <form method="post" class="form" enctype="multipart/form-data">
     
     <label for="name">Product Name</label><br>
     <?= html_text('name', 'maxlength="100"') ?>
     <?= err('name') ?>
     <br>
+    <br>
     <label for="price">Price</label><br>
     <?= html_text('price', 'maxlength="100"') ?>
     <?= err('price') ?>
     <br>
+    <br>
     <label for="quantity">Quantity</label><br>
     <?= html_number('quantity', 1, 100, 1, 'class="form-control"') ?>
     <?= err('quantity') ?>
+    <br>
     <br>
     <label for="photo">Product Photo</label><br>
     <label class="upload" tabindex="0">
@@ -93,13 +99,16 @@ include '../_head.php';
     </label>
     <?= err('photo') ?>
     <br>
+    <br>
     <label for="description">Description</label><br>
     <?= html_textarea('description', 'placeholder="Enter Description"') ?>
     <?= err('description') ?>
     <br>
+    <br>
     <label for="weight">Weight</label><br>
     <?= html_text('weight', 'maxlength="100"') ?>
     <?= err('weight') ?>
+    <br>
     <br>
     <label for="category">Category</label><br>
     <select name="category_id">
@@ -112,6 +121,7 @@ include '../_head.php';
         ?>
     </select>
     <?= err('category_id') ?>
+    <br>
     <br>
     <button type="submit">Submit</button>
 </form>
