@@ -4,7 +4,7 @@ USE `web_ass`;
 
 
 CREATE TABLE `bank` (
-  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `id` varchar(11) NOT NULL AUTO_INCREMENT,
   `balance` decimal(10,2) NOT NULL,
   `name` varchar(255) NOT NULL,
   `ccv` varchar(255) NOT NULL,
@@ -18,11 +18,11 @@ INSERT INTO bank (id, balance, name, ccv, phone, card, expires) VALUES ('1', '90
 INSERT INTO bank (id, balance, name, ccv, phone, card, expires) VALUES ('2', '3500.25', 'Lee Wen Hao ', '217', '018-3535893', '4999969938799999', '09/23');
 
 CREATE TABLE `carts` (
-  `id` int(11) NOT NULL AUTO_INCREMENT,
-  `user_id` int(11) NOT NULL,
-  `product_id` int(1) DEFAULT NULL,
+  `id` varchar(11) NOT NULL AUTO_INCREMENT,
+  `user_id` varchar(11) NOT NULL,
+  `product_id` varchar(1) DEFAULT NULL,
   `unit` int(11) NOT NULL,
-  `category_id` int(11) DEFAULT NULL,
+  `category_id` varchar(11) DEFAULT NULL,
   PRIMARY KEY (`id`),
   KEY `user_id` (`user_id`),
   KEY `product_id` (`product_id`),
@@ -39,9 +39,9 @@ INSERT INTO carts (id, user_id, product_id, unit, category_id) VALUES ('62', '26
 INSERT INTO carts (id, user_id, product_id, unit, category_id) VALUES ('63', '26', '10', '1', '');
 
 CREATE TABLE `category` (
-  `category_id` int(10) NOT NULL AUTO_INCREMENT,
+  `category_id` varchar(10) NOT NULL AUTO_INCREMENT,
   `category_name` varchar(100) NOT NULL,
-  `product_id` int(10) NOT NULL,
+  `product_id` varchar(10) NOT NULL,
   PRIMARY KEY (`category_id`),
   KEY `product_id` (`product_id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
@@ -49,9 +49,9 @@ CREATE TABLE `category` (
 INSERT INTO category (category_id, category_name, product_id) VALUES ('2', 'keyboard train', '1');
 
 CREATE TABLE `comment` (
-  `comment_id` int(11) NOT NULL AUTO_INCREMENT,
-  `user_id` int(11) NOT NULL,
-  `product_id` int(11) NOT NULL,
+  `comment_id` varchar(11) NOT NULL AUTO_INCREMENT,
+  `user_id` varchar(11) NOT NULL,
+  `product_id` varchar(11) NOT NULL,
   `datetime` datetime NOT NULL,
   `comment` varchar(255) NOT NULL,
   `rate` int(11) NOT NULL,
@@ -85,9 +85,9 @@ INSERT INTO comment (comment_id, user_id, product_id, datetime, comment, rate, p
 INSERT INTO comment (comment_id, user_id, product_id, datetime, comment, rate, photo) VALUES ('25', '26', '8', '2024-09-18 12:13:20', 'reger', '3', '1074989.jpg');
 
 CREATE TABLE `favorite` (
-  `id` int(11) NOT NULL AUTO_INCREMENT,
-  `product_id` int(11) DEFAULT NULL,
-  `user_id` int(11) DEFAULT NULL,
+  `id` varchar(11) NOT NULL AUTO_INCREMENT,
+  `product_id` varchar(11) DEFAULT NULL,
+  `user_id` varchar(11) DEFAULT NULL,
   PRIMARY KEY (`id`),
   KEY `product_id` (`product_id`),
   KEY `user_id` (`user_id`)
@@ -99,8 +99,8 @@ INSERT INTO favorite (id, product_id, user_id) VALUES ('195', '13', '8');
 INSERT INTO favorite (id, product_id, user_id) VALUES ('196', '15', '8');
 
 CREATE TABLE `order_details` (
-  `order_id` int(11) NOT NULL,
-  `product_id` int(11) NOT NULL,
+  `order_id` varchar(11) NOT NULL,
+  `product_id` varchar(11) NOT NULL,
   `price` decimal(10,0) NOT NULL,
   `unit` int(11) NOT NULL,
   `subtotal` decimal(10,0) NOT NULL,
@@ -178,11 +178,11 @@ INSERT INTO order_details (order_id, product_id, price, unit, subtotal, order_st
 INSERT INTO order_details (order_id, product_id, price, unit, subtotal, order_status, commment_status) VALUES ('55', '8', '1000', '8', '8000', 'Pending', 'Panding');
 
 CREATE TABLE `orders` (
-  `id` int(11) NOT NULL AUTO_INCREMENT,
-  `user_id` int(11) NOT NULL,
+  `id` varchar(11) NOT NULL AUTO_INCREMENT,
+  `user_id` varchar(11) NOT NULL,
   `datetime` datetime NOT NULL,
   `total` decimal(10,2) NOT NULL,
-  `ship_id` int(11) NOT NULL,
+  `ship_id` varchar(11) NOT NULL,
   `count` int(11) NOT NULL,
   `status` varchar(22) NOT NULL,
   `created_at` timestamp NOT NULL DEFAULT current_timestamp(),
@@ -237,12 +237,12 @@ INSERT INTO orders (id, user_id, datetime, total, ship_id, count, status, create
 INSERT INTO orders (id, user_id, datetime, total, ship_id, count, status, created_at) VALUES ('55', '26', '2024-09-18 12:32:07', '7761.60', '57', '1', 'Cancel', '2024-09-18 12:32:07');
 
 CREATE TABLE `payment_record` (
-  `id` int(11) NOT NULL AUTO_INCREMENT,
-  `user_id` int(11) NOT NULL,
+  `id` varchar(11) NOT NULL AUTO_INCREMENT,
+  `user_id` varchar(11) NOT NULL,
   `datetime` datetime NOT NULL,
   `amount` decimal(10,2) NOT NULL,
   `method` varchar(55) NOT NULL,
-  `order_id` int(11) NOT NULL,
+  `order_id` varchar(11) NOT NULL,
   PRIMARY KEY (`id`),
   KEY `order_id` (`order_id`),
   CONSTRAINT `payment_record_ibfk_1` FOREIGN KEY (`order_id`) REFERENCES `orders` (`id`)
@@ -260,10 +260,10 @@ INSERT INTO payment_record (id, user_id, datetime, amount, method, order_id) VAL
 INSERT INTO payment_record (id, user_id, datetime, amount, method, order_id) VALUES ('10', '26', '0000-00-00 00:00:00', '7761.60', 'card', '55');
 
 CREATE TABLE `product` (
-  `product_id` int(10) NOT NULL AUTO_INCREMENT,
+  `product_id` varchar(10) NOT NULL AUTO_INCREMENT,
   `name` varchar(100) NOT NULL,
   `price` decimal(10,2) NOT NULL,
-  `category_id` int(10) NOT NULL,
+  `category_id` varchar(10) NOT NULL,
   `quantity` int(10) NOT NULL,
   `product_photo` varchar(100) NOT NULL,
   `description` varchar(1000) NOT NULL,
@@ -298,7 +298,7 @@ INSERT INTO product (product_id, name, price, category_id, quantity, product_pho
 INSERT INTO product (product_id, name, price, category_id, quantity, product_photo, description, weight) VALUES ('29', 'recliner', '220.00', '2', '1', '', 'leather recliner', '35.00');
 
 CREATE TABLE `shippers` (
-  `ship_id` int(11) NOT NULL AUTO_INCREMENT,
+  `ship_id` varchar(11) NOT NULL AUTO_INCREMENT,
   `address` varchar(255) NOT NULL,
   `company_name` varchar(255) NOT NULL,
   `phone` varchar(55) NOT NULL,
@@ -356,7 +356,7 @@ INSERT INTO shippers (ship_id, address, company_name, phone, ship_method, status
 INSERT INTO shippers (ship_id, address, company_name, phone, ship_method, status) VALUES ('57', 'Jalan Pantai Permai 12, Taman Desa Kerinchi, Pantai Dalam, Kuala Lumpur, 59200, Malaysia Sarawak', 'NINJA VAN', 'ss', 'pick', 'Pending');
 
 CREATE TABLE `token` (
-  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `id` varchar(11) NOT NULL AUTO_INCREMENT,
   `email` varchar(255) NOT NULL,
   `verification_code` char(6) NOT NULL,
   `expire` datetime NOT NULL,
