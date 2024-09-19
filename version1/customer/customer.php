@@ -1,11 +1,9 @@
 <?php
 include '../_base.php';
-include '../include/header.php';
-include '../_head.php';
-
 auth('Role','Admin','Member');
 // Fetch user profile information
 $_title = 'Customer Dashboard - ' . htmlspecialchars($_user->name);
+include '../include/header.php';
 ?>
 <!DOCTYPE html>
 <html lang="en">

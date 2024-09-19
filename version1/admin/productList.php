@@ -1,5 +1,6 @@
 <?php
 include '../_base.php';
+auth('Root', 'Admin');
 
 $search_query = isset($_GET['search']) ? trim($_GET['search']) : '';
 $page = isset($_GET['page']) ? (int)$_GET['page'] : 1;

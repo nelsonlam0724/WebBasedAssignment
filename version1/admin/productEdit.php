@@ -5,6 +5,7 @@ include '../_head.php';
 
 $_err = [];
 
+// Get product ID from request
 $product_id = req('product_id');
 
 if (!$product_id) {
@@ -12,23 +13,30 @@ if (!$product_id) {
     redirect('productList.php');
 }
 
+// Fetch product details
 $stm = $_db->prepare('SELECT * FROM product WHERE product_id = ?');
 $stm->execute([$product_id]);
 $product = $stm->fetch();
+
+// Fetch all product images with their IDs
+$stm = $_db->prepare('SELECT image_id, product_photo FROM product_image WHERE product_id = ?');
+$stm->execute([$product_id]);
+$images = $stm->fetchAll();
 
 if (!$product) {
     redirect('productList.php');
 }
 
 if (is_post()) {
-    // Validation and update logic
+    // Retrieve form data
     $new_name = req('name');
     $new_price = req('price');
     $new_category = req('category_id');
     $new_quantity = req('quantity');
     $new_weight = req('weight');
     $new_description = req('description');
-    $new_product_photo = get_file('photo');
+    $new_product_photos = get_file_multiple('photo'); // Fetch multiple files
+    $existing_image_ids = req('existing_image_ids'); // Fetch existing image IDs
 
     // Validation
     if (!$new_name) {
@@ -49,19 +57,6 @@ if (is_post()) {
         $_err['quantity'] = 'Required';
     }
 
-    // Validation: photo (file)
-    if (!empty($new_product_photo->name) && $new_product_photo->error === UPLOAD_ERR_OK) {
-        // If a new file is uploaded, validate it
-        if (!in_array($new_product_photo->type, ['image/jpeg', 'image/png'])) {
-            $_err['photo'] = 'Must be a JPEG or PNG';
-        } else if ($new_product_photo->size > 1 * 1024 * 1024) {
-            $_err['photo'] = 'Maximum 1MB';
-        }
-    } else {
-        // No new photo uploaded, retain the current photo
-        $product_photo_name = $product->product_photo;
-    }
-
     if (!$new_category) {
         $_err['category_id'] = 'Required';
     }
@@ -78,16 +73,39 @@ if (is_post()) {
         $_err['weight'] = 'Maximum 100 characters';
     }
 
-    // Update the product if there are no validation errors
-    if (empty($_err)) {
-        if (!empty($new_product_photo->name) && $new_product_photo->error == UPLOAD_ERR_OK) {
-            $product_photo_name = save_photo_admin($new_product_photo);
-        } else {
-            $product_photo_name = $product->product_photo;
+    // Handle file uploads
+    if (!empty($new_product_photos)) {
+        foreach ($new_product_photos as $photo) {
+            if ($photo->error === UPLOAD_ERR_OK) {
+                if (!in_array($photo->type, ['image/jpeg', 'image/png'])) {
+                    $_err['photo'] = 'All files must be JPEG or PNG';
+                    break;
+                } elseif ($photo->size > 1 * 1024 * 1024) {
+                    $_err['photo'] = 'Files must be 1MB or smaller';
+                    break;
+                }
+            }
         }
+    }
 
-        $stm = $_db->prepare('UPDATE product SET name = ?, price = ?, category_id = ?, quantity = ?, weight = ?, description = ?, product_photo = ? WHERE product_id = ?');
-        $stm->execute([$new_name, $new_price, $new_category, $new_quantity, $new_weight, $new_description, $product_photo_name, $product_id]);
+    if (empty($_err)) {
+        // Update product details
+        $stm = $_db->prepare('UPDATE product SET name = ?, price = ?, category_id = ?, quantity = ?, weight = ?, description = ? WHERE product_id = ?');
+        $stm->execute([$new_name, $new_price, $new_category, $new_quantity, $new_weight, $new_description, $product_id]);
+
+        // Update existing images
+        if (!empty($existing_image_ids)) {
+            foreach ($existing_image_ids as $index => $image_id) {
+                if (isset($_FILES['photo']['tmp_name'][$index]) && !empty($_FILES['photo']['tmp_name'][$index])) {
+                    $file = $_FILES['photo']['tmp_name'][$index];
+                    if (file_exists($file)) {
+                        $photo_path = save_photo_admin($file);
+                        $stm = $_db->prepare('UPDATE product_image SET product_photo = ? WHERE image_id = ?');
+                        $stm->execute([$photo_path, $image_id]);
+                    }
+                }
+            }
+        }
 
         temp('info', 'Product Details Updated');
         redirect('productList.php');
@@ -155,11 +173,20 @@ if (is_post()) {
             </td>
         </tr>
         <tr>
-            <th>Product Photo:</th>
+            <th>Product Photos:</th>
             <td>
                 <label class="upload">
-                    <input type="file" name="photo" id="photo" accept="image/*" style="display: none;">
-                    <img src="../uploads/<?= htmlspecialchars($product->product_photo) ?>" alt="Product Photo" id="product-photo">
+                    <input type="file" name="photo[]" id="photo" accept="image/*" multiple>
+                    <div id="product-photos">
+                        <div class="image-container">
+                            <?php foreach ($images as $img): ?>
+                                <div class="image-wrapper">
+                                    <img src="../uploads/<?= htmlspecialchars($img->product_photo) ?>" alt="Product Photo" class="product-photo-preview">
+                                    <input type="hidden" name="existing_image_ids[]" value="<?= htmlspecialchars($img->image_id) ?>">
+                                </div>
+                            <?php endforeach; ?>
+                        </div>
+                    </div>
                 </label>
                 <?= isset($_err['photo']) ? "<span class='error'>{$_err['photo']}</span>" : '' ?>
             </td>

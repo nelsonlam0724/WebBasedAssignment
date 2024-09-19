@@ -110,6 +110,23 @@ function get_file($key)
 
     return null;
 }
+function get_file_multiple($key) {
+    $files = [];
+    if (!empty($_FILES[$key])) {
+        foreach ($_FILES[$key]['name'] as $index => $name) {
+            if ($_FILES[$key]['error'][$index] === UPLOAD_ERR_OK) {
+                $file = new stdClass();
+                $file->name = $_FILES[$key]['name'][$index];
+                $file->type = $_FILES[$key]['type'][$index];
+                $file->tmp_name = $_FILES[$key]['tmp_name'][$index];
+                $file->error = $_FILES[$key]['error'][$index];
+                $file->size = $_FILES[$key]['size'][$index];
+                $files[] = $file;
+            }
+        }
+    }
+    return $files;
+}
 
 function get_mail() {
     require_once 'lib/PHPMailer.php';
@@ -151,20 +168,29 @@ function save_photo($file) {
     
     return $photo;
 }
+
 function save_photo_admin($file) {
-    // Check if $file is an object or array
-    if (is_object($file)) {
+    // If $file is a string (file path)
+    if (is_string($file)) {
+        $file_tmp_name = $file;
+        $file_type = mime_content_type($file);
+        $file_size = filesize($file);
+    }
+    // If $file is an object (like $_FILES['photo'])
+    elseif (is_object($file)) {
         $file_tmp_name = $file->tmp_name;
         $file_type = $file->type;
         $file_size = $file->size;
-    } elseif (is_array($file)) {
+    }
+    // If $file is an array (like $_FILES['photo'])
+    elseif (is_array($file)) {
         $file_tmp_name = $file['tmp_name'];
         $file_type = $file['type'];
         $file_size = $file['size'];
     } else {
         throw new InvalidArgumentException('Invalid file input');
     }
-    
+
     $photo = uniqid() . '.jpg';
     require_once '../lib/SimpleImage.php';
     $img = new SimpleImage();
@@ -174,6 +200,8 @@ function save_photo_admin($file) {
     
     return $photo;
 }
+
+
 // Is money?
 function is_money($value)
 {
