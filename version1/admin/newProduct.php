@@ -56,12 +56,14 @@ if (is_post()) {
     if (!$_err) {
         $photo = save_photo_admin($p);
 
+        $product_id = generateID('product', 'product_id', 'P', 4);
+
         $stm = $_db->prepare('
-    INSERT INTO product (name, price, category_id, quantity, product_photo, description, weight)
-    VALUES (?, ?, ?, ?, ?, ?, ?)
+    INSERT INTO product (product_id, name, price, category_id, quantity, product_photo, description, weight, status)
+    VALUES (?, ?, ?, ?, ?, ?, ?, ?, "Available")
     ');
 
-        $stm->execute([$name, $price, $category_id, $quantity, $photo, $desc, $weight]);
+        $stm->execute([$product_id, $name, $price, $category_id, $quantity, $photo, $desc, $weight]);
 
         temp('info', 'Record inserted');
         redirect('productList.php');

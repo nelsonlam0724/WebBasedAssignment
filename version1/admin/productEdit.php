@@ -14,7 +14,7 @@ if (!$product_id) {
 
 $stm = $_db->prepare('SELECT * FROM product WHERE product_id = ?');
 $stm->execute([$product_id]);
-$product = $stm->fetch();
+$product = $stm->fetch(PDO::FETCH_OBJ);
 
 if (!$product) {
     redirect('productList.php');
@@ -28,6 +28,7 @@ if (is_post()) {
     $new_quantity = req('quantity');
     $new_weight = req('weight');
     $new_description = req('description');
+    $new_status = req('status');
     $new_product_photo = get_file('photo');
 
     // Validation
@@ -66,16 +67,20 @@ if (is_post()) {
         $_err['category_id'] = 'Required';
     }
 
+    if (!$new_weight) {
+        $_err['weight'] = 'Required';
+    } elseif (strlen($new_weight) > 100) {
+        $_err['weight'] = 'Maximum 100 characters';
+    }
+
     if (!$new_description) {
         $_err['description'] = 'Required';
     } elseif (strlen($new_description) > 1000) {
         $_err['description'] = 'Maximum 1000 characters';
     }
 
-    if (!$new_weight) {
-        $_err['weight'] = 'Required';
-    } elseif (strlen($new_weight) > 100) {
-        $_err['weight'] = 'Maximum 100 characters';
+    if (!$new_status) {
+        $_err['status'] = 'Required';
     }
 
     // Update the product if there are no validation errors
@@ -86,8 +91,8 @@ if (is_post()) {
             $product_photo_name = $product->product_photo;
         }
 
-        $stm = $_db->prepare('UPDATE product SET name = ?, price = ?, category_id = ?, quantity = ?, weight = ?, description = ?, product_photo = ? WHERE product_id = ?');
-        $stm->execute([$new_name, $new_price, $new_category, $new_quantity, $new_weight, $new_description, $product_photo_name, $product_id]);
+        $stm = $_db->prepare('UPDATE product SET name = ?, price = ?, category_id = ?, quantity = ?, weight = ?, description = ?, product_photo = ?, status = ? WHERE product_id = ?');
+        $stm->execute([$new_name, $new_price, $new_category, $new_quantity, $new_weight, $new_description, $product_photo_name, $new_status, $product_id]);
 
         temp('info', 'Product Details Updated');
         redirect('productList.php');
@@ -152,6 +157,20 @@ if (is_post()) {
             <td>
                 <textarea name="description" id="description"><?= htmlspecialchars($product->description) ?></textarea>
                 <?= isset($_err['description']) ? "<span class='error'>{$_err['description']}</span>" : '' ?>
+            </td>
+        </tr>
+        <tr>
+            <th>Status:</th>
+            <td>
+                <select name="status" id="status">
+                    <option value="<?= htmlspecialchars('Available') ?>" <?= $product->status == 'Available' ? 'selected' : '' ?>>
+                        <?= htmlspecialchars('Available') ?>
+                    </option>
+                    <option value="<?= htmlspecialchars('Unavailable') ?>" <?= $product->status == 'Unavailable' ? 'selected' : '' ?>>
+                        <?= htmlspecialchars('Unavailable') ?>
+                    </option>
+                </select>
+                <?= isset($_err['status']) ? "<span class='error'>" . htmlspecialchars($_err['status']) . "</span>" : '' ?>
             </td>
         </tr>
         <tr>

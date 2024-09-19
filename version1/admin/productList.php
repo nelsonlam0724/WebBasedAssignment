@@ -1,17 +1,18 @@
 <?php
 include '../_base.php';
+require_once '../lib/SimplePager.php';
 
 $search_query = isset($_GET['search']) ? trim($_GET['search']) : '';
 $page = isset($_GET['page']) ? (int)$_GET['page'] : 1;
-$records_per_page = 5;
-$offset = ($page - 1) * $records_per_page;
 $sort_by = isset($_GET['sort_by']) ? $_GET['sort_by'] : 'product_id'; // Default sort by id
 $sort_order = isset($_GET['sort_order']) ? $_GET['sort_order'] : 'ASC'; // Default sort order ascending
 $category_filter = isset($_GET['category']) ? $_GET['category'] : ''; // Category filter
+$status_filter = isset($_GET['status']) ? $_GET['status'] : '';
+$limit = 5;
 
 // Select product with category name using LEFT JOIN
 $sql = 'SELECT p.*, c.category_name FROM product p
-LEFT JOIN category c ON p.category_id = c.category_id WHERE 1';
+LEFT JOIN category c ON p.category_id = c.category_id WHERE 1=1';
 $params = [];
 
 if ($search_query) {
@@ -20,32 +21,28 @@ if ($search_query) {
     $params[] = '%' . $search_query . '%';
 }
 
-// Correctly reference the category_id from the product table
 if ($category_filter) {
     $sql .= ' AND p.category_id = ?';
     $params[] = $category_filter;
 }
 
-// Count query should also use the correct reference for category_id
-$count_sql = 'SELECT COUNT(*) FROM product p WHERE 1';
-if ($search_query) {
-    $count_sql .= ' AND (p.name LIKE ? OR p.description LIKE ?)';
+if ($status_filter) {
+    $sql .= ' AND p.status LIKE ?';
+    $params[] = $status_filter;
 }
-if ($category_filter) {
-    $count_sql .= ' AND p.category_id = ?';
-}
-$count_stm = $_db->prepare($count_sql);
-$count_stm->execute($params);
-$total_records = $count_stm->fetchColumn();
-$total_pages = ceil($total_records / $records_per_page);
 
-$sql .= ' ORDER BY ' . $sort_by . ' ' . $sort_order;
-$sql .= ' LIMIT ' . $records_per_page . ' OFFSET ' . $offset;
-$stm = $_db->prepare($sql);
-$stm->execute($params);
-$product = $stm->fetchAll(PDO::FETCH_OBJ);
+$sql .= " ORDER BY p.$sort_by $sort_order";
+
+$pager = new SimplePager($sql, $params, $limit, $page);
+
+$product = $pager->result;
+$total_pages = $pager->page_count;
+
 $categories_stm = $_db->query('SELECT DISTINCT category_id, category_name FROM category');
 $categories = $categories_stm->fetchAll(PDO::FETCH_KEY_PAIR);
+
+$status_stm = $_db->query('SELECT DISTINCT status FROM product');
+$statuses = $status_stm->fetchAll(PDO::FETCH_COLUMN);
 
 $_title = 'Product List';
 include '../_head.php';
@@ -57,10 +54,10 @@ include '../_head.php';
 
     <!-- Success/Error Messages -->
     <?php if (isset($_SESSION['success_message'])): ?>
-        <div class="success-message">
-            <?= htmlspecialchars($_SESSION['success_message']); ?>
-            <?php unset($_SESSION['success_message']); ?>
-        </div>
+    <div class="success-message">
+        <?= htmlspecialchars($_SESSION['success_message']); ?>
+        <?php unset($_SESSION['success_message']); ?>
+    </div>
     <?php endif; ?>
 
     <?php if (isset($_SESSION['error_message'])): ?>
@@ -72,7 +69,12 @@ include '../_head.php';
 
     <!-- Search Form -->
     <form action="productList.php" method="get" class="search-form">
-        <input type="text" name="search" placeholder="Search by product name" value="<?= htmlspecialchars($search_query) ?>">
+        <input type="text" name="search" placeholder="Search" value="<?= htmlspecialchars($search_query) ?>">
+        <input type="hidden" name="sort_by" value="<?= htmlspecialchars($category_filter) ?>">
+        <input type="hidden" name="sort_order" value="<?= htmlspecialchars($status_filter) ?>">
+        <input type="hidden" name="sort_by" value="<?= htmlspecialchars($sort_by) ?>">
+        <input type="hidden" name="sort_order" value="<?= htmlspecialchars($sort_order) ?>">
+        <input type="hidden" name="page" value="1">
         <button type="submit" class="form-button">Search</button>
     </form>
 
@@ -81,7 +83,7 @@ include '../_head.php';
     <div class="filter-sorting">
         <form action="productList.php" method="get" class="filter-form">
             <input type="hidden" name="search" value="<?= htmlspecialchars($search_query) ?>">
-            <input type="hidden" name="page" value="<?= $page ?>">
+            <input type="hidden" name="page" value="1">
 
             <!-- Category Filter -->
             <label for="category">Category:</label>
@@ -90,6 +92,17 @@ include '../_head.php';
                 <?php foreach ($categories as $category_id => $category_name): ?>
                     <option value="<?= $category_id ?>" <?= $category_id == $category_filter ? 'selected' : '' ?>>
                         <?= htmlspecialchars($category_name) ?>
+                    </option>
+                <?php endforeach; ?>
+            </select>
+
+            <!-- Status Filter -->
+            <label for="status">Status:</label>
+            <select name="status" id="status" onchange="this.form.submit()">
+                <option value="">All Status</option>
+                <?php foreach ($statuses as $status): ?>
+                    <option value="<?= htmlspecialchars($status) ?>" <?= $status == $status_filter ? 'selected' : '' ?>>
+                        <?= htmlspecialchars($status) ?>
                     </option>
                 <?php endforeach; ?>
             </select>
@@ -113,7 +126,7 @@ include '../_head.php';
 
     <div class="table-wrapper">
         <!-- Product Table with Checkboxes -->
-        <form method="post" action="deleteProducts.php">
+        <form method="post" action="deleteProduct.php">
             <?php if ($product): ?>
                 <table>
                     <thead>
@@ -143,13 +156,13 @@ include '../_head.php';
                 </table>
 
                 <div class="action-buttons">
-                    <button type="submit" id="delete-selected" onclick="return confirm('Are you sure you want to delete the selected products?');">Delete Selected</button>
+                    <button type="submit" id="delete-selected" onclick="return confirm('Are you sure you want to deactivate the selected products?');">Deactivate</button>
                 </div>
 
                 <div class="pagination-container">
                     <!-- Previous Button -->
                     <?php if ($page > 1): ?>
-                        <a href="?search=<?= urlencode($search_query) ?>&page=<?= $page - 1 ?>&sort_by=<?= urlencode($sort_by) ?>&sort_order=<?= urlencode($sort_order) ?>&category=<?= urlencode($category_filter) ?>" class="pagination-button">Previous</a>
+                        <a href="?search=<?= urlencode($search_query) ?>&page=<?= $page - 1 ?>&sort_by=<?= urlencode($sort_by) ?>&sort_order=<?= urlencode($sort_order) ?>&category=<?= urlencode($category_filter) ?>&status=<?= urlencode($status_filter) ?>" class="pagination-button">Previous</a>
                     <?php endif; ?>
 
                     <!-- Page Numbers -->
@@ -157,14 +170,15 @@ include '../_head.php';
                         <?php if ($i == $page): ?>
                             <span class="current-page"><?= $i ?></span>
                         <?php else: ?>
-                            <a href="?search=<?= urlencode($search_query) ?>&page=<?= $i ?>&sort_by=<?= urlencode($sort_by) ?>&sort_order=<?= urlencode($sort_order) ?>&category=<?= urlencode($category_filter) ?>" class="pagination-button"><?= $i ?></a>
+                            <a href="?search=<?= urlencode($search_query) ?>&page=<?= $i ?>&sort_by=<?= urlencode($sort_by) ?>&sort_order=<?= urlencode($sort_order) ?>&category=<?= urlencode($category_filter) ?>&status=<?= urlencode($status_filter) ?>" class="pagination-button"><?= $i ?></a>
                         <?php endif; ?>
                     <?php endfor; ?>
 
                     <!-- Next Button -->
                     <?php if ($page < $total_pages): ?>
-                        <a href="?search=<?= urlencode($search_query) ?>&page=<?= $page + 1 ?>&sort_by=<?= urlencode($sort_by) ?>&sort_order=<?= urlencode($sort_order) ?>&category=<?= urlencode($category_filter) ?>" class="pagination-button">Next</a>
+                        <a href="?search=<?= urlencode($search_query) ?>&page=<?= $page + 1 ?>&sort_by=<?= urlencode($sort_by) ?>&sort_order=<?= urlencode($sort_order) ?>&category=<?= urlencode($category_filter) ?>&status=<?= urlencode($status_filter) ?>" class="pagination-button">Next</a>
                     <?php endif; ?>
+
                 </div>
             <?php else: ?>
                 <p class="no-results">No products found.</p>
