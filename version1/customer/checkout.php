@@ -8,7 +8,6 @@ $productIds = array_keys($cartSelect);
 $products = [];
 
 if (!empty($productIds)) {
-  // Escape and wrap product IDs in single quotes
   $ids = implode(',', array_map(function($id) {
       return "'" . htmlspecialchars($id, ENT_QUOTES) . "'";
   }, $productIds));
@@ -57,26 +56,26 @@ if (is_post()) {
   if (!$_err) {
 
     $_db->beginTransaction();
-    $ship_id = generateID('shippers', 'ship_id', 'S', 4);
+    $shipid = generateID('shippers', 'ship_id', 'S', 4);
     $stm = $_db->prepare('
     INSERT INTO `shippers` (ship_id, address,company_name,phone,ship_method,status) VALUES (?,?, ? ,? , ?,?)
     ');
 
-    $stm->execute([$ship_id,$address, $shopnameOption, $phone, $shipMethod,"Pending"]);
+    $stm->execute([$shipid,$address, $shopnameOption, $phone, $shipMethod,"Pending"]);
     $ship_id = $_db->lastInsertId();
     $_SESSION['ship_id'] = $ship_id;
 
     $_db->commit();
 
     $_db->beginTransaction();
-    $Orderid = generateID('orders', 'id', 'O', 4);
+    $orderid = generateID('orders', 'id', 'O', 4);
     $stm = $_db->prepare('
     INSERT INTO `orders` (id,datetime,user_id,ship_id,status,count,total) VALUES (?,NOW(), ?, ?, ?, ?, ?)
     ');
 
     $total = floatval($total);
    
-    $stm->execute([$Orderid,$userID, $ship_id, "Pending", $count, $total]);
+    $stm->execute([$orderid,$userID, $ship_id, "Pending", $count, $total]);
     $id = $_db->lastInsertId();
 
     $stm = $_db->prepare('
@@ -91,11 +90,10 @@ if (is_post()) {
     $_db->commit();
     $pay_id = generateID('payment_record', 'id', 'PR', 4);
     $stm = $_db->prepare('
-    INSERT INTO `payment_record` (id,user_id,amount,method,order_id) VALUES (?,?, ? ,? , ?)
+    INSERT INTO `payment_record` (id,user_id,amount,method,order_id) VALUES (?,?,?,?,?)
     ');
 
     $stm->execute([$pay_id,$userID, $total, $paymentMethod, $id]);
-  
     $_SESSION['order_id'] = $id;
     redirect('payment.php');
     exit();
