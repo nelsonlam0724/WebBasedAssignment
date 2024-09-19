@@ -75,6 +75,7 @@ $_title = 'Admin Dashboard - ' . htmlspecialchars($_user->name);
             <li><a href="orderList.php"><button>Order List</button></a></li>
             <li><a href="backup.php"><button>Backup</button></a></li>
             <li><a href="restore.php"><button>Restore</button></a></li>
+            <li><a href="produtList.php"><button>Product List</button></a></li>
             <li><a href="../customer/customer.php"><button>Customer Page</button></a></li>
             <li><a href="../logout.php"><button>Logout</button></a></li>
         </ul>
