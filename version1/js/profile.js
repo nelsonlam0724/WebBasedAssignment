@@ -60,3 +60,4 @@ document.addEventListener('DOMContentLoaded', function () {
     document.getElementById('birthday').setAttribute('max', today);
 });
 
+

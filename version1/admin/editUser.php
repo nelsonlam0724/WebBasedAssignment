@@ -18,6 +18,10 @@ $stm = $_db->prepare('SELECT * FROM user WHERE user_id = ?');
 $stm->execute([$user_id]);
 $user = $stm->fetch(PDO::FETCH_OBJ);
 
+$stm = $_db->prepare('SELECT * FROM address WHERE user_id = ?');
+$stm->execute([$user_id]);
+$address = $stm->fetch(PDO::FETCH_OBJ);
+
 // Determine the current user's role
 $current_role = $_user->role;
 $current_user_id = $_user->user_id;
@@ -34,6 +38,13 @@ if (is_post()) {
     $new_status = req('status');
     $password = req('password');
     $confirm_password = req('confirm');
+
+    // Address fields
+    $new_street = req('street');
+    $new_city = req('city');
+    $new_state = req('state');
+    $new_postal_code = req('postal_code');
+    $new_country = req('country');
 
     // Validation: email
     if (!$new_email) {
@@ -111,7 +122,15 @@ if (is_post()) {
         } else {
             $stm = $_db->prepare('UPDATE user SET email = ?, name = ?, password = ?, role = ?, gender = ?, birthday = ?, photo = ?, status = ? WHERE user_id = ?');
             $stm->execute([$new_email, $new_name, $hashed_password, $new_role, $new_gender, $new_birthday, $photo_name, $new_status, $user_id]);
-
+            // Update address details
+            if ($address) {
+                $stm = $_db->prepare('UPDATE address SET street = ?, city = ?, state = ?, postal_code = ?, country = ? WHERE user_id = ?');
+                $stm->execute([$new_street, $new_city, $new_state, $new_postal_code, $new_country, $user_id]);
+            } else {
+                $address_id = generateID('address', 'address_id', 'A', 4);
+                $stm = $_db->prepare('INSERT INTO address (address_id ,user_id, street, city, state, postal_code, country) VALUES (?, ?, ?, ?, ?, ?, ?)');
+                $stm->execute([$address_id, $user_id, $new_street, $new_city, $new_state, $new_postal_code, $new_country]);
+            }
             temp('info', 'User updated successfully');
             redirect('userList.php');
         }
@@ -186,7 +205,7 @@ $_title = 'Edit User';
                 </div>
             </div>
 
-            <div class="form-right">
+            <div class="form-middle">
                 <div class="form-group">
                     <label for="status">Status:</label>
                     <select name="status" id="status">
@@ -211,13 +230,46 @@ $_title = 'Edit User';
                     <?= isset($_err['photo']) ? "<span class='error'>{$_err['photo']}</span>" : '' ?>
                 </div>
             </div>
-        </div>
 
+            <div class="form-right">
+                <div class="form-group">
+                    <label for="street">Street:</label>
+                    <input type="text" name="street" id="street" value="<?= htmlspecialchars($address->street ?? '') ?>" maxlength="255">
+                    <?= isset($_err['street']) ? "<span class='error'>{$_err['street']}</span>" : '' ?>
+                </div>
+
+                <div class="form-group">
+                    <label for="city">City:</label>
+                    <input type="text" name="city" id="city" value="<?= htmlspecialchars($address->city ?? '') ?>" maxlength="100">
+                    <?= isset($_err['city']) ? "<span class='error'>{$_err['city']}</span>" : '' ?>
+                </div>
+
+                <div class="form-group">
+                    <label for="state">State:</label>
+                    <input type="text" name="state" id="state" value="<?= htmlspecialchars($address->state ?? '') ?>" maxlength="100">
+                    <?= isset($_err['state']) ? "<span class='error'>{$_err['state']}</span>" : '' ?>
+                </div>
+
+                <div class="form-group">
+                    <label for="postal_code">Postal Code:</label>
+                    <input type="text" name="postal_code" id="postal_code" value="<?= htmlspecialchars($address->postal_code ?? '') ?>" maxlength="20">
+                    <?= isset($_err['postal_code']) ? "<span class='error'>{$_err['postal_code']}</span>" : '' ?>
+                </div>
+
+                <div class="form-group">
+                    <label for="country">Country:</label>
+                    <input type="text" name="country" id="country" value="<?= htmlspecialchars($address->country ?? '') ?>" maxlength="100">
+                    <?= isset($_err['country']) ? "<span class='error'>{$_err['country']}</span>" : '' ?>
+                </div>
+            </div>
+        </div>
         <div class="form-actions">
             <button type="submit">Update User</button>
-            <a href="userList.php"><button>Cancel</button></a>
         </div>
     </form>
+    <div class="action-buttons">
+        <a href="userList.php"><button type="button">Back to List</button></a>
+    </div>
 </body>
 
 </html>

@@ -7,7 +7,7 @@ auth('Root', 'Admin');  // Ensure both Root and Admin roles can access this page
 $current_role = $_user->role;
 $current_user_id = $_user->user_id;
 if ($current_role == 'Root') {
-    $arr = $_db->query('SELECT * FROM user')->fetchAll();
+    $arr = $_db->query('SELECT * FROM user WHERE role IN ("Member","Admin")')->fetchAll();
 } elseif ($current_role == 'Admin') {
     $arr = $_db->query('SELECT * FROM user WHERE role = "Member"')->fetchAll();
 } else {
@@ -27,10 +27,13 @@ $limit = 5; // Number of records per page
 $query = 'SELECT * FROM user WHERE 1=1';
 $params = [];
 
-if ($current_role == 'Admin') {
-    $query .= ' AND role = ?';
-    $params[] = 'member';
+if ($current_role == 'Root') {
+    $query .= ' AND role IN ("Admin", "Member")';
+} elseif ($current_role == 'Admin') {
+    $query .= ' AND role = "Member"';
 }
+
+
 // Add search condition if provided
 if ($search_query) {
     $query .= ' AND name LIKE ?';
@@ -60,7 +63,7 @@ $users = $pager->result;
 $total_pages = $pager->page_count;
 
 // Fetch roles and statuses for filter options
-$roles_stm = $_db->query('SELECT DISTINCT role FROM user');
+$roles_stm = $_db->query('SELECT DISTINCT role FROM user WHERE role != "Root"');
 $roles = $roles_stm->fetchAll(PDO::FETCH_COLUMN);
 
 $statuses_stm = $_db->query('SELECT DISTINCT status FROM user');
@@ -131,7 +134,6 @@ $_title = 'User List';
 
         <!-- User Table -->
         <?php if ($users): ?>
-            <p>There has <?= count($arr) ?> record</p>
             <table>
                 <thead>
                     <tr>
@@ -183,17 +185,7 @@ $_title = 'User List';
                                     <button>Edit</button>
                                 </a>
                             </td>
-                            <?php if ($current_role == 'Root'): ?>
-                                <td class="delete">
-                                    <form action="deleteUser.php?user_id=<?= $user->user_id ?>&search=<?= urlencode($search_query) ?>
-                                    &page=<?= $page - 1 ?>&sort_by=<?= urlencode($sort_by) ?>&sort_order=<?= urlencode($sort_order) ?>
-                                    &status=<?= urlencode($status_filter) ?>&role=<?= urlencode($role_filter) ?>" method="post" style="display:inline;">
-                                        <input type="hidden" name="id" value="<?= $user->user_id ?>">
-                                        <button type="submit" onclick="return confirm('Are you sure you want to delete this user?');">Delete</button>
-                                    </form>
-                                </td>
-                            <?php endif; ?>
-                            <?php if ($current_role == 'Admin' && $user->status != 'banned'): ?>
+                            <?php if ($current_role == 'Root' || $current_role == 'Admin' && $user->status != 'banned'): ?>
                                 <td class="deactivate">
                                     <form action="bannedUser.php?user_id=<?= $user->user_id ?>&search=<?= urlencode($search_query) ?>
                                     &page=<?= $page - 1 ?>&sort_by=<?= urlencode($sort_by) ?>&sort_order=<?= urlencode($sort_order) ?>

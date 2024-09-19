@@ -13,6 +13,9 @@ h1 {
     margin: auto;
     padding: 0 15px;
 }
+.address {
+    white-space: nowrap; /* Prevents text from wrapping to the next line */
+}
 
 form {
     margin-bottom: 20px;

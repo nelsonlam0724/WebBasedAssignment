@@ -16,7 +16,12 @@ if (is_post()) {
     $f = get_file('photo');
     $gender = req('gender');
     $birthday = req('birthday');
-
+    // Address
+    $street = req('street');
+    $city = req('city');
+    $state = req('state');
+    $postal_code = req('postal_code');
+    $country = req('country');
     // Validate form data...
     $_err = [];
 
@@ -93,18 +98,24 @@ if (is_post()) {
         $_err['photo'] = 'Maximum 1MB';
     }
 
-    $user_id = generateID('user', 'user_id', 'U', 4);
+
 
     if (!$_err) {
         // Process registration
         $photo = save_photo($f);
-
+        $user_id = generateID('user', 'user_id', 'U', 4);
         $stm = $_db->prepare('
             INSERT INTO user (user_id, email, password, name, gender, birthday, photo, role, status)
             VALUES (?, ?, SHA1(?), ?, ?, ?, ?, "Member", "Active")
         ');
         $stm->execute([$user_id, $email, $password, $name, $gender, $birthday, $photo]);
 
+        $address_id = generateID('address', 'address_id', 'A', 4);
+        // Insert into address table if any address field is provided
+        if ($street || $city || $state || $postal_code || $country) {
+            $stmt = $_db->prepare('INSERT INTO address (address_id, user_id, street, city, state, postal_code, country) VALUES (?, ?, ?, ?, ?, ?, ?)');
+            $stmt->execute([$address_id, $user_id, $street, $city, $state, $postal_code, $country]);
+        }
         // Unset verification only after successful registration
         unset($_SESSION['verified']);
         unset($_SESSION['email']);  // Optionally clear email
@@ -134,19 +145,17 @@ include '_head.php';
 </head>
 
 <body>
-    <h1>Register New Member</h1>
-    <?php if (isset($_err['general'])): ?>
-        <p class="error"><?= htmlspecialchars($_err['general']) ?></p>
-    <?php endif; ?>
     <form method="post" class="form" enctype="multipart/form-data">
+    <h1>Register New Member</h1>
         <div class="form-container">
             <div class="form-left">
                 <label for="email">Email:</label>
                 <p style="color: blue;"><?= htmlspecialchars($email) ?></p>
 
                 <label for="name">Name:</label>
-                <input type="text" name="name" maxlength="100">
+                <?= html_text('name', 'maxlength="100"') ?>
                 <?= err('name') ?>
+
                 <label for="password">Password:</label>
                 <?= html_password('password', 'maxlength="100"') ?>
                 <?= err('password') ?>
@@ -158,18 +167,21 @@ include '_head.php';
                 <label for="gender">Gender:</label>
                 <?php
                 $genderOptions = [
+                    '' => 'Select Gender',
                     'Male' => 'Male',
                     'Female' => 'Female'
                 ];
                 html_select('gender', $genderOptions);
                 ?>
                 <?= err('gender') ?>
-
             </div>
-            <div class="form-right">
+
+            <!-- Middle Column -->
+            <div class="form-middle">
                 <label for="birthday">Birthday:</label>
                 <?= html_date('birthday', 'required') ?>
                 <?= err('birthday') ?>
+
 
                 <label for="photo">Photo:</label>
                 <label class="upload">
@@ -177,6 +189,29 @@ include '_head.php';
                     <img src="images/photo.jpg" alt="Profile Photo">
                 </label>
                 <?= err('photo') ?>
+            </div>
+
+            <!-- Right Column -->
+            <div class="form-right">
+                <label for="street">Street:</label>
+                <?= html_text('street', 'maxlength="255"') ?>
+                <?= err('street') ?>
+
+                <label for="city">City:</label>
+                <?= html_text('city', 'maxlength="100"') ?>
+                <?= err('city') ?>
+
+                <label for="state">State:</label>
+                <?= html_text('state', 'maxlength="100"') ?>
+                <?= err('state') ?>
+
+                <label for="postal_code">Postal Code:</label>
+                <?= html_text('postal_code', 'maxlength="20"') ?>
+                <?= err('postal_code') ?>
+
+                <label for="country">Country:</label>
+                <?= html_text('country', 'maxlength="100"') ?>
+                <?= err('country') ?>
             </div>
         </div>
         <section class="form-actions">
