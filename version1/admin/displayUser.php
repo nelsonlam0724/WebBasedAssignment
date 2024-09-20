@@ -1,7 +1,7 @@
 <?php
 include '../_base.php';
 include '../_head.php';
-
+include 'sidebar.php'; 
 auth('Root', 'Admin');
 
 // Retrieve the user ID from the query string

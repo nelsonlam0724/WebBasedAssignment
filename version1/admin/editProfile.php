@@ -1,7 +1,7 @@
 <?php
 include '../_base.php';
 include '../_head.php';
-
+include 'sidebar.php'; 
 auth('Root', 'Admin');
 $stm = $_db->prepare('SELECT * FROM address WHERE user_id = ?');
 $stm->execute([$_user->user_id]);

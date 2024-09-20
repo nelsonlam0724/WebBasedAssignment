@@ -1,7 +1,7 @@
 <?php
 include '../_base.php';
 require_once '../lib/SimplePager.php';
-
+include 'sidebar.php'; 
 
 $search_query = isset($_GET['search']) ? trim($_GET['search']) : '';
 $page = isset($_GET['page']) ? (int)$_GET['page'] : 1;

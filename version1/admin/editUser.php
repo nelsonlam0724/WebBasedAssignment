@@ -1,7 +1,7 @@
 <?php
 include '../_base.php';
 include '../_head.php';
-
+include 'sidebar.php'; 
 auth('Root', 'Admin');
 
 // Check if ID is provided in the URL
@@ -10,6 +10,7 @@ if (!isset($_GET['user_id'])) {
 }
 
 $user_id = $_GET['user_id'];
+
 $page = isset($_GET['page']) ? (int)$_GET['page'] : 1;
 $search_query = isset($_GET['search']) ? trim($_GET['search']) : '';
 
@@ -25,6 +26,11 @@ $address = $stm->fetch(PDO::FETCH_OBJ);
 // Determine the current user's role
 $current_role = $_user->role;
 $current_user_id = $_user->user_id;
+
+if ($current_role == 'Admin' && ($user->role == 'Root' || $user->role == 'Admin')) {
+    temp('info', 'You do not have permission to edit this user.');
+    redirect('admin.php');
+}
 
 // Handle form submission
 if (is_post()) {

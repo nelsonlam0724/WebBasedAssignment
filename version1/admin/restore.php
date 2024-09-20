@@ -1,7 +1,13 @@
 <?php
 include '../_base.php';
+include 'sidebar.php'; 
 auth('Root', 'Admin');
 
+$role = $_user->role;
+if($role == 'Admin'){
+    temp('info','Only Root can Restore Database.');
+    redirect('admin.php');
+}
 if (is_post()) {
     if (isset($_FILES['backupFile']) && $_FILES['backupFile']['error'] == UPLOAD_ERR_OK) {
         $fileTmpPath = $_FILES['backupFile']['tmp_name'];

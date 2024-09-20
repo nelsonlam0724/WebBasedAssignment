@@ -2,6 +2,7 @@
 include '../_base.php';
 include '../_head.php';
 require_once '../lib/SimplePager.php'; // Include SimplePager class
+include 'sidebar.php'; 
 
 auth('Root', 'Admin');
 

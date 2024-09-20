@@ -1,12 +1,29 @@
 <?php
-    include '../_base.php';
+include '../_base.php';
+include '../_head.php';
+include 'sidebar.php'; 
+auth('Root', 'Admin');
 
-    $user_id = req('user_id');
+// Check if ID is provided in the URL
+if (!isset($_GET['user_id'])) {
+    redirect('userList.php');
+}
 
-    $stm = $_db->prepare('SELECT * FROM user WHERE user_id = ?');
-    $stm->execute([$user_id]);
-    $user = $stm->fetch();
+$user_id = $_GET['user_id'];
 
+// Fetch the user's details
+$stm = $_db->prepare('SELECT * FROM user WHERE user_id = ?');
+$stm->execute([$user_id]);
+$user = $stm->fetch(PDO::FETCH_OBJ);
+
+// Determine the current user's role
+$current_role = $_user->role;
+$current_user_id = $_user->user_id;
+
+if ($current_role == 'Admin' && ($user->role == 'Root' || $user->role == 'Admin')) {
+    temp('info', 'You do not have permission to edit this user.');
+    redirect('admin.php');
+}
 
 ?>
 
