@@ -70,6 +70,21 @@ $(document).ready(function(){
         });
     });
 
+    $('.btn-remove').on("click", function() {     
+        let $this = $(this);  
+        let userID = $('.text-first h6').data('user');
+        let proID = $this.data('del');             
+        $.ajax({
+            url: '../function/delete_favorite.php',
+            type: 'POST',
+            data: {user: userID, pro: proID},
+            success: function(response) {
+              window.location.reload();
+            }
+        });
+    });
+
+
 
     
     function fetchCart() {
