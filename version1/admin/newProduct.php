@@ -1,5 +1,6 @@
 <?php
 include '../_base.php';
+include 'sidebar.php'; 
 
 if (is_post()) {
     $name = req('name');

@@ -1,9 +1,11 @@
 <?php
 include '../_base.php';
 include '../_head.php';
-require_once '../lib/SimplePager.php'; // Include SimplePager class
+require_once '../lib/SimplePager.php'; 
+include 'sidebar.php'; 
 
-auth('Root', 'Admin');  // Ensure both Root and Admin roles can access this page
+auth('Root', 'Admin');  
+
 $current_role = $_user->role;
 $current_user_id = $_user->user_id;
 if ($current_role == 'Root') {

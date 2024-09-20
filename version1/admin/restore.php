@@ -1,6 +1,8 @@
 <?php
 include '../_base.php';
+include 'sidebar.php'; 
 auth('Root', 'Admin');
+
 $role = $_user->role;
 if($role == 'Admin'){
     temp('info','Only Root can Restore Database.');

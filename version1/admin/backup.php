@@ -1,5 +1,6 @@
 <?php
 include '../_base.php';
+include 'sidebar.php'; 
 auth('Root', 'Admin');
 
 // Define how many results per page

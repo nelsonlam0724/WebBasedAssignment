@@ -1,6 +1,7 @@
 <?php
 include '../_base.php';
 include '../_head.php';
+include 'sidebar.php'; 
 auth('Root', 'Admin');
 $order_ID = req('order_ID');
 $user_ID = req('user_ID');
