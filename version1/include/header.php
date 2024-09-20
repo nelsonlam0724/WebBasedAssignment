@@ -132,16 +132,6 @@ if ($userID != '0') {
            <script src="../js/header.js"></script>
             </div>
         </div>
-        <!-- <div class="second-row">
-
-            <ul>
-                <li><a href="customerProfile.php">Profile</a></li>
-                <li><a href="product.php">Product</a></li>
-                <li><a href="information.php">View Details</a></li>
-                <li><a href="../logout.php">Logout</a></li>
-            </ul>
-
-        </div> -->
     </header>
 
 
@@ -159,6 +149,7 @@ if ($userID != '0') {
             <a class="al" href="customerProfile.php"><i class="fas fa-user" ></i>   Profile</a>
             <a class="al" href="product.php"><i class='fas fa-address-book' ></i>   Product</a>
             <a class="al" href="information.php"> <i class="fas fa-shopping-bag"></i> My Purchase</a>
+            <a class="al" href="orders.php"><i class="fas fa-box"></i> My Order</a>
             <a class="al" href="../logout.php"> <i class="fas fa-sign-out-alt"></i> Logout</a>
         </div>
     </div>

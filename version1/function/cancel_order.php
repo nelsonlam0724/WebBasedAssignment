@@ -30,10 +30,10 @@ if (is_post()) {
 
     if ($check->status == 'Delivered') {
         temp('info', 'Delivered Item cannot be cancelled!');
-        redirect('../customer/information.php?tab=5&tmp=1');
+        redirect('../customer/orders.php');
     } else if ($check->status == 'Cancelled') {
         temp('info', 'Cancelled Item cannot be cancelled again!');
-        redirect('../customer/information.php?tab=5&tmp=2');
+        redirect('../customer/orders.php');
     } else {
 
         $stm = $_db->prepare('
@@ -52,6 +52,6 @@ if (is_post()) {
         // $m->send();
 
         temp('info', 'Order cancelled successfully!');
-        redirect('../customer/information.php?tab=5?&tmp=3');
+        redirect('../customer/orders.php');
     }
 }

@@ -145,3 +145,21 @@ body {
     background-color: #f2f2f2;
     font-weight: bold;
 }
+
+.pagination {
+    margin-top: 20px;
+    text-align: center;
+  }
+  
+  .pagination a {
+    margin: 0 5px;
+    padding: 8px 16px;
+    text-decoration: none;
+    color: #333;
+    border: 1px solid #ddd;
+    background-color: #fff;
+  }
+  
+  .pagination a:hover {
+    background-color: #ddd;
+  }
