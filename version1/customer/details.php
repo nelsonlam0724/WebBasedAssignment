@@ -11,7 +11,7 @@ $ship_id = get('ship_id');
 
 
 $getItems = $_db->prepare('
-    SELECT o.* , p.name , p.product_photo 
+    SELECT o.* , p.name , p.product_id
     FROM order_details AS o 
     JOIN product AS p ON o.product_id = p.product_id
     WHERE o.order_id = ?
@@ -88,7 +88,15 @@ $_SESSION['order_id'] = $order_id;
                 $discount = 0;
                 foreach ($results as $o): ?>
                     <tr>
-                        <td><img src="../uploads/<?= $o['product_photo'] ?>" width="90" height="90"></td>
+
+                      <?php   
+                      $getProductImg = $_db->prepare('SELECT product_photo FROM product_image WHERE product_id = ?');
+                      $getProductImg->execute([$o['product_id']]);
+                      $productImg = $getProductImg->fetch(PDO::FETCH_OBJ);
+                      $productPhoto = $productImg ? $productImg->product_photo : 'default_image.jpg';  
+                      
+                      ?>
+                        <td><img src="../uploads/<?= $productPhoto?>" width="90" height="90"></td>
                         <td><?= $o['name'] ?></td>
                         <td><?= $o['unit'] ?></td>
                         <td>RM<?= $o['price'] ?></td>
