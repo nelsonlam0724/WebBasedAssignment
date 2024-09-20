@@ -108,7 +108,7 @@ button#submit-button {
     margin-top: 20px;
 }
 
-button#delete-selected {
+button#deactivate-selected {
     background-color: #ff4d4d;
     color: #fff;
     border: none;
@@ -121,8 +121,25 @@ button#delete-selected {
     transition: background-color 0.3s ease;
 }
 
-button#delete-selected:hover {
+button#deactivate-selected:hover {
     background-color: #cc0000;
+}
+
+button#activate-selected {
+    background-color: #4CAF50;
+    color: #fff;
+    border: none;
+    border-radius: 5px;
+    padding: 10px 20px;
+    cursor: pointer;
+    font-size: 16px;
+    align-self: flex-end;
+    margin-top: 10px;
+    transition: background-color 0.3s ease;
+}
+
+button#activate-selected:hover {
+    background-color: #04741a;
 }
 
 button#add-new,

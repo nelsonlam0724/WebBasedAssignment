@@ -1,6 +1,6 @@
-document.getElementById('select-all').addEventListener('click', function() {
-    let checkboxes = document.querySelectorAll('.product-checkbox');
-    for (let checkbox of checkboxes) {
+document.getElementById('select-all').addEventListener('change', function() {
+    const checkboxes = document.querySelectorAll('.product-checkbox');
+    checkboxes.forEach(checkbox => {
         checkbox.checked = this.checked;
-    }
+    });
 });

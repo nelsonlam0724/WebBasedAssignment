@@ -168,20 +168,24 @@ $(document).ready(function() {
 
 $(document).ready(function () {
     $('label.upload input[type=file]').on('change', e => {
-        const f = e.target.files[0];
-        const img = $(e.target).siblings('img')[0];
-
-        if (!img) return;
-
-        img.dataset.src ??= img.src;
-
-        if (f?.type.startsWith('image/')) {
-            img.src = URL.createObjectURL(f);
-        } else {
-            img.src = img.dataset.src;
-            e.target.value = '';
+        const files = e.target.files;
+        const previewContainer = $('#image-previews');  // Container for image previews
+        const defaultPhoto = $('#default-photo');  // Default photo image
+    
+        previewContainer.empty();  // Clear previous previews
+    
+        // Remove or hide the default photo
+        if (defaultPhoto.length) {
+            defaultPhoto.remove();  // You can also use .hide() if you want to keep it in the DOM
         }
+    
+        // Loop through selected files and display image previews
+        Array.from(files).forEach(file => {
+            if (file.type.startsWith('image/')) {
+                const img = $('<img>').addClass('preview-image').attr('src', URL.createObjectURL(file));
+                previewContainer.append(img);
+            }
+        });
     });
-    photo_value
-
+    
 });
