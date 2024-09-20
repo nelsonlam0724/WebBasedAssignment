@@ -385,24 +385,28 @@ button#add-new:hover, button#back-to-menu:hover {
 }
 
 /* Pager */
-nav.pager {
+
+.pro-page{
     padding: 0;
     background: transparent;
     display: flex;
     gap: 20px;
 }
 
-nav.pager a {
+
+.pro-page a {
     border-radius: 10px;
     outline: 1px solid #333;
     padding: 15px;
     color: black;
 }
 
-nav.pager a.active {
+.pro-page a.active {
     background: #007bff;
     color: white;
 }
+
+
 
 /* Responsive Design */
 @media (max-width: 600px) {
