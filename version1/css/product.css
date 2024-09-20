@@ -41,23 +41,71 @@ h1 {
 /* Table */
 table {
     width: 100%;
-    border-collapse: collapse;
-    border: 1px solid black;
+    border-collapse: separate; /* Use separate to allow for border-radius */
+    border-spacing: 0;
+    margin-bottom: 20px;
+    background-color: #fff;
+    border-radius: 10px; /* Rounded corners */
+    overflow: hidden; /* Apply border-radius effect */
+    box-shadow: 0 2px 12px rgba(0, 0, 0, 0.1); /* Soft shadow for a fancy look */
 }
 
-table th, table td {
-    padding: 12px;
-    border: 1px solid black;
-    text-align: left;
+table th,
+table td {
+    padding: 7px 10px;
+    text-align: center;
+    border-bottom: 1px solid #e0e0e0; /* Consistent borders */
+    font-size: 1rem;
+    transition: background-color 0.3s ease; /* Smooth hover transition */
 }
 
 table th {
-    background: #f9f9f9;
-    font-weight: bold;
+    background-color: #bebebe;
+    color: #333;
+    font-weight: 600;
+    font-size: 1.1rem;
+    border-right: 2px solid #ddd; /* Solid line between columns */
 }
 
 table td {
-    background-color: #fff;    
+    background-color: #fff;
+    color: black;
+    font-size: 0.95rem;
+    border-right: 2px solid #ddd; /* Solid line between columns */
+}
+
+table tr:hover td {
+    background-color: rgb(222, 222, 222); /* Light background on hover */
+}
+
+table td.actions {
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    border-top: none;
+    border-left: none;
+    border-right: none;
+    padding: 10px 5px;
+}
+
+table th:first-child,
+table td:first-child {
+    border-top-left-radius: 10px; /* Top-left rounded corner */
+}
+
+table th:last-child,
+table td:last-child {
+    border-top-right-radius: 10px; /* Top-right rounded corner */
+    border-right: none; /* Solid line between columns */
+}
+
+table tr:last-child td:first-child {
+    border-bottom-left-radius: 10px; /* Bottom-left rounded corner */
+}
+
+table tr:last-child td:last-child {
+    border-bottom-right-radius: 10px; /* Bottom-right rounded corner */
+    border-right: none; /* Solid line between columns */
 }
 
 /* Input Fields */
@@ -87,14 +135,38 @@ button {
     margin-right: 10px;
 }
 
+.form-buttons {
+    margin-bottom: 10px;
+}
+
+button#edit-button,
+button#cancel-button {
+    padding: 10px 20px;
+    cursor: pointer;
+}
+
+/* Edit button styles */
 button#edit-button {
     background-color: #4CAF50;
     color: #fff;
+    border-radius: 5px;
 }
 
+/* Cancel button styles */
 button#cancel-button {
     background-color: #f44336;
     color: #fff;
+    border-radius: 5px;
+    display: none; /* Initially hidden until the form is in edit mode */
+}
+
+/* Button hover effects */
+button#edit-button:hover {
+    background-color: #45a049;
+}
+
+button#cancel-button:hover {
+    background-color: #e53935;
 }
 
 button#submit-button {
@@ -102,10 +174,15 @@ button#submit-button {
     color: #fff;
 }
 
+button#submit-button:hover {
+    background-color: #0073d1;
+    color: black;
+}
+
 .action-buttons {
     display: flex;
-    justify-content: center;
-    margin-top: 20px;
+    justify-content: space-around;
+    align-items: center;
 }
 
 button#deactivate-selected {
@@ -157,7 +234,8 @@ button#back-to-menu {
 }
 
 button#add-new:hover, button#back-to-menu:hover {
-    background-color: #2638ff;
+    background-color: #2196F3;
+    color: #fff;
 }
 
 /* Error Messages */
@@ -406,8 +484,6 @@ button#add-new:hover, button#back-to-menu:hover {
     color: white;
 }
 
-
-
 /* Responsive Design */
 @media (max-width: 600px) {
     .form {
@@ -424,27 +500,21 @@ button#add-new:hover, button#back-to-menu:hover {
     }
 }
 
-.edit-container {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    border-radius: 8px;
-    padding: 8px;
-    margin: 4px;
-}
 
 .edit-container button {
-    background-color: #007bff;
-    color: #fff;
+    background-color: transparent;
     border: none;
-    border-radius: 4px;
-    padding: 10px 20px;
     cursor: pointer;
-    font-size: 16px;
+    padding: 0px;
 }
 
-.edit-container button:hover {
-    background-color: #0056b3;
+.edit-container button i {
+    font-size: 20px;
+    color: #007bff;
+}
+
+.edit-container button i:hover {
+    color: rgb(11, 11, 165);
 }
 
 /* Pagination Container */
@@ -484,8 +554,8 @@ button#add-new:hover, button#back-to-menu:hover {
 
 .current-page:hover {
     background-color: #2196F3;
+    color: black;
 }
-
 
 .search-form {
     display: flex;
@@ -507,4 +577,41 @@ button#add-new:hover, button#back-to-menu:hover {
     font-size: 14px;
     cursor: pointer;
     margin: 0;
+}
+
+
+form.inline-form {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+form.inline-form button#deactivate-category-button {
+    background-color: #ff4d4d;
+    color: #fff;
+    border: none;
+    border-radius: 5px;
+    padding: 10px 20px;
+    cursor: pointer;
+    font-size: 16px;
+    transition: background-color 0.3s ease;
+}
+
+form.inline-form button#deactivate-category-button:hover {
+    background-color: #cc0000;
+}
+
+form.inline-form button#activate-category-button {
+    background-color: #4CAF50;
+    color: #fff;
+    border: none;
+    border-radius: 5px;
+    padding: 10px 20px;
+    cursor: pointer;
+    font-size: 16px;
+    transition: background-color 0.3s ease;
+}
+
+form.inline-form button#activate-category-button:hover {
+    background-color: #04741a;
 }

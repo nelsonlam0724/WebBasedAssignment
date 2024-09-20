@@ -31,8 +31,4 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['product_ids'])) {
         redirect('productList.php');
         exit;
     }
-} else {
-    temp('info', 'You cannot deactivate without selecting products.');
-    redirect('productList.php');
-    exit;
 }
