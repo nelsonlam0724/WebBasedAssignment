@@ -9,21 +9,7 @@ $user = $_SESSION['user'];
 $order_ID = req('order_id');
 $user_ID = req('user_id');
 
-$stm = $_db->prepare('
-        SELECT * FROM orders
-        WHERE user_id = ? AND id = ?
-    ');
-$stm->execute([$user_ID, $order_ID]);
-$order = $stm->fetch();
 
-$stm = $_db->prepare('
-    SELECT i.*,p.name
-    FROM `order_details` AS i,product AS p
-    WHERE i.product_id = p.product_id
-    AND i.order_id = ?
-');
-$stm->execute([$order_ID]);
-$arr = $stm->fetchAll();
 
 $_title = 'Order Details -' . htmlspecialchars($user->name);
 ?>
@@ -82,12 +68,7 @@ $_title = 'Order Details -' . htmlspecialchars($user->name);
         <?php endforeach; ?>
 
     </table>
-    <form method="post" action="../function/cancel_order.php">
-        <input type="hidden" name="order_ID" value="<?php echo $item->order_id; ?>">
-        <input type="hidden" name="user_ID" value="<?php echo $user->user_id; ?>">
-        <input type="hidden" name="product_ID" value="<?php $item->product_id ?>">
-        <input type="submit" name="submit" value="Cancel Order" data-order class="cancel-button">
-    </form>
+    
 
     <button class="back-button" onclick="location.href='information.php?tab=5'">Back</button>
 </body>

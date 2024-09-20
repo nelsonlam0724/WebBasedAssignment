@@ -6,11 +6,6 @@ auth('Role', 'Admin', 'Member');
 $user = $_SESSION['user'];
 
 
-$cancel = 0;
-$num = 0;
-
-
-
 if (is_post()) {
     // $email = $user->email;
     // $subject = 'Order';
@@ -21,29 +16,33 @@ if (is_post()) {
 
 
     $stm = $_db->prepare('
-    SELECT status
-    FROM `orders` 
-    WHERE id = ?
-    AND user_id = ?
+        SELECT status
+        FROM `orders` 
+        WHERE id = ?
+        AND user_id = ?
     ');
     $stm->execute([$order_ID, $user->user_id]);
     $check = $stm->fetch();
 
+    echo $order_ID;
+    echo $user->user_id;
+    echo $product_ID;
+
     if ($check->status == 'Delivered') {
         temp('info', 'Delivered Item cannot be cancelled!');
-        redirect('../customer/orderDetails.php?order_id=' . $order_ID . '&user_id=' . $user->user_id);
-    }else if($check->status == 'Cancelled'){
-        temp('info', 'Delivered Item cannot be cancelled again!');
-        redirect('../customer/orderDetails.php?order_id=' . $order_ID . '&user_id=' . $user->user_id);
+        redirect('../customer/information.php?tab=5&tmp=1');
+    } else if ($check->status == 'Cancelled') {
+        temp('info', 'Cancelled Item cannot be cancelled again!');
+        redirect('../customer/information.php?tab=5&tmp=2');
     } else {
 
-            $stm = $_db->prepare('
+        $stm = $_db->prepare('
             UPDATE `orders`
             SET status = ?
             WHERE id = ? AND user_id = ?
         ');
-            $stm->execute(['Cancelled', $order_ID, $user->user_id]);
-        
+        $stm->execute(['Cancelled', $order_ID, $user->user_id]);
+
 
 
         // $m = get_mail();
@@ -53,6 +52,6 @@ if (is_post()) {
         // $m->send();
 
         temp('info', 'Order cancelled successfully!');
-        redirect('../customer/orderDetails.php?order_id=' . $order_ID . '&user_id=' . $user->user_id);
+        redirect('../customer/information.php?tab=5?&tmp=3');
     }
 }

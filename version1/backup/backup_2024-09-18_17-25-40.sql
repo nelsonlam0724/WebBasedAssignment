@@ -417,3 +417,18 @@ INSERT INTO user (user_id, name, email, password, gender, birthday, photo, role,
 INSERT INTO user (user_id, name, email, password, gender, birthday, photo, role, status, failed_attempts, last_failed_attempt, banned_until, last_login_time, login_count, last_login_event_time, deactivated_at, remember_token, remember_token_expiry) VALUES ('U0023', 'Olivia Miller', 'olivia.m@gmail.com', '7c4a8d09ca3762af61e59520943dc26494f8941b', 'Female', '1998-07-25', '66e82a2fd5a52.jpg', 'Member', 'Active', '0', '2024-09-12 11:15:49', '', '2024-09-18 17:17:30', '1', '2024-09-18 17:17:30', '0000-00-00 00:00:00', '', '0000-00-00 00:00:00');
 INSERT INTO user (user_id, name, email, password, gender, birthday, photo, role, status, failed_attempts, last_failed_attempt, banned_until, last_login_time, login_count, last_login_event_time, deactivated_at, remember_token, remember_token_expiry) VALUES ('U0024', 'Noah Smith', 'noah.s@gmail.com', '7c4a8d09ca3762af61e59520943dc26494f8941b', 'Male', '1996-11-02', '66e82a372cc9f.jpg', 'Member', 'Banned', '0', '2024-09-08 09:30:17', '0000-00-00 00:00:00', '2024-09-09 12:45:02', '1', '2024-09-09 12:45:02', '0000-00-00 00:00:00', '', '0000-00-00 00:00:00');
 INSERT INTO user (user_id, name, email, password, gender, birthday, photo, role, status, failed_attempts, last_failed_attempt, banned_until, last_login_time, login_count, last_login_event_time, deactivated_at, remember_token, remember_token_expiry) VALUES ('U0025', 'Emma Wilson', 'emma.w@gmail.com', '7c4a8d09ca3762af61e59520943dc26494f8941b', 'Female', '1999-03-15', '66ddc8a6f2098.jpg', 'Member', 'Active', '0', '2024-09-13 15:21:55', '0000-00-00 00:00:00', '2024-09-15 16:34:22', '1', '2024-09-15 16:34:22', '0000-00-00 00:00:00', '', '0000-00-00 00:00:00');
+
+CREATE TABLE `address` (
+  `address_id` varchar(10) NOT NULL,
+  `user_id` varchar(10) DEFAULT NULL,
+  `street` varchar(255) DEFAULT NULL,
+  `city` varchar(100) DEFAULT NULL,
+  `state` varchar(100) DEFAULT NULL,
+  `postal_code` varchar(20) DEFAULT NULL,
+  `country` varchar(100) DEFAULT NULL,
+  PRIMARY KEY (`address_id`),
+  KEY `user_id` (`user_id`),
+  CONSTRAINT `address_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `user` (`user_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+INSERT INTO address (address_id, user_id, street, city, state, postal_code, country) VALUES ('A0001', 'U0002', 'hello', 'byebye', 'hihi', 'haha', 'hoho');
