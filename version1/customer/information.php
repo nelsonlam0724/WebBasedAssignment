@@ -267,11 +267,10 @@ $results = $getPending->fetchAll();
                         <!-- Order Card -->
                         <div class="order-card">
                             <div class="order-info">
-                                <p><strong>Orde5<?= ++$disp ?></strong></p>
+                                <p><strong>Order <?= ++$disp ?></strong></p>
                                 <p><strong>Date:</strong> <?= $order->datetime ?></p>
                                 <p><strong>Status:</strong> <?= $order->status ?></p>
                                 <p><strong>Total Amount:</strong> RM <?= $order->total ?></p>
-                                <p><strong>Total Quantity:</strong> <?= $order->count ?></p>
 
                                 <form method="post" action="../function/cancel_order.php">
                                     <input type="hidden" name="order_ID" value="<?= $order->id ?>">
