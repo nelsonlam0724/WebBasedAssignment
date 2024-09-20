@@ -142,7 +142,7 @@ CREATE TABLE `orders` (
   `total` decimal(10,2) NOT NULL,
   `ship_id` varchar(11) NOT NULL,
   `count` int(11) NOT NULL,
-  `status` varchar(22) NOT NULL,
+  `status` enum('Pending','Cancelled','Delivered','Shipped','Paid') NOT NULL DEFAULT 'Pending',
   `created_at` timestamp NOT NULL DEFAULT current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
@@ -151,14 +151,17 @@ CREATE TABLE `orders` (
 --
 
 INSERT INTO `orders` (`id`, `user_id`, `datetime`, `total`, `ship_id`, `count`, `status`, `created_at`) VALUES
-('O0001', 'U0023', '2024-09-18 22:56:17', '4851.60', 'S0002', 1, 'Cancel', '2024-09-18 14:56:17'),
-('O0002', 'U0023', '2024-09-18 23:01:00', '4850.00', 'S0003', 1, 'Cancel', '2024-09-18 15:01:00'),
-('O0003', 'U0023', '2024-09-18 23:05:07', '4907.86', 'S0004', 3, 'Cancel', '2024-09-18 15:05:07'),
+('O0001', 'U0023', '2024-09-18 22:56:17', '4851.60', 'S0002', 1, 'Cancelled', '2024-09-18 14:56:17'),
+('O0002', 'U0023', '2024-09-18 23:01:00', '4850.00', 'S0003', 1, 'Cancelled', '2024-09-18 15:01:00'),
+('O0003', 'U0023', '2024-09-18 23:05:07', '4907.86', 'S0004', 3, 'Cancelled', '2024-09-18 15:05:07'),
 ('O0004', 'U0023', '2024-09-18 23:12:27', '4906.26', 'S0005', 3, 'Paid', '2024-09-18 15:12:27'),
 ('O0005', 'U0023', '2024-09-18 23:18:28', '60.76', 'S0006', 2, 'Paid', '2024-09-18 15:18:28'),
 ('O0006', 'U0023', '2024-09-18 23:29:17', '1033.84', 'S0007', 2, 'Paid', '2024-09-18 15:29:17'),
-('O0007', 'U0023', '2024-09-18 23:46:37', '2041.60', 'S0008', 1, 'Cancel', '2024-09-18 15:46:37'),
-('O0008', 'U0023', '2024-09-18 23:48:25', '2041.60', 'S0009', 1, 'Paid', '2024-09-18 15:48:25');
+('O0007', 'U0023', '2024-09-18 23:46:37', '2041.60', 'S0008', 1, 'Cancelled', '2024-09-18 15:46:37'),
+('O0008', 'U0023', '2024-09-18 23:48:25', '2041.60', 'S0009', 1, 'Paid', '2024-09-18 15:48:25'),
+('O0009', 'U0023', '2024-09-19 01:14:57', '3905.85', 'S0010', 2, 'Cancelled', '2024-09-18 17:14:57'),
+('O0010', 'U0013', '2024-09-19 21:33:03', '30.10', 'S0011', 1, 'Pending', '2024-09-19 13:33:03'),
+('O0011', 'U0013', '2024-09-19 21:33:48', '25.50', 'S0012', 1, 'Paid', '2024-09-19 13:33:48');
 
 -- --------------------------------------------------------
 
@@ -172,7 +175,6 @@ CREATE TABLE `order_details` (
   `price` decimal(10,0) NOT NULL,
   `unit` int(11) NOT NULL,
   `subtotal` decimal(10,0) NOT NULL,
-  `order_status` enum('Pending','Cancelled','Delivered','Shipped') NOT NULL DEFAULT 'Pending',
   `commment_status` varchar(20) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
@@ -180,21 +182,25 @@ CREATE TABLE `order_details` (
 -- Dumping data for table `order_details`
 --
 
-INSERT INTO `order_details` (`order_id`, `product_id`, `price`, `unit`, `subtotal`, `order_status`, `commment_status`) VALUES
-('O0001', 'P0008', '1000', 5, '5000', 'Pending', 'Pending'),
-('O0002', 'P0008', '1000', 5, '5000', 'Pending', 'Pending'),
-('O0003', 'P0008', '1000', 5, '5000', 'Pending', 'Pending'),
-('O0003', 'P0009', '33', 1, '33', 'Pending', 'Pending'),
-('O0003', 'P0010', '25', 1, '25', 'Pending', 'Pending'),
-('O0004', 'P0008', '1000', 5, '5000', 'Pending', 'Pending'),
-('O0004', 'P0009', '33', 1, '33', 'Pending', 'Pending'),
-('O0004', 'P0010', '25', 1, '25', 'Pending', 'Pending'),
-('O0005', 'P0009', '33', 1, '33', 'Pending', 'Pending'),
-('O0005', 'P0010', '25', 1, '25', 'Pending', 'Pending'),
-('O0006', 'P0007', '12', 1, '12', 'Pending', 'Rated'),
-('O0006', 'P0008', '1000', 1, '1000', 'Pending', 'Rated'),
-('O0007', 'P0008', '1000', 2, '2000', 'Pending', 'Pending'),
-('O0008', 'P0008', '1000', 2, '2000', 'Pending', 'Pending');
+INSERT INTO `order_details` (`order_id`, `product_id`, `price`, `unit`, `subtotal`, `commment_status`) VALUES
+('O0001', 'P0008', '1000', 5, '5000', 'Pending'),
+('O0002', 'P0008', '1000', 5, '5000', 'Pending'),
+('O0003', 'P0008', '1000', 5, '5000', 'Pending'),
+('O0003', 'P0009', '33', 1, '33', 'Pending'),
+('O0003', 'P0010', '25', 1, '25', 'Pending'),
+('O0004', 'P0008', '1000', 5, '5000', 'Pending'),
+('O0004', 'P0009', '33', 1, '33', 'Pending'),
+('O0004', 'P0010', '25', 1, '25', 'Pending'),
+('O0005', 'P0009', '33', 1, '33', 'Pending'),
+('O0005', 'P0010', '25', 1, '25', 'Pending'),
+('O0006', 'P0007', '12', 1, '12', 'Rated'),
+('O0006', 'P0008', '1000', 1, '1000', 'Rated'),
+('O0007', 'P0008', '1000', 2, '2000', 'Pending'),
+('O0008', 'P0008', '1000', 2, '2000', 'Pending'),
+('O0009', 'P0008', '1000', 4, '4000', 'Pending'),
+('O0009', 'P0010', '25', 1, '25', 'Pending'),
+('O0010', 'P0010', '25', 1, '25', 'Pending'),
+('O0011', 'P0010', '25', 1, '25', 'Pending');
 
 -- --------------------------------------------------------
 
