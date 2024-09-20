@@ -20,14 +20,13 @@
     <div class="sidebar" id="sidebar">
         <h2>Admin Menu</h2>
         <ul>
-            <li><a href="profile.php">Admin Profile</a></li>
-            <li><a href="userList.php">User List</a></li>
-            <li><a href="orderList.php">Order List</a></li>
-            <li><a href="backup.php">Backup</a></li>
-            <li><a href="restore.php">Restore</a></li>
-            <li><a href="productList.php">Product List</a></li>
-            <li><a href="../customer/customer.php">Customer Page</a></li>
-            <li><a href="../logout.php">Logout</a></li>
+            <li><a href="profile.php"><i class="fas fa-user"></i><span class="menu-text">Admin Profile</span></a></li>
+            <li><a href="userList.php"><i class="fas fa-users"></i><span class="menu-text">User List</span></a></li>
+            <li><a href="orderList.php"><i class="fas fa-list"></i><span class="menu-text">Order List</span></a></li>
+            <li><a href="productList.php"><i class="fas fa-box"></i><span class="menu-text">Product List</span></a></li>
+            <li><a href="backup.php"><i class="fas fa-database"></i><span class="menu-text">Backup</span></a></li>
+            <li><a href="restore.php"><i class="fas fa-upload"></i><span class="menu-text">Restore</span></a></li>
+            <li><a href="../logout.php"><i class="fas fa-sign-out-alt"></i><span class="menu-text">Logout</span></a></li>
         </ul>
     </div>
 </body>

@@ -1,14 +1,21 @@
-body {
-    font-family: Arial, sans-serif;
-    background-color: #f7f7f7;
+* {
     margin: 0;
     padding: 0;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    height: 100vh;
+    text-decoration: none;
+    list-style-type: none;
+    box-sizing: border-box;
+    user-select: none;
 }
+
+/* Body Styles */
+body {
+    font-family: Arial, sans-serif;
+    line-height: 1.6;
+    margin: 0;
+    padding: 0;
+    background-color: #f4f4f4;
+}
+
 
 h1 {
     color: #333;
@@ -32,7 +39,9 @@ h1 {
     gap: 10px;
 }
 
-.form-left, .form-middle, .form-right {
+.form-left,
+.form-middle,
+.form-right {
     padding: 10px;
     border: 1px solid #ddd;
 }
@@ -48,7 +57,10 @@ label {
     color: #555;
 }
 
-input[type="text"], input[type="password"], input[type="date"], select {
+input[type="text"],
+input[type="password"],
+input[type="date"],
+select {
     width: 100%;
     padding: 8px;
     margin-bottom: 15px;
@@ -57,7 +69,8 @@ input[type="text"], input[type="password"], input[type="date"], select {
     box-sizing: border-box;
 }
 
-button[type="submit"], button[type="reset"] {
+button[type="submit"],
+button[type="reset"] {
     width: 100%;
     padding: 10px;
     background-color: #5cb85c;
