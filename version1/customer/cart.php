@@ -4,7 +4,7 @@ include '../include/header.php';
 
 
 $getUserID = $_db->prepare('
-    SELECT c.id, c.unit, p.name, p.product_photo, p.price, p.product_id  
+    SELECT c.id, c.unit, p.name, p.price, p.product_id  
     FROM carts AS c
     JOIN product AS p ON c.product_id = p.product_id 
     WHERE c.user_id = ? 
@@ -16,10 +16,9 @@ $results = $getUserID->fetchAll(PDO::FETCH_ASSOC);
 $cart = [];
 foreach ($results as $c) {
     $cart[$c['product_id']] = $c['unit'];
-  
 }
 
-if(is_post()) {
+if (is_post()) {
     $totalItems = post('product');
     $items = post('selectItems');
     $unit = post('qty');
@@ -31,8 +30,8 @@ if(is_post()) {
         }
     }
     
-    for($i =0; $i < count($items); $i++) {
-        if(isset($cart[$items[$i]])) {           
+    for ($i = 0; $i < count($items); $i++) {
+        if (isset($cart[$items[$i]])) {           
             $cartSelected[$items[$i]] = $cart[$items[$i]];
         }
     }
@@ -71,18 +70,26 @@ if(is_post()) {
                 <div class="cart-box-list">
                     <?php 
                     $count = 0;
-                    foreach ($results as $c): ?>
+                    foreach ($results as $c): 
+                    
+                        $getProductImg = $_db->prepare('SELECT product_photo FROM product_image WHERE product_id = ?');
+                        $getProductImg->execute([$c['product_id']]);
+                        $productImg = $getProductImg->fetch(PDO::FETCH_OBJ);
+                        $productPhoto = $productImg ? $productImg->product_photo : 'default_image.jpg';  
+                    
+                    ?>
+                
                     <div class="cart-box">
-                       <input type="hidden" name="product[]" value="<?=$c['product_id']?>">
+                       <input type="hidden" name="product[]" value="<?= $c['product_id'] ?>">
                         <div class="product-info">
                             <div class="delete-cart">
                                 <span style="font-size:25px" class="delete" data-del="<?=$c['id']?>">&times;</span>
                             </div>
 
-                            <img src="<?=$c['product_photo']?>" width="90" height="90">
+                            <img src="../uploads/<?=$productPhoto?>" width="90" height="90" alt="Product Image">
 
                             <div class="product-name" style="width:20px;">
-                                <h4 ><?= $c['name'] ?></h4>
+                                <h4><?= $c['name'] ?></h4>
                             </div>
                         </div>
 
@@ -105,7 +112,7 @@ if(is_post()) {
                     $count++;
                     endforeach ?>
 
-                    <?php if($count == 0): ?>
+                    <?php if ($count == 0): ?>
                         <p style="padding:50px;font-size:30px;">Your Cart Is Empty</p>
                     <?php endif; ?>
                 </div>

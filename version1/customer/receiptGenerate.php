@@ -12,7 +12,7 @@ if (!empty($productIds)) {
   }, $productIds));
 
   $stmt = $_db->prepare("
-      SELECT product_id, name, price, product_photo 
+      SELECT product_id, name, price
       FROM product 
       WHERE product_id IN ($ids)
   ");
@@ -88,13 +88,19 @@ $recordResult = $getPayRecord->fetch();
 
 
           $productId = $product['product_id'];
+
+          $getProductImg = $_db->prepare('SELECT product_photo FROM product_image WHERE product_id = ?');
+          $getProductImg->execute([$productId]);
+          $productImg = $getProductImg->fetch(PDO::FETCH_OBJ);
+          $productPhoto = $productImg ? $productImg->product_photo : 'default_image.jpg';  
+
           $quantity = isset($cartSelect[$productId]) ? $cartSelect[$productId] : 0;
           $subtotal += $product['price'] * $quantity;
 
           ?>
         <tr>
           <td><?= $count + 1 ?></td>
-          <td><img src=".../uploads/<?= $product['product_photo'] ?>" alt="" width="80" height="80"></td>
+          <td><img src="../uploads/<?= $productPhoto?>" alt="" width="80" height="80"></td>
           <td><?= $product['name'] ?></td>
           <td><?= $quantity?></td>
           <td><?= $product['price']  ?></td>
