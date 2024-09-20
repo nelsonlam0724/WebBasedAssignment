@@ -137,7 +137,6 @@ $_title = 'User List';
             <table>
                 <thead>
                     <tr>
-                        <th>No.</th>
                         <th>
                             <a href="?sort_by=user_id&sort_order=<?= $sort_order == 'ASC' ? 'DESC' : 'ASC' ?>&search=<?= urlencode($search_query) ?>&page=<?= $page ?>&role=<?= urlencode($role_filter) ?>&status=<?= urlencode($status_filter) ?>">
                                 ID <?= $sort_by == 'user_id' ? ($sort_order == 'ASC' ? '▲' : '▼') : '' ?>
@@ -167,9 +166,8 @@ $_title = 'User List';
                     </tr>
                 </thead>
                 <tbody>
-                    <?php foreach ($users as $i => $user): ?>
+                    <?php foreach ($users as $user): ?>
                         <tr>
-                            <td><?= $i + 1 ?></td>
                             <td><?= htmlspecialchars($user->user_id) ?></td>
                             <td><?= htmlspecialchars($user->name) ?></td>
                             <td><?= htmlspecialchars($user->email) ?></td>
@@ -210,27 +208,33 @@ $_title = 'User List';
                 </tbody>
             </table>
 
+            <!-- Pagination Links -->
             <div class="pagination">
+                <!-- First Page Link -->
+                <?php if ($page > 1): ?>
+                    <a href="?page=1&sort_by=<?= urlencode($sort_by) ?>&sort_order=<?= urlencode($sort_order) ?>&status=<?= urlencode($status_filter) ?>">First</a>
+                <?php endif; ?>
+
                 <!-- Previous Page Link -->
                 <?php if ($page > 1): ?>
-                    <a href="?page=<?= $page - 1 ?>&search=<?= urlencode($search_query) ?>&sort_by=<?= urlencode($sort_by) ?>&sort_order=<?= urlencode($sort_order) ?>&status=<?= urlencode($status_filter) ?>&role=<?= urlencode($role_filter) ?>">Previous</a>
+                    <a href="?page=<?= $page - 1 ?>&sort_by=<?= urlencode($sort_by) ?>&sort_order=<?= urlencode($sort_order) ?>&status=<?= urlencode($status_filter) ?>">Previous</a>
                 <?php endif; ?>
 
                 <!-- Page Numbers -->
                 <?php
-                $page_range = 2; // Number of pages to show before and after the current page
+                $page_range = 1; // Number of pages to show before and after the current page
                 $start_page = max(1, $page - $page_range);
                 $end_page = min($total_pages, $page + $page_range);
 
                 if ($start_page > 1): ?>
-                    <a href="?page=1&search=<?= urlencode($search_query) ?>&sort_by=<?= urlencode($sort_by) ?>&sort_order=<?= urlencode($sort_order) ?>&status=<?= urlencode($status_filter) ?>&role=<?= urlencode($role_filter) ?>">1</a>
+                    <a href="?page=1&sort_by=<?= urlencode($sort_by) ?>&sort_order=<?= urlencode($sort_order) ?>&status=<?= urlencode($status_filter) ?>">1</a>
                     <?php if ($start_page > 2): ?>
                         <span>...</span>
                     <?php endif; ?>
                 <?php endif; ?>
 
                 <?php for ($i = $start_page; $i <= $end_page; $i++): ?>
-                    <a href="?page=<?= $i ?>&search=<?= urlencode($search_query) ?>&sort_by=<?= urlencode($sort_by) ?>&sort_order=<?= urlencode($sort_order) ?>&status=<?= urlencode($status_filter) ?>&role=<?= urlencode($role_filter) ?>" class="<?= $i == $page ? 'current-page' : '' ?>">
+                    <a href="?page=<?= $i ?>&sort_by=<?= urlencode($sort_by) ?>&sort_order=<?= urlencode($sort_order) ?>&status=<?= urlencode($status_filter) ?>" class="<?= $i == $page ? 'current-page' : '' ?>">
                         <?= $i ?>
                     </a>
                 <?php endfor; ?>
@@ -239,14 +243,19 @@ $_title = 'User List';
                     <?php if ($end_page < $total_pages - 1): ?>
                         <span>...</span>
                     <?php endif; ?>
-                    <a href="?page=<?= $total_pages ?>&search=<?= urlencode($search_query) ?>&sort_by=<?= urlencode($sort_by) ?>&sort_order=<?= urlencode($sort_order) ?>&status=<?= urlencode($status_filter) ?>&role=<?= urlencode($role_filter) ?>">
+                    <a href="?page=<?= $total_pages ?>&sort_by=<?= urlencode($sort_by) ?>&sort_order=<?= urlencode($sort_order) ?>&status=<?= urlencode($status_filter) ?>">
                         <?= $total_pages ?>
                     </a>
                 <?php endif; ?>
 
                 <!-- Next Page Link -->
                 <?php if ($page < $total_pages): ?>
-                    <a href="?page=<?= $page + 1 ?>&search=<?= urlencode($search_query) ?>&sort_by=<?= urlencode($sort_by) ?>&sort_order=<?= urlencode($sort_order) ?>&status=<?= urlencode($status_filter) ?>&role=<?= urlencode($role_filter) ?>">Next</a>
+                    <a href="?page=<?= $page + 1 ?>&sort_by=<?= urlencode($sort_by) ?>&sort_order=<?= urlencode($sort_order) ?>&status=<?= urlencode($status_filter) ?>">Next</a>
+                <?php endif; ?>
+
+                <!-- Last Page Link -->
+                <?php if ($page < $total_pages): ?>
+                    <a href="?page=<?= $total_pages ?>&sort_by=<?= urlencode($sort_by) ?>&sort_order=<?= urlencode($sort_order) ?>&status=<?= urlencode($status_filter) ?>">Last</a>
                 <?php endif; ?>
             </div>
 
