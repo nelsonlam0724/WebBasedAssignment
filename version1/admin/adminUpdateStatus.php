@@ -22,7 +22,9 @@ $stm = $_db->prepare('
 $stm->execute([$order_ID]);
 $arr = $stm->fetchAll();
 
-
+$stm = $_db->prepare('SELECT * FROM user WHERE user_id = ?');
+$stm->execute([$user_ID]);
+$user = $stm->fetch();
 
 $_title = 'Order Details';
 ?>
@@ -42,19 +44,37 @@ $_title = 'Order Details';
             <tr>
                 <th>Order ID</th>
                 <td><?= $order->id ?></td>
+                <th>User ID</th>
+                <td><?= htmlspecialchars($user->user_id) ?></td>
             </tr>
             <tr>
                 <th>Date</th>
                 <td><?= $order->datetime ?></td>
+                <th>Username</th>
+                <td><?= htmlspecialchars($user->name) ?></td>
             </tr>
             <tr>
                 <th>Count</th>
                 <td><?= $order->count ?></td>
+                <th>Email</th>
+                <td><?= htmlspecialchars($user->email) ?></td>
             </tr>
             <tr>
                 <th>Total</th>
                 <td><?= $order->total ?></td>
+                <th>Status</th>
+                <td><?= htmlspecialchars($user->status) ?></td>
             </tr>
+            <th style="display: none;"></th>
+            <th style="display: none;"></th>
+            <th>Photo</th>
+            <td>
+                <?php if ($user->photo): ?>
+                    <img src="../uploads/<?= htmlspecialchars($user->photo) ?>" alt="User Photo">
+                <?php else: ?>
+                    No photo available
+                <?php endif; ?>
+            </td>
         </table>
     </form>
 
@@ -68,7 +88,6 @@ $_title = 'Order Details';
                 <th>Price (RM)</th>
                 <th>Unit</th>
                 <th>Subtotal (RM)</th>
-                <th>Status</th>
             </tr>
         </thead>
         <tbody>
@@ -85,28 +104,26 @@ $_title = 'Order Details';
                     <td><?= $item->price ?></td>
                     <td><?= $item->unit ?></td>
                     <td><?= $item->subtotal ?></td>
-                    <td>
-
-                        <form method="post" action="../function/update_status.php" class="status-form">
-                            <select name="status[<?= $item->product_id ?>]" class="status-select" onchange="document.getElementById('status_<?= $item->product_id ?>').value = this.value;">
-                                <option value="Pending" <?= $item->order_status == 'Pending' ? 'selected' : '' ?>>Pending</option>
-                                <option value="Shipped" <?= $item->order_status == 'Shipped' ? 'selected' : '' ?>>Shipped</option>
-                                <option value="Delivered" <?= $item->order_status == 'Delivered' ? 'selected' : '' ?>>Delivered</option>
-                            </select>
-
-                            <input type="hidden" name="product_ID" value="<?= $item->product_id ?>">
-                            <input type="hidden" name="order_ID" value="<?= $item->order_id ?>">
-                            <input type="hidden" name="user_ID" value="<?= $user_ID ?>">
-                            <input type="hidden" id="status_<?= $item->product_id ?>" name="status" value="<?= $item->order_status ?>">
-                            <input type="hidden" name="num" value="<?= $num ?>">
-                            <input type="hidden" name="delivered" value="<?= $delivered ?>">
-                            <input type="submit" name="submit" value="Update" data-updatestatus>
-                        </form>
-                    </td>
                 </tr>
             <?php endforeach; ?>
         </tbody>
     </table>
+
+    <form method="post" action="../function/update_status.php" class="status-form">
+        <select name="status[<?= $item->product_id ?>]" class="status-select" onchange="document.getElementById('status_<?= $order->id ?>').value = this.value;">
+            <option value="Shipped" <?= $order->status == 'Shipped' ? 'selected' : '' ?>>Shipped</option>
+            <option value="Cancelled" <?= $order->status == 'Cancelled' ? 'selected' : '' ?>>Cancelled</option>
+            <option value="Paid" <?= $order->status == 'Paid' ? 'selected' : '' ?>>Paid</option>
+            <option value="Delivered" <?= $order->status == 'Delivered' ? 'selected' : '' ?>>Delivered</option>
+        </select>
+
+        <input type="hidden" name="product_ID" value="<?= $order->id ?>">
+        <input type="hidden" name="user_ID" value="<?= $user_ID ?>">
+        <input type="hidden" id="status_<?= $order->id ?>" name="status" value="<?= $order->status ?>">
+        <input type="hidden" name="num" value="<?= $num ?>">
+        <input type="hidden" name="delivered" value="<?= $delivered ?>">
+        <input type="submit" name="submit" value="Update" data-updatestatus>
+    </form>
 
     <div class="action-buttons">
         <a href="orderList.php"><button>Back To Order List</button></a>

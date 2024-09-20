@@ -129,6 +129,7 @@ if ($userID != '0') {
                 <li><a href="customerProfile.php">Profile</a></li>
                 <li><a href="product.php">Product</a></li>
                 <li><a href="information.php">View Details</a></li>
+                <li><a href="orders.php">Order</a></li>
                 <li><a href="../logout.php">Logout</a></li>
             </ul>
 

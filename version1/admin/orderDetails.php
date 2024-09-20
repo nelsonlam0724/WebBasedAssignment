@@ -11,6 +11,9 @@ $stm = $_db->prepare('
 $stm->execute([$order_ID, $user_ID]);
 $order = $stm->fetch();
 
+$stm = $_db->prepare('SELECT * FROM user WHERE user_id = ?');
+$stm->execute([$user_ID]);
+$user = $stm->fetch();
 
 $stm = $_db->prepare('
     SELECT i.*,p.name
@@ -39,19 +42,37 @@ $_title = 'Order Details';
         <tr>
             <th>Order ID</th>
             <td><?= $order->id ?></td>
+            <th>User ID</th>
+            <td><?= htmlspecialchars($user->user_id) ?></td>
         </tr>
         <tr>
             <th>Date</th>
             <td><?= $order->datetime ?></td>
+            <th>Username</th>
+            <td><?= htmlspecialchars($user->name) ?></td>
         </tr>
         <tr>
             <th>Count</th>
             <td><?= $order->count ?></td>
+            <th>Email</th>
+            <td><?= htmlspecialchars($user->email) ?></td>
         </tr>
         <tr>
             <th>Total</th>
             <td><?= $order->total ?></td>
+            <th>Status</th>
+            <td><?= htmlspecialchars($user->status) ?></td>
         </tr>
+        <th style="display: none;"></th>
+        <th style="display: none;"></th>
+        <th>Photo</th>
+        <td>
+            <?php if ($user->photo): ?>
+                <img src="../uploads/<?= htmlspecialchars($user->photo) ?>" alt="User Photo">
+            <?php else: ?>
+                No photo available
+            <?php endif; ?>
+        </td>
     </table>
 </form>
 
@@ -65,7 +86,6 @@ $_title = 'Order Details';
         <th>Price (RM)</th>
         <th>Unit</th>
         <th>Subtotal (RM)</th>
-        <th>Status</th>
     </tr>
 
 
@@ -79,7 +99,6 @@ $_title = 'Order Details';
             <td><?= $item->price ?></td>
             <td><?= $item->unit ?></td>
             <td><?= $item->subtotal ?></td>
-            <td><?= $item->order_status ?></td>
         </tr>
     <?php endforeach; ?>
 

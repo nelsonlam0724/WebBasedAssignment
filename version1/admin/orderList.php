@@ -113,9 +113,7 @@ $statuses = $statuses_stm->fetchAll(PDO::FETCH_COLUMN);
                     <td><?= $order->count ?></td>
                     <td>
                         <button data-get="orderDetails.php?order_ID=<?= $order->id ?>&user_ID=<?= $order->user_id ?>">Detail</button>
-                        <?php if ($order->status != 'Delivered' && $order->status != 'Cancelled'): ?>
-                            <button data-get="adminUpdateStatus.php?order_ID=<?= $order->id ?>&user_ID=<?= $order->user_id ?>">Update Status</button>
-                        <?php endif; ?>
+                        <button data-get="adminUpdateStatus.php?order_ID=<?= $order->id ?>&user_ID=<?= $order->user_id ?>">Update Status</button>
                     </td>
                 </tr>
             <?php endforeach; ?>
