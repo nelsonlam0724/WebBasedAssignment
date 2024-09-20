@@ -6,7 +6,6 @@ if (is_post()) {
 
     $user_ID = $_POST['user_ID'];
     $order_ID = $_POST['order_ID'];
-    $product_ID = $_POST['product_ID'];
     $status = $_POST['status'];
 
     $delivered = 0;
@@ -14,11 +13,11 @@ if (is_post()) {
     $done = 'Delivered';
 
     $stm = $_db->prepare('
-        UPDATE `order_details`
-        SET `order_status` = ?
-        WHERE order_id = ? AND product_id = ?
+        UPDATE `orders`
+        SET `status` = ?
+        WHERE id = ? AND user_id = ?
     ');
-    $stm->execute([$status, $order_ID, $product_ID]);
+    $stm->execute([$status, $order_ID, $user_ID]);
 
     $stm = $_db->prepare('
         SELECT i.*,p.name
@@ -36,37 +35,14 @@ if (is_post()) {
     $stm->execute([$order_ID, $user_ID]);
     $order = $stm->fetch();
 
-    if ($order->status != 'Delivered') {
-        foreach ($arr as $item) {
-            $num++;
-            if ($item->order_status == 'Delivered') {
-                $delivered++;
-            }
-        }
 
-        if ($delivered == $num) {
-            $stm = $_db->prepare('
-            UPDATE `orders`
-            SET `status` = ?
-            WHERE id = ?
-        ');
-            $stm->execute([$done, $order_ID]);
-        } else {
-            $stm = $_db->prepare('
-            UPDATE `orders`
-            SET `status` = ?
-            WHERE id = ?
-        ');
-            $stm->execute(['Pending', $order_ID]);
-        }
 
-        temp('info', 'Status update successfully!');
-        redirect('../admin/adminUpdateStatus.php?order_ID=' . $order_ID . '&user_ID=' . $user_ID);
-    }else if($order->order_status != 'Cancelled'){
-        temp('info','The order that has been cancelled cannot be update!');
-        redirect('../admin/adminUpdateStatus.php?order_ID=' . $order_ID . '&user_ID=' . $user_ID);
-    }else if($order->order_status != 'Delivered'){
-        temp('info','The order that has been delivered cannot be update!');
-        redirect('../admin/adminUpdateStatus.php?order_ID=' . $order_ID . '&user_ID=' . $user_ID);
-    }
+    temp('info', 'Status update successfully!');
+    redirect('../admin/orderList.php');
+} else if ($order->order_status != 'Cancelled') {
+    temp('info', 'The order that has been cancelled cannot be update!');
+    redirect('../admin/orderList.php');
+} else if ($order->order_status != 'Delivered') {
+    temp('info', 'The order that has been delivered cannot be update!');
+    redirect('../admin/orderList.php');
 }

@@ -13,6 +13,13 @@ $stm = $_db->prepare('
 $stm->execute([$order_ID, $user_ID]);
 $order = $stm->fetch();
 
+if($order->status == 'Delivered'){
+    temp('info','The order has been completed. Status cannot be change.');
+    redirect('orderList.php');
+}else if($order->status == 'Cancelled'){
+    temp('info','User has cancelled this order. Status cannot be change.');
+    redirect('orderList.php');
+}
 
 $stm = $_db->prepare('
     SELECT i.*,p.name
@@ -113,12 +120,11 @@ $_title = 'Order Details';
     <form method="post" action="../function/update_status.php" class="status-form">
         <select name="status[<?= $item->product_id ?>]" class="status-select" onchange="document.getElementById('status_<?= $order->id ?>').value = this.value;">
             <option value="Shipped" <?= $order->status == 'Shipped' ? 'selected' : '' ?>>Shipped</option>
-            <option value="Cancelled" <?= $order->status == 'Cancelled' ? 'selected' : '' ?>>Cancelled</option>
             <option value="Paid" <?= $order->status == 'Paid' ? 'selected' : '' ?>>Paid</option>
             <option value="Delivered" <?= $order->status == 'Delivered' ? 'selected' : '' ?>>Delivered</option>
         </select>
 
-        <input type="hidden" name="product_ID" value="<?= $order->id ?>">
+        <input type="hidden" name="order_ID" value="<?= $order->id ?>">
         <input type="hidden" name="user_ID" value="<?= $user_ID ?>">
         <input type="hidden" id="status_<?= $order->id ?>" name="status" value="<?= $order->status ?>">
         <input type="hidden" name="num" value="<?= $num ?>">
