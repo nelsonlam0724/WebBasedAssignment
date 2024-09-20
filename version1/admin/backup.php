@@ -1,6 +1,6 @@
 <?php
 include '../_base.php';
-auth('Root','Admin');
+auth('Root', 'Admin');
 
 // Define how many results per page
 $resultsPerPage = 5;
@@ -26,11 +26,7 @@ if (!empty($filter)) {
 }
 
 // Apply sorting (ASC or DESC)
-if ($sortOrder == 'DESC') {
-    rsort($tables);
-} else {
-    sort($tables);
-}
+$sortOrder == 'DESC' ? rsort($tables) : sort($tables);
 
 // Calculate total number of tables after filtering
 $totalTables = count($tables);
@@ -39,8 +35,13 @@ $totalTables = count($tables);
 $tables = array_slice($tables, $offset, $resultsPerPage);
 
 // Handle form submission for backup
-if (is_post() && isset($_POST['tables'])) {
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['tables'])) {
     $selectedTables = $_POST['tables'];
+    
+    if (empty($selectedTables)) {
+        temp('error', 'Please select at least one table to backup.');
+        redirect('backup.php'); // Redirect back to the backup page
+    }
 
     // Retrieve selected tables from cookies if they exist
     if (isset($_COOKIE['selectedTables'])) {
@@ -55,8 +56,7 @@ if (is_post() && isset($_POST['tables'])) {
     $conn = $_db;
 
     // Get the database name
-    $result = $conn->query('SELECT DATABASE()');
-    $databaseName = $result->fetchColumn();
+    $databaseName = $conn->query('SELECT DATABASE()')->fetchColumn();
 
     // Start the SQL backup file with CREATE DATABASE and USE statements
     $sql = "-- Database Backup\n";
@@ -67,12 +67,16 @@ if (is_post() && isset($_POST['tables'])) {
     foreach ($selectedTables as $table) {
         $result = $conn->query('SHOW CREATE TABLE ' . $table);
         $row = $result->fetch(PDO::FETCH_ASSOC);
-        $sql .= "\n" . $row['Create Table'] . ";\n\n";
+        
+        // Get the CREATE TABLE SQL
+        $createTableSQL = $row['Create Table'];
+        $sql .= "\n" . $createTableSQL . ";\n\n";
 
+        // Fetch the data for INSERT statements
         $result = $conn->query('SELECT * FROM ' . $table);
         while ($row = $result->fetch(PDO::FETCH_ASSOC)) {
-            $sql .= 'INSERT INTO ' . $table . ' (' . implode(', ', array_keys($row)) . ') VALUES (\'';
-            $sql .= implode('\', \'', array_values($row)) . '\');' . "\n";
+            $sql .= 'INSERT INTO ' . $table . ' (' . implode(', ', array_keys($row)) . ') VALUES (\'' . 
+                implode('\', \'', array_map('addslashes', array_values($row))) . '\');' . "\n";
         }
     }
 
@@ -89,9 +93,9 @@ if (isset($_POST['select_all'])) {
     setcookie('selectedTables', json_encode($selectedTables), time() + 3600, '/');
 }
 ?>
+
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -99,10 +103,8 @@ if (isset($_POST['select_all'])) {
     <link rel="stylesheet" href="../css/backup.css">
     <script src="../js/backup.js"></script>
 </head>
-
 <body>
     <div class="container">
-        <!-- Combined form for filtering, sorting, and backing up -->
         <form method="get" action="">
             <h1>Database Backup</h1>
             <input type="text" name="filter" placeholder="Filter by table name" value="<?php echo htmlspecialchars($filter); ?>">
@@ -130,7 +132,6 @@ if (isset($_POST['select_all'])) {
                 </tbody>
             </table>
             <br>
-            <!-- Pagination -->
             <div class="pagination">
                 <?php
                 $totalPages = ceil($totalTables / $resultsPerPage);
@@ -167,5 +168,4 @@ if (isset($_POST['select_all'])) {
         <a href="admin.php" onclick="clearSelectedTablesCookie()"><button>Back to Menu</button></a>
     </div>
 </body>
-
 </html>

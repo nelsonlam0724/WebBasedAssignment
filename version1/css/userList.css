@@ -111,29 +111,21 @@ table th a[data-sort-order='DESC']::after {
     content: '▼'; /* Unicode character for down arrow */
 }
 
-.actions, .delete, .deactivate {
+.actions, .active, .deactivate {
     width: 100px; /* Set column width */
 }
 
-.actions button, .delete button, .deactivate button  {
+.actions button, .active button, .deactivate button  {
     width: 100%; /* Make buttons fill the column width */
     margin: 0; /* Remove extra margin */
 }
 
 .actions button {
-    background-color: #28a745;
+    background-color: #007bff;
 }
 
 .actions button:hover {
-    background-color: #218838;
-}
-
-.delete button {
-    background-color: #dc3545;
-}
-
-.delete button:hover {
-    background-color: #c82333;
+    background-color: #007bff;
 }
 
 .deactivate button {
@@ -142,6 +134,14 @@ table th a[data-sort-order='DESC']::after {
 
 .deactivate button:hover {
     background-color: #c82333;
+}
+
+.active button {
+    background-color: #28a745;
+}
+
+.active button:hover {
+    background-color: #28a745;
 }
 
 .no-results {

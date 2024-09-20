@@ -86,7 +86,6 @@ function redirect($url = null)
     header("Location: $url");
     exit();
 }
-
 // Set or get temporary session variable
 function temp($key, $value = null)
 {
