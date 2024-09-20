@@ -20,6 +20,7 @@ $results = $getPending->fetchAll();
 ?>
 
 <link rel="stylesheet" href="../css/information.css">
+<link rel="stylesheet" href="../css/orderItem.css">
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script src="../js/orders.js"></script>
 </head>
@@ -37,10 +38,10 @@ $results = $getPending->fetchAll();
             $current_time = time();
 
             $stm = $_db->prepare("SELECT id FROM orders WHERE status = ? AND created_at < NOW() - INTERVAL 1 MINUTE");
-            
+
             $stm->execute(['Pending']);
             $orderss = $stm->fetchAll(PDO::FETCH_ASSOC);
-            
+
             foreach ($orderss as $order) {
                 $stm = $_db->prepare("UPDATE orders SET status = 'Cancel' WHERE id = :id");
                 $stm->bindParam(':id', $order['id'], PDO::PARAM_STR);
@@ -77,28 +78,29 @@ $results = $getPending->fetchAll();
                 WHERE o.user_id = ? AND o.status = ?
             ');
 
-            $getShip->execute([$userID,"Paid"]);
+            $getShip->execute([$userID, "Paid"]);
             $shipResults = $getShip->fetchAll();
 
             ?>
 
 
 
-<?php $counts = 0;
+            <?php $counts = 0;
             foreach ($shipResults as $o): ?>
-            <div class="product-container" style="padding:28px">
-                <div class="product-details">
-                    <div class="product-title"><?= $counts+1 ?>.Shipping ID : <?= $o->ship_id ?></div>
-                    <div class="product-description">Address : <?= $o->address ?></div>
-                    <!-- <div class="product-description">Recipient name : <?= $o->name ?></div> -->
-                    <div class="product-description">Status : <?= $o->ship_status ?> </div>
-                    <div class="product-description">Company : <?= $o->company_name ?>  </div>
-                    <div class="product-description" style="color:rgb(77, 130, 24)">Ship Method : <?= $o->ship_method ?> </div>
-                    <button class="rate-button" onclick="view_detail('<%= ship[0] %>', '<%= ship[5] %>')">View detail</button>
-                </div>
+                <div class="product-container" style="padding:28px">
+                    <div class="product-details">
+                        <div class="product-title"><?= $counts + 1 ?>.Shipping ID : <?= $o->ship_id ?></div>
+                        <div class="product-description">Address : <?= $o->address ?></div>
+                        <!-- <div class="product-description">Recipient name : <?= $o->name ?></div> -->
+                        <div class="product-description">Status : <?= $o->ship_status ?> </div>
+                        <div class="product-description">Company : <?= $o->company_name ?> </div>
+                        <div class="product-description" style="color:rgb(77, 130, 24)">Ship Method : <?= $o->ship_method ?> </div>
+                        <button class="rate-button" onclick="view_detail('<%= ship[0] %>', '<%= ship[5] %>')">View detail</button>
+                    </div>
 
-            </div>
-            <?php $counts++; endforeach  ?>
+                </div>
+            <?php $counts++;
+            endforeach  ?>
 
 
         </div>
@@ -118,7 +120,7 @@ $results = $getPending->fetchAll();
                WHERE o.status = ? AND o.user_id = ? AND od.commment_status = ? AND s.status = ?
                ');
 
-            $getPaid->execute(["Paid", $userID ,"Pending","Arrive"]);
+            $getPaid->execute(["Paid", $userID, "Pending", "Arrive"]);
             $results = $getPaid->fetchAll();
 
             ?>
@@ -156,6 +158,31 @@ $results = $getPending->fetchAll();
             $stm->execute([$user->user_id]);
             $arr = $stm->fetchAll();
 
+            if (isset($_GET['tmp'])) {
+                $message = '';
+
+                if ($_GET['tmp'] == '1') {
+                    $message = 'Delivered Item cannot be cancelled!';
+                } else if ($_GET['tmp'] == '2') {
+                    $message = 'Cancelled Item cannot be cancelled again!';
+                } else if ($_GET['tmp'] == '3') {
+                    $message = 'Order cancelled successfully!';
+                }
+
+                if ($message !== '') {
+                    temp('info', $message);
+                    echo '<div id="info">' . temp('info') . '</div>';
+                }
+
+                echo '<script>
+                        setTimeout(function() {
+                            window.location.href = "information.php?tab=5";
+                        }, 1000); // 1-second delay before redirection
+                      </script>';
+            }
+
+            $disp = 0;
+
             require_once '../lib/SimplePager.php'; // Include SimplePager class
 
 
@@ -163,7 +190,7 @@ $results = $getPending->fetchAll();
             $status_filter = isset($_GET['status']) ? trim($_GET['status']) : '';
             $sort_by = isset($_GET['sort_by']) ? trim($_GET['sort_by']) : 'id';
             $page = isset($_GET['page']) ? (int)$_GET['page'] : 1;
-            $limit = 10; // Number of records per page
+            $limit = 5; // Number of records per page
 
             // Start constructing the query
             $query = 'SELECT * FROM orders WHERE 1=1';
@@ -204,9 +231,11 @@ $results = $getPending->fetchAll();
                     <select name="status" id="status" onchange="this.form.submit()">
                         <option value="">All Status</option>
                         <?php foreach ($statuses as $status): ?>
-                            <option value="<?= htmlspecialchars($status) ?>" <?= $status == $status_filter ? 'selected' : '' ?>>
-                                <?= htmlspecialchars($status) ?>
-                            </option>
+                            <?php if ($status != 'Pending' && $status != ''): ?>
+                                <option value="<?= htmlspecialchars($status) ?>" <?= $status == $status_filter ? 'selected' : '' ?>>
+                                    <?= htmlspecialchars($status) ?>
+                                </option>
+                            <?php endif; ?>
                         <?php endforeach; ?>
                     </select>
 
@@ -220,32 +249,64 @@ $results = $getPending->fetchAll();
                     <input type="hidden" id="tab" name="tab" value="5">
                 </form>
             </div>
-            <table class="order-table">
-                <thead>
-                    <tr>
-                        <th></th>
-                        <th>Order DateTime</th>
-                        <th>Order Status</th>
-                        <th>Total Amount</th>
-                        <th>Total Quantity</th>
-                        <th></th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <?php foreach ($orders as $i => $order): ?>
-                        <tr>
-                            <th><?php echo $i + 1; ?></th>
-                            <td><?= $order->datetime ?></td>
-                            <td><?= $order->status ?></td>
-                            <td><?= $order->total ?></td>
-                            <td><?= $order->count ?></td>
-                            <td>
-                                <button data-get="orderDetails.php?order_id=<?= $order->id ?>&user_id=<?= $order->user_id ?>" class="details-button">Detail</button>
-                            </td>
-                        </tr>
-                    <?php endforeach ?>
-                </tbody>
-            </table>
+            <div class="order-grid">
+                <?php foreach ($orders as $i => $order): ?>
+                    <?php if ($order->status != 'Pending' && $order->status != ''): ?>
+                        <?php
+                        // Fetch order details and related product names
+                        $stm = $_db->prepare('
+                SELECT i.*, p.name
+                FROM `order_details` AS i, product AS p
+                WHERE i.product_id = p.product_id
+                AND i.order_id = ?
+            ');
+                        $stm->execute([$order->id]);
+                        $order_details = $stm->fetchAll();
+                        ?>
+
+                        <!-- Order Card -->
+                        <div class="order-card">
+                            <div class="order-info">
+                                <p><strong>Order <?= ++$disp ?></strong></p>
+                                <p><strong>Date:</strong> <?= $order->datetime ?></p>
+                                <p><strong>Status:</strong> <?= $order->status ?></p>
+                                <p><strong>Total Amount:</strong> RM <?= $order->total ?></p>
+
+                                <form method="post" action="../function/cancel_order.php">
+                                    <input type="hidden" name="order_ID" value="<?= $order->id ?>">
+                                    <input type="hidden" name="user_ID" value="<?= $order->user_id ?>">
+                                    <input type="hidden" name="product_ID" value="<?= $order->product_id ?>">
+                                    <input type="submit" name="submit" value="Cancel Order" class="cancel-button">
+                                </form>
+                            </div>
+
+                            <div class="product-info">
+                                <table class="product-table">
+                                    <thead>
+                                        <tr>
+                                            <th>Product Name</th>
+                                            <th>Price (RM)</th>
+                                            <th>Unit</th>
+                                            <th>Subtotal (RM)</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <?php foreach ($order_details as $item): ?>
+                                            <tr>
+                                                <td><?= $item->name ?></td>
+                                                <td><?= $item->price ?></td>
+                                                <td><?= $item->unit ?></td>
+                                                <td><?= $item->subtotal ?></td>
+                                            </tr>
+                                        <?php endforeach; ?>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    <?php endif; ?>
+                <?php endforeach; ?>
+            </div>
+
 
             <!-- Pagination Links -->
             <div class="pagination">

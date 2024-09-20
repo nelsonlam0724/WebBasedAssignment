@@ -14,7 +14,7 @@ if (!empty($productIds)) {
     }, $productIds));
 
     $stmt = $_db->prepare("
-      SELECT product_id, name, price, product_photo 
+      SELECT product_id, name, price
       FROM product 
       WHERE product_id IN ($ids)
   ");
@@ -235,19 +235,22 @@ if (is_post()) {
                     $count = 0;
                     $discount = 0;
                     foreach ($products as $product):
-
-
+                    
                         $productId = $product['product_id'];
                         $quantity = isset($cartSelect[$productId]) ? $cartSelect[$productId] : 0;
                         $subtotal += $product['price'] * $quantity;
 
+                        $getProductImg = $_db->prepare('SELECT product_photo FROM product_image WHERE product_id = ?');
+                        $getProductImg->execute([$productId]);
+                        $productImg = $getProductImg->fetch(PDO::FETCH_OBJ);
+                        $productPhoto = $productImg ? $productImg->product_photo : 'default_image.jpg';  
                     ?>
                         <tr>
                             <td><?= $count + 1 ?></td>
                             <td><?= $product['name'] ?></td>
                             <td>RM <?= $product['price'] ?> X <?= $quantity ?></td>
                             <td style="width:100px;height:100px;">
-                                <img src="../uploads/<?= $product['product_photo'] ?>" class="poster-img" style="width:100%;height:100%;">
+                                <img src="../uploads/<?= $productPhoto ?>" class="poster-img" style="width:100%;height:100%;">
                             </td>
                         </tr>
                     <?php
