@@ -55,7 +55,7 @@ $comment = $getComment->fetchAll();
         <a href="#">
           <div class="btn-buy">Buy Now</div>
         </a>
-        <div class="add-to-card add_card" data-add="<?= $product->product_id ?> ">Add to Cart</div>
+        <div class="add-to-card add_card" data-add="<?= $product->product_id ?>">Add to Cart</div>
       </div>
     </div>
   </div>

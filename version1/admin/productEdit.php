@@ -5,7 +5,6 @@ include '../_head.php';
 
 $_err = [];
 
-// Get product ID from request
 $product_id = req('product_id');
 
 if (!$product_id) {
@@ -13,12 +12,10 @@ if (!$product_id) {
     redirect('productList.php');
 }
 
-// Fetch product details
 $stm = $_db->prepare('SELECT * FROM product WHERE product_id = ?');
 $stm->execute([$product_id]);
-$product = $stm->fetch();
+$product = $stm->fetch(PDO::FETCH_OBJ);
 
-// Fetch all product images with their IDs
 $stm = $_db->prepare('SELECT image_id, product_photo FROM product_image WHERE product_id = ?');
 $stm->execute([$product_id]);
 $images = $stm->fetchAll();
@@ -28,15 +25,16 @@ if (!$product) {
 }
 
 if (is_post()) {
-    // Retrieve form data
+    // Validation and update logic
     $new_name = req('name');
     $new_price = req('price');
     $new_category = req('category_id');
     $new_quantity = req('quantity');
     $new_weight = req('weight');
     $new_description = req('description');
-    $new_product_photos = get_file_multiple('photo'); // Fetch multiple files
-    $existing_image_ids = req('existing_image_ids'); // Fetch existing image IDs
+    $new_status = req('status');
+    $new_product_photo = get_file_multiple('photo');
+    $existing_image_ids = req('existing_image_ids');
 
     // Validation
     if (!$new_name) {
@@ -57,8 +55,10 @@ if (is_post()) {
         $_err['quantity'] = 'Required';
     }
 
-    if (!$new_category) {
-        $_err['category_id'] = 'Required';
+    if (!$new_weight) {
+        $_err['weight'] = 'Required';
+    } elseif (strlen($new_weight) > 100) {
+        $_err['weight'] = 'Maximum 100 characters';
     }
 
     if (!$new_description) {
@@ -67,13 +67,10 @@ if (is_post()) {
         $_err['description'] = 'Maximum 1000 characters';
     }
 
-    if (!$new_weight) {
-        $_err['weight'] = 'Required';
-    } elseif (strlen($new_weight) > 100) {
-        $_err['weight'] = 'Maximum 100 characters';
+    if (!$new_status) {
+        $_err['status'] = 'Required';
     }
 
-    // Handle file uploads
     if (!empty($new_product_photos)) {
         foreach ($new_product_photos as $photo) {
             if ($photo->error === UPLOAD_ERR_OK) {
@@ -90,8 +87,8 @@ if (is_post()) {
 
     if (empty($_err)) {
         // Update product details
-        $stm = $_db->prepare('UPDATE product SET name = ?, price = ?, category_id = ?, quantity = ?, weight = ?, description = ? WHERE product_id = ?');
-        $stm->execute([$new_name, $new_price, $new_category, $new_quantity, $new_weight, $new_description, $product_id]);
+        $stm = $_db->prepare('UPDATE product SET name = ?, price = ?, category_id = ?, quantity = ?, weight = ?, description = ? , status = ? WHERE product_id = ?');
+        $stm->execute([$new_name, $new_price, $new_category, $new_quantity, $new_weight, $new_description, $new_status, $product_id]);
 
         // Update existing images
         if (!empty($existing_image_ids)) {
@@ -170,6 +167,20 @@ if (is_post()) {
             <td>
                 <textarea name="description" id="description"><?= htmlspecialchars($product->description) ?></textarea>
                 <?= isset($_err['description']) ? "<span class='error'>{$_err['description']}</span>" : '' ?>
+            </td>
+        </tr>
+        <tr>
+            <th>Status:</th>
+            <td>
+                <select name="status" id="status">
+                    <option value="<?= htmlspecialchars('Available') ?>" <?= $product->status == 'Available' ? 'selected' : '' ?>>
+                        <?= htmlspecialchars('Available') ?>
+                    </option>
+                    <option value="<?= htmlspecialchars('Unavailable') ?>" <?= $product->status == 'Unavailable' ? 'selected' : '' ?>>
+                        <?= htmlspecialchars('Unavailable') ?>
+                    </option>
+                </select>
+                <?= isset($_err['status']) ? "<span class='error'>" . htmlspecialchars($_err['status']) . "</span>" : '' ?>
             </td>
         </tr>
         <tr>

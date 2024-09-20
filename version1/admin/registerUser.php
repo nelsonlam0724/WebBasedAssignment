@@ -141,10 +141,10 @@ $_title = 'Register User';
 </head>
 
 <body>
-    <h1>Register New User</h1>
     <?php if (isset($_err['general'])): ?>
         <p class="error"><?= htmlspecialchars($_err['general']) ?></p>
     <?php endif; ?>
+    <h1>Register New User</h1>
     <form method="post" class="form" enctype="multipart/form-data">
         <div class="form-container">
             <!-- Left Column -->

@@ -185,7 +185,17 @@ $_title = 'User List';
                                     <button>Edit</button>
                                 </a>
                             </td>
-                            <?php if ($current_role == 'Root' || $current_role == 'Admin' && $user->status != 'banned'): ?>
+                            <?php if ($user->status == 'Banned'): ?>
+                                <td class="active">
+                                    <form action="activeUser.php?user_id=<?= $user->user_id ?>&search=<?= urlencode($search_query) ?>
+                                    &page=<?= $page - 1 ?>&sort_by=<?= urlencode($sort_by) ?>&sort_order=<?= urlencode($sort_order) ?>
+                                    &status=<?= urlencode($status_filter) ?>&role=<?= urlencode($role_filter) ?>" method="post" style="display:inline;">
+                                        <input type="hidden" name="id" value="<?= $user->user_id ?>">
+                                        <button type="submit" onclick="return confirm('Are you sure you want to active this user?');">Active</button>
+                                    </form>
+                                </td>
+                            <?php endif; ?>
+                            <?php if ($user->status == 'Active'): ?>
                                 <td class="deactivate">
                                     <form action="bannedUser.php?user_id=<?= $user->user_id ?>&search=<?= urlencode($search_query) ?>
                                     &page=<?= $page - 1 ?>&sort_by=<?= urlencode($sort_by) ?>&sort_order=<?= urlencode($sort_order) ?>

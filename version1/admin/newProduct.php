@@ -5,12 +5,12 @@ if (is_post()) {
     $name = req('name');
     $price = req('price');
     $quantity = req('quantity');
-    $photos = get_file_multiple('photo'); // Get multiple files
+    $photos = get_file_multiple('photo'); 
     $category_id = req('category_id');
     $desc = req('description');
     $weight = req('weight');
 
-    // Validation
+    //Validation
     if (!$name) {
         $_err['name'] = 'Required';
     } else if (strlen($name) > 100) {
@@ -62,12 +62,12 @@ if (is_post()) {
     if (!$_err) {
         $product_id = generateID('product', 'product_id', 'P', 4);
         $stm = $_db->prepare('
-        INSERT INTO product (product_id, name, price, category_id, quantity, description, weight)
-        VALUES (?, ?, ?, ?, ?, ?, ?)
+        INSERT INTO product (product_id, name, price, category_id, quantity, description, weight, status)
+        VALUES (?, ?, ?, ?, ?, ?, ?, "Available")
         ');
         $stm->execute([$product_id, $name, $price, $category_id, $quantity, $desc, $weight]);
 
-        $photos = array_slice($photos, 0, 3); // Limit to 3 images
+        $photos = array_slice($photos, 0, 5); // Limit to 3 images
 
         foreach ($photos as $p) {
             $photo = save_photo_admin($p); // Save each image
@@ -89,13 +89,10 @@ include '../_head.php';
 ?>
 
 <link rel="stylesheet" href="../css/product.css">
-<link rel="stylesheet" href="../css/preview.css">
-<script src="../js/preview.js"></script>
-
 <a href="productList.php"><button type="button">⬅️ Back to Product List</button></a>
 <h1>Add New Product</h1>
 <form method="post" class="form" enctype="multipart/form-data">
-
+    
     <label for="name">Product Name</label><br>
     <?= html_text('name', 'maxlength="100"') ?>
     <?= err('name') ?>
@@ -147,5 +144,6 @@ include '../_head.php';
 </form>
 
 <script src="../js/product.js"></script>
+
 <?php
 include '../_foot.php';
