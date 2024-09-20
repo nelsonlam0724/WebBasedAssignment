@@ -26,6 +26,9 @@ if ($userID != '0') {
     <link rel="stylesheet" href="/css/image.css">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+
+    
     <link rel="stylesheet" href="../css/header.css">
 </head>
 <style>
@@ -111,6 +114,7 @@ if ($userID != '0') {
                 </div>
             </div>
 
+            <div class="small-icon">
             <a href="../customer/cart.php">
                 <p style="font-size: 30px;cursor:pointer;color:black;" class="cart-icon">
                     <i class='bx bx-cart'></i>
@@ -122,8 +126,13 @@ if ($userID != '0') {
                 </P>
             </a>
 
+
+
+            <span style="font-size:30px;cursor:pointer" class="openbtn">&#9776;</span>
+           <script src="../js/header.js"></script>
+            </div>
         </div>
-        <div class="second-row">
+        <!-- <div class="second-row">
 
             <ul>
                 <li><a href="customerProfile.php">Profile</a></li>
@@ -133,5 +142,32 @@ if ($userID != '0') {
                 <li><a href="../logout.php">Logout</a></li>
             </ul>
 
-        </div>
+        </div> -->
     </header>
+
+
+
+<div id="mySidenav" class="sidenav">
+    <a href="javascript:void(0)" class="closebtn">&times;</a>
+    <div class="content">
+        <div class="profile">
+            <img style="object-fit: cover;" src="<?= $img ?>" width="80">
+            <h2 style="color:white"><?= $user ?></h2>
+            <p><?= $_SESSION['user']->email ?></p>
+        </div>
+        <div style="padding:50px 9px;">
+            <a class="al" href="customer.php"><i class="fa fa-home" ></i>  Home</a>
+            <a class="al" href="customerProfile.php"><i class="fas fa-user" ></i>   Profile</a>
+            <a class="al" href="product.php"><i class='fas fa-address-book' ></i>   Product</a>
+            <a class="al" href="information.php"> <i class="fas fa-shopping-bag"></i> My Purchase</a>
+            <a class="al" href="../logout.php"> <i class="fas fa-sign-out-alt"></i> Logout</a>
+        </div>
+    </div>
+</div>
+
+
+
+
+
+
+

@@ -55,7 +55,7 @@ $CategoryResults = $getCategory->fetchAll();
 
   <?php if ($pager->item_count == 0) { ?>
     <div style="padding:30px;">
-      <h2>No results for " <?= htmlspecialchars($search) ?> "</h2>
+      <h2>No results for " <?= $search ?> "</h2>
     </div>
   <?php } ?>
 

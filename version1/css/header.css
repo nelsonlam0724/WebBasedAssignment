@@ -101,3 +101,71 @@ header{
     position: absolute;
     top: 15px;
  }
+
+.small-icon{
+    display:flex;
+    justify-content: space-between;
+    gap:45px;
+}
+
+
+.sidenav {
+    width: 250px;
+    box-sizing: border-box;
+    height: 100%;
+    position: fixed;
+    z-index: 10;
+    top: 0;
+    left: -250px; 
+    background-color: #292a2a;
+    overflow-x: hidden;
+    transition: 0.5s;
+    padding-top: 60px;
+    display: flex;
+    flex-direction: column; 
+}
+
+.sidenav.open {
+    left: 0; 
+}
+.profile {
+    text-align: center;
+    margin-bottom: 20px;
+}
+.profile img {
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    margin-bottom: 10px;
+}
+.profile h2 {
+    margin: 0;
+    font-size: 18px;
+}
+.profile p {
+    margin: 0;
+    font-size: 14px;
+    color: #BDC3C7;
+}
+.sidenav a {
+    padding: 8px 8px 8px 32px;
+    text-decoration: none;
+    font-size: 17px;
+    color: white;
+    display: block;
+    transition: 0.3s;
+    padding: 20px 10px;
+  }
+  
+  .sidenav .al:hover {
+    color: black;
+    background-color: white;
+  }
+  
+  .sidenav .closebtn {
+    position: absolute;
+    top: 0;
+    right: 25px;
+    font-size: 36px;
+    margin-left: 50px;
+  }
