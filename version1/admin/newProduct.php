@@ -5,7 +5,7 @@ if (is_post()) {
     $name = req('name');
     $price = req('price');
     $quantity = req('quantity');
-    $p = get_file('photo');
+    $photos = get_file_multiple('photo'); 
     $category_id = req('category_id');
     $desc = req('description');
     $weight = req('weight');
@@ -29,12 +29,18 @@ if (is_post()) {
         $_err['quantity'] = 'Required';
     }
 
-    if (!$p) {
+    if (!$photos) {
         $_err['photo'] = 'Required';
-    } else if (!str_starts_with($p->type, 'image/')) {
-        $_err['photo'] = 'Must be image';
-    } else if ($p->size > 1 * 1024 * 1024) {
-        $_err['photo'] = 'Maximum 1MB';
+    } else {
+        foreach ($photos as $p) {
+            if (!str_starts_with($p->type, 'image/')) {
+                $_err['photo'] = 'Must be image';
+                break;
+            } else if ($p->size > 1 * 1024 * 1024) {
+                $_err['photo'] = 'Maximum 1MB';
+                break;
+            }
+        }
     }
 
     if (!$category_id) {
@@ -54,16 +60,24 @@ if (is_post()) {
     }
 
     if (!$_err) {
-        $photo = save_photo_admin($p);
-
         $product_id = generateID('product', 'product_id', 'P', 4);
-
         $stm = $_db->prepare('
-    INSERT INTO product (product_id, name, price, category_id, quantity, product_photo, description, weight, status)
-    VALUES (?, ?, ?, ?, ?, ?, ?, ?, "Available")
-    ');
+        INSERT INTO product (product_id, name, price, category_id, quantity, description, weight, status)
+        VALUES (?, ?, ?, ?, ?, ?, ?, "Available")
+        ');
+        $stm->execute([$product_id, $name, $price, $category_id, $quantity, $desc, $weight]);
 
-        $stm->execute([$product_id, $name, $price, $category_id, $quantity, $photo, $desc, $weight]);
+        $photos = array_slice($photos, 0, 5); // Limit to 3 images
+
+        foreach ($photos as $p) {
+            $photo = save_photo_admin($p); // Save each image
+            $image_id = generateID('product_image', 'image_id', 'I', 4);
+            $stm = $_db->prepare('
+            INSERT INTO product_image (image_id, product_id, product_photo)
+            VALUES (?, ?, ?)
+            ');
+            $stm->execute([$image_id, $product_id, $photo]);
+        }
 
         temp('info', 'Record inserted');
         redirect('productList.php');
@@ -94,10 +108,11 @@ include '../_head.php';
     <?= err('quantity') ?>
     <br>
     <br>
-    <label for="photo">Product Photo</label><br>
+    <label for="photo">Product Photos</label><br>
     <label class="upload" tabindex="0">
-        <?= html_file('photo', 'image/*', 'hidden') ?>
-        <img src="../images/photo.jpg">
+        <?= html_file('photo[]', 'image/*', 'multiple id="photo"') ?>
+        <img src="../images/photo.jpg" alt="Default Photo" id="default-photo">
+        <div id="image-previews" class="preview-container"></div>
     </label>
     <?= err('photo') ?>
     <br>

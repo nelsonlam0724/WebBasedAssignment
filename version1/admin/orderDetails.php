@@ -3,7 +3,7 @@ include '../_base.php';
 include '../_head.php';
 $order_ID = req('order_ID');
 $user_ID = req('user_ID');
-
+auth('Root', 'Admin');
 $stm = $_db->prepare('
     SELECT * FROM `orders`
     WHERE id = ? AND user_id = ?

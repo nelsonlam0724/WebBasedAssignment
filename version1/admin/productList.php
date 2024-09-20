@@ -54,10 +54,10 @@ include '../_head.php';
 
     <!-- Success/Error Messages -->
     <?php if (isset($_SESSION['success_message'])): ?>
-    <div class="success-message">
-        <?= htmlspecialchars($_SESSION['success_message']); ?>
-        <?php unset($_SESSION['success_message']); ?>
-    </div>
+        <div class="success-message">
+            <?= htmlspecialchars($_SESSION['success_message']); ?>
+            <?php unset($_SESSION['success_message']); ?>
+        </div>
     <?php endif; ?>
 
     <?php if (isset($_SESSION['error_message'])): ?>
@@ -126,7 +126,7 @@ include '../_head.php';
 
     <div class="table-wrapper">
         <!-- Product Table with Checkboxes -->
-        <form method="post" action="deleteProduct.php">
+        <form method="post" action="deactivateProduct.php">
             <?php if ($product): ?>
                 <table>
                     <thead>
@@ -135,16 +135,22 @@ include '../_head.php';
                             <th>Product ID</th>
                             <th>Product Name</th>
                             <th>Category</th>
+                            <th>Status</th>
                             <th>Actions</th>
                         </tr>
                     </thead>
                     <tbody>
                         <?php foreach ($product as $p): ?>
                             <tr>
-                                <td><input type="checkbox" name="product_ids[]" value="<?= $p->product_id ?>" class="product-checkbox"></td> <!-- Product Checkbox -->
+                                <!-- Disable checkbox for deactivated products -->
+                                <td>
+                                <input type="checkbox" name="product_ids[]" value="<?= $p->product_id ?>" class="product-checkbox">
+                                </td>
                                 <td><?= htmlspecialchars($p->product_id) ?></td>
                                 <td><?= htmlspecialchars($p->name) ?></td>
                                 <td><?= htmlspecialchars($p->category_name) ?></td>
+                                <!-- Add Status Column -->
+                                <td><?= htmlspecialchars($p->status) ?></td>
                                 <td class="actions">
                                     <a href="productEdit.php?product_id=<?= $p->product_id ?>" class="edit-container">
                                         <button type="button">Edit Details</button>
@@ -156,7 +162,8 @@ include '../_head.php';
                 </table>
 
                 <div class="action-buttons">
-                    <button type="submit" id="delete-selected" onclick="return confirm('Are you sure you want to deactivate the selected products?');">Deactivate</button>
+                    <button type="submit" id="deactivate-selected" onclick="return confirm('Are you sure you want to deactivate the selected products?');">Deactivate</button>
+                    <button type="submit" formaction="activateProduct.php" id="activate-selected" onclick="return confirm('Are you sure you want to activate the selected products?');">Activate</button>
                 </div>
 
                 <div class="pagination-container">
@@ -181,7 +188,9 @@ include '../_head.php';
 
                 </div>
             <?php else: ?>
-                <p class="no-results">No products found.</p>
+                <?php if (!$product): ?>
+                    <p class="no-results">No active products available for deactivation.</p>
+                <?php endif; ?>
             <?php endif; ?>
         </form>
 
@@ -197,3 +206,4 @@ include '../_head.php';
 
 <?php
 include '../_foot.php';
+?>
