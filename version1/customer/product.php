@@ -61,9 +61,17 @@ $CategoryResults = $getCategory->fetchAll();
 
     <?php
     if ($p->item_count != 0) {
-      foreach ($getProduct as $i): ?>
+      foreach ($getProduct as $i): 
+      
+        $getProductImg = $_db->prepare('SELECT product_photo FROM product_image WHERE product_id = ?');
+        $getProductImg->execute([$i->product_id]);
+        $productImg = $getProductImg->fetch(PDO::FETCH_OBJ);
+        $productPhoto = $productImg ? $productImg->product_photo : 'default_image.jpg';  
+      
+      ?>
+      
         <div class="items-card cards">
-          <img src="../uploads/<?= $i->product_photo ?>" width="100" height="200">
+          <img src="../uploads/<?= $productPhoto ?>" width="100" height="200">
           <div class="text2">
             <p class="product-name space"> <?= $i->name ?></p>
             <p class="product-price space">RM <?= $i->price ?></p>

@@ -107,7 +107,7 @@ let i = 0;
 const $image = $('#images');
 const $demo = $('#demo');
 const updateImage = () => {
-  $image.prop('src', arr[i]);
+  $image.prop('src','../uploads/' + arr[i]);
   $demo.text('Image ' + (i + 1) + ' of ' + arr.length);
 };
 updateImage();
