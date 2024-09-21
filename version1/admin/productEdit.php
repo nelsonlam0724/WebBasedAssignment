@@ -2,6 +2,9 @@
 include '../_base.php';
 $_title = 'Product Details';
 include '../_head.php';
+include 'sidebar.php'; 
+
+auth('Root', 'Admin');
 
 $_err = [];
 

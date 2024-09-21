@@ -101,7 +101,7 @@ button {
 }
 
 /* Button hover effect for primary buttons */
-button:hover {
+.container button:hover {
     background-color: #0056b3;
 }
 input[type="text"] {

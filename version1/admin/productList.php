@@ -1,7 +1,8 @@
 <?php
 include '../_base.php';
 require_once '../lib/SimplePager.php';
-
+include 'sidebar.php';
+auth('Root', 'Admin'); 
 $search_query = isset($_GET['search']) ? trim($_GET['search']) : '';
 $page = isset($_GET['page']) ? (int)$_GET['page'] : 1;
 $sort_by = isset($_GET['sort_by']) ? $_GET['sort_by'] : 'product_id'; // Default sort by id
@@ -48,7 +49,6 @@ include '../_head.php';
 ?>
 
 <link rel="stylesheet" href="../css/product.css">
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
 
 <div class="container">
     <h1>Product List</h1>

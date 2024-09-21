@@ -1,6 +1,6 @@
 <?php
 include '../_base.php';
-
+auth('Root', 'Admin');
 // Check if product_ids are posted
 if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['product_ids'])) {
     $product_ids = $_POST['product_ids'];

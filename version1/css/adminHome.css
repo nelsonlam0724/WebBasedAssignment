@@ -13,7 +13,6 @@
     position: fixed;
     left: 0;
     top: 0;
-    transition: width 0.3s ease;
     z-index: 1000; /* Ensure it stays above other elements */
     display: flex;
     flex-direction: column;
@@ -35,6 +34,7 @@
 .sidebar.show h2 {
     opacity: 1; /* Show title when expanded */
     margin-bottom: 28px;
+    
 }
 
 .sidebar ul {

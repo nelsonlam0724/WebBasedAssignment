@@ -1,3 +1,6 @@
+<?php
+auth('Root', 'Admin');
+?>
 <!DOCTYPE html>
 <html lang="en">
 <head>

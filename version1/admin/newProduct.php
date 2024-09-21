@@ -1,7 +1,7 @@
 <?php
 include '../_base.php';
 include 'sidebar.php';
-
+auth('Root', 'Admin');
 if (is_post()) {
     $name = req('name');
     $price = req('price');

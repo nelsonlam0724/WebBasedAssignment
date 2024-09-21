@@ -2,7 +2,7 @@
 include '../_base.php';
 include '../_head.php';
 include 'sidebar.php'; 
-
+auth('Root', 'Admin');
 $_title = 'Admin Dashboard - ' . htmlspecialchars($_user->name);
 ?>
 <!DOCTYPE html>

@@ -1,6 +1,6 @@
 <?php
 include '../_base.php';
-
+auth('Root', 'Admin');
 if (is_post() && isset($_POST['category_id'])) {
     $category_id = $_POST['category_id'];
 
