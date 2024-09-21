@@ -5,7 +5,8 @@ include '../include/sidebarAdmin.php';
 
 $topSalesData = $_db->query('
     SELECT p.name AS product_name, SUM(od.unit) AS total_units, p.price AS product_price
-    FROM order_details AS od
+    FROM orders AS o
+    JOIN order_details AS od ON o.id = od.order_id
     JOIN product AS p ON od.product_id = p.product_id
     GROUP BY od.product_id
     ORDER BY total_units DESC
@@ -16,7 +17,40 @@ $productNames = [];
 $totalUnits = [];
 $totalPrices = [];
 
-foreach ($topSalesData as $data) {
+// Initialize variables for date filtering
+$start_date = isset($_GET['start_date']) ? trim($_GET['start_date']) : '';
+$end_date = isset($_GET['end_date']) ? trim($_GET['end_date']) : '';
+
+// Start constructing the query
+$query = 'SELECT p.name AS product_name, SUM(od.unit) AS total_units, p.price AS product_price
+    FROM orders AS o
+    JOIN order_details AS od ON o.id = od.order_id
+    JOIN product AS p ON od.product_id = p.product_id
+    WHERE 1=1';
+$params = [];
+
+if ($start_date) {
+    $query .= ' AND o.datetime >= ?';
+    $params[] = $start_date;
+}
+
+if ($end_date) {
+    $query .= ' AND o.datetime <= ?';
+    $params[] = $end_date;
+}
+
+$query .= ' GROUP BY od.product_id ORDER BY total_units DESC LIMIT 10';
+
+$ord = $_db->prepare($query);
+$ord->execute($params);
+$orders = $ord->fetchAll();
+
+// foreach ($orders as $order) {
+//     $statuses[] = $order->status;
+//     $counts[] = $order->count;
+// }
+
+foreach ($orders as $data) {
     $productNames[] = $data->product_name;
     $totalUnits[] = $data->total_units;
     $totalPrices[] = $data->total_units * $data->product_price; // Calculate total price
@@ -61,6 +95,16 @@ foreach ($topSalesData as $data) {
 <body>
 
     <h1>Top Sales</h1>
+    <!-- Filter and Sorting Options -->
+    <div class="filter-sorting">
+        <form action="topSalesChart.php" method="get">
+            <label for="start_date">Start Date:</label>
+            <input type="date" name="start_date" id="start_date" onchange="this.form.submit()" value="<?= htmlspecialchars($start_date) ?>">
+            
+            <label for="end_date">End Date:</label>
+            <input type="date" name="end_date" id="end_date" onchange="this.form.submit()" value="<?= htmlspecialchars($end_date) ?>">
+        </form>
+    </div>
 
     <div class="charts">
         <div class="chart-container">
