@@ -1,3 +1,10 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    line-height: 1.6;
+}
+
 /* Sidebar Styles */
 .sidebar {
     width: 60px; /* Default width to show only icons */
@@ -6,7 +13,7 @@
     position: fixed;
     left: 0;
     top: 0;
-    /* transition: width 0.3s ease; */
+    transition: width 0.3s ease;
     z-index: 1000; /* Ensure it stays above other elements */
     display: flex;
     flex-direction: column;
