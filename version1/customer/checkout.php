@@ -2,7 +2,7 @@
 include '../_base.php';
 include '../include/header.php';
 include '../include/sidebar.php';
-
+auth('Member');
 $cartSelect =  $_SESSION['cartSelection'];
 $total = 0;
 
