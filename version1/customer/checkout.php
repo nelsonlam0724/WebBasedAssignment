@@ -1,7 +1,7 @@
 <?php
 include '../_base.php';
 include '../include/header.php';
-include '../include/sidebar.php';
+
 
 $cartSelect =  $_SESSION['cartSelection'];
 $total = 0;
@@ -120,7 +120,7 @@ if (is_post()) {
 
 
 <body class="body1">
-
+<?php include '../include/sidebar.php';  ?>
 
     <div class="update-address-fill">
 
