@@ -1,6 +1,7 @@
 <?php
 include '../_base.php';
 include '../include/header.php';
+include '../include/sidebar.php';
 $product_id = get('id');
 $getProduct = $_db->prepare('SELECT * FROM product WHERE product_id = ?');
 $getProduct->execute([$product_id]);

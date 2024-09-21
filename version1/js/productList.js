@@ -15,3 +15,4 @@ function checkSelection(form) {
     }
     return true; // Allow form submission
 }
+

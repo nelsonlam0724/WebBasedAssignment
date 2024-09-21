@@ -2,6 +2,7 @@
 include '../_base.php';
 include '../_head.php';
 include '../include/header.php';
+include '../include/sidebar.php';
 
 auth('Role', 'Admin', 'Member');
 // Fetch user profile information

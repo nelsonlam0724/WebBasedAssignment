@@ -1,6 +1,8 @@
 <?php
 include '../_base.php';
 include '../include/header.php';
+include '../include/sidebar.php';
+
 $cartSelect =  $_SESSION['cartSelection'];
 $total = 0;
 

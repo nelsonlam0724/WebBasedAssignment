@@ -2,7 +2,7 @@
 include '../_base.php';
 require_once '../lib/SimplePager.php';
 include '../include/header.php';
-
+include '../include/sidebar.php';
 $search = isset($_GET['search']) ? trim($_GET['search']) : '';
 $category = isset($_GET['category']) ? trim($_GET['category']) : '';
 $page = isset($_GET['page']) ? (int)$_GET['page'] : 1;

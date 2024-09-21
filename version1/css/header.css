@@ -6,6 +6,10 @@
     box-sizing: border-box;
 }
 
+*::-webkit-scrollbar {
+    display: none; /* Chrome, Safari, and Opera */
+  }
+
 header{
     padding:15px 0px;
     box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
@@ -116,7 +120,7 @@ header{
     position: fixed;
     z-index: 10;
     top: 0;
-    left: -250px; 
+    right: -250px; 
     background-color: #292a2a;
     transition: 0.5s;
     padding-top: 60px;
@@ -125,7 +129,7 @@ header{
 }
 
 .sidenav.open {
-    left: 0; 
+    right: 0; 
 }
 .profile {
     text-align: center;
@@ -164,7 +168,7 @@ header{
   .sidenav .closebtn {
     position: absolute;
     top: 0;
-    right: 25px;
+    left: 25px;
     font-size: 36px;
-    margin-left: 50px;
+    margin-right: 50px;
   }

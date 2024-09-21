@@ -3,6 +3,7 @@ include '../_base.php';
 include '../include/header.php'; 
 
 
+
 $getUserID = $_db->prepare('
     SELECT c.id, c.unit, p.name, p.price, p.product_id  
     FROM carts AS c
@@ -48,6 +49,8 @@ if (is_post()) {
 </head>
 
 <body>
+
+<?php include '../include/sidebar.php'; ?>
 
 <div class="container">
 
