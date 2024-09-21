@@ -3,6 +3,31 @@ include '../_base.php';
 include '../_head.php';
 include '../include/sidebarAdmin.php'; 
 auth('Root', 'Admin');
+
+$member = $_db->query('SELECT * FROM user WHERE role = "Member"')->fetchAll();
+
+$currentYearMonth = date('Y-m');
+$currentYear = date('Y');
+$currentMonth = date('M');
+
+$sales = $_db->prepare('SELECT total FROM orders WHERE DATE_FORMAT(datetime, "%Y-%m") = ?');
+$sales->execute([$currentYearMonth]);
+$salesData = $sales->fetchAll(PDO::FETCH_OBJ);
+
+$salesYear = $_db->prepare('SELECT total FROM orders WHERE DATE_FORMAT(datetime, "%Y") = ?');
+$salesYear->execute([$currentYear]);
+$salesDataYear = $salesYear->fetchAll(PDO::FETCH_OBJ);
+
+$totalSales = 0;
+foreach ($salesData as $order) {
+    $totalSales += $order->total;
+}
+
+$totalSalesYear = 0;
+foreach ($salesDataYear as $order) {
+    $totalSalesYear += $order->total;
+}
+
 $_title = 'Admin Dashboard - ' . htmlspecialchars($_user->name);
 ?>
 <!DOCTYPE html>
@@ -18,10 +43,44 @@ $_title = 'Admin Dashboard - ' . htmlspecialchars($_user->name);
 
 <body>
     <div class="main-content" id="main-content">
-        <h1>Welcome, <?= htmlspecialchars($_user->name) ?> to the Admin Dashboard</h1>
-        <p>Here you can manage your admin tasks.</p>
-        <!-- Add a paragraph to display the current date and time -->
-        <p>Today : <span id="current-datetime"></span></p>
+        <h1 class="welcome">Welcome, <?= htmlspecialchars($_user->name) ?> to the Admin Dashboard</h1>
+        <p class="datetime">Today: <span id="current-datetime"></span></p>
+
+        <div class="dashboard-grid">
+            <div class="dashboard-box" id="total-users-box">
+                <h3>Total Users</h3>
+                <p id="total-users"><?= count($member) ?> user</p>
+            </div>
+
+            <div class="dashboard-box" id="total-month-sales-box">
+                <h3>Total Sales (<?= $currentMonth ?>)</h3>
+                <p id="total-sales">RM <?= number_format($totalSales, 2) ?></p>
+            </div>
+
+            <div class="dashboard-box" id="total-sales-box">
+                <h3>Total Sales (<?= $currentYear ?>)</h3>
+                <p id="total-sales">RM <?= number_format($totalSalesYear, 2) ?></p>
+            </div>
+
+            <div class="dashboard-box" id="top-products-box">
+                <h3>Top Products</h3>
+                <div class="chart" id="top-products-chart"></div> <!-- 这里放置图表 -->
+            </div>
+
+            <div class="dashboard-box" id="revenue-breakdown-box">
+                <h3>Revenue Breakdown</h3>
+                <div class="chart" id="revenue-breakdown"></div> <!-- 这里放置图表 -->
+            </div>
+
+            <div class="dashboard-box" id="recent-activity-box">
+                <h3>Recent Activity</h3>
+                <ul>
+                    <li>User Jane Doe registered</li>
+                    <li>Order #12345 placed</li>
+                    <li>User John flagged for review</li>
+                </ul>
+            </div>
+        </div>
     </div>
 </body>
 

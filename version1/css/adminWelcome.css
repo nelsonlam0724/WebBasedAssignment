@@ -15,6 +15,68 @@ body {
 }
 
 .main-content {
-    margin-top: 10%;
-    margin-left: 20%;
+    margin-left: 60px; 
+    padding: 20px;
+}
+
+/* 顶部欢迎语和时间 */
+.welcome {
+    font-size: 32px;
+    margin-bottom: 10px;
+}
+
+.datetime {
+    font-size: 18px;
+    color: #777;
+}
+
+/* 网格布局的CSS */
+.dashboard-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr); /* 三列布局 */
+    grid-gap: 15px; /* 缩小网格之间的间距 */
+    padding: 20px;
+    box-sizing: border-box;
+}
+
+.dashboard-box {
+    padding: 15px; /* 缩小内部边距 */
+    background-color: #fff;
+    box-shadow: 0 0 8px rgba(0, 0, 0, 0.1); /* 缩小阴影效果 */
+    border-radius: 6px;
+    text-align: center;
+    transition: transform 0.3s ease;
+}
+
+.dashboard-box h3 {
+    font-size: 16px; /* 缩小标题字体 */
+    margin-bottom: 8px;
+    color: #333;
+}
+
+.dashboard-box p {
+    font-size: 20px; /* 缩小文字字体 */
+    color: #555;
+}
+
+.dashboard-box:hover {
+    transform: translateY(-8px); /* 鼠标悬停时，格子微微上升 */
+}
+
+.chart {
+    height: 150px; /* 缩小图表的高度 */
+    background-color: #f0f0f0; /* 示例背景色，实际图表可替换 */
+}
+
+/* 响应式调整 */
+@media (max-width: 1200px) {
+    .dashboard-grid {
+        grid-template-columns: repeat(2, 1fr); /* 中等屏幕两列布局 */
+    }
+}
+
+@media (max-width: 768px) {
+    .dashboard-grid {
+        grid-template-columns: 1fr; /* 小屏幕单列布局 */
+    }
 }
