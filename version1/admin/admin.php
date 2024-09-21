@@ -4,8 +4,29 @@ include '../_head.php';
 include '../include/sidebarAdmin.php'; 
 auth('Root', 'Admin');
 
-$arr = $_db->query('SELECT * FROM user WHERE role = "Member"')->fetchAll();
+$member = $_db->query('SELECT * FROM user WHERE role = "Member"')->fetchAll();
 
+$currentYearMonth = date('Y-m');
+$currentYear = date('Y');
+$currentMonth = date('M');
+
+$sales = $_db->prepare('SELECT total FROM orders WHERE DATE_FORMAT(datetime, "%Y-%m") = ?');
+$sales->execute([$currentYearMonth]);
+$salesData = $sales->fetchAll(PDO::FETCH_OBJ);
+
+$salesYear = $_db->prepare('SELECT total FROM orders WHERE DATE_FORMAT(datetime, "%Y") = ?');
+$salesYear->execute([$currentYear]);
+$salesDataYear = $salesYear->fetchAll(PDO::FETCH_OBJ);
+
+$totalSales = 0;
+foreach ($salesData as $order) {
+    $totalSales += $order->total;
+}
+
+$totalSalesYear = 0;
+foreach ($salesDataYear as $order) {
+    $totalSalesYear += $order->total;
+}
 
 $_title = 'Admin Dashboard - ' . htmlspecialchars($_user->name);
 ?>
@@ -21,26 +42,24 @@ $_title = 'Admin Dashboard - ' . htmlspecialchars($_user->name);
 </head>
 
 <body>
-<div class="main-content" id="main-content">
+    <div class="main-content" id="main-content">
         <h1 class="welcome">Welcome, <?= htmlspecialchars($_user->name) ?> to the Admin Dashboard</h1>
         <p class="datetime">Today: <span id="current-datetime"></span></p>
 
-
         <div class="dashboard-grid">
-
             <div class="dashboard-box" id="total-users-box">
                 <h3>Total Users</h3>
-                <p id="total-users"><?= count($arr) ?></p>
+                <p id="total-users"><?= count($member) ?> user</p>
             </div>
 
-            <div class="dashboard-box" id="new-users-box">
-                <h3>Total Sales This Month</h3>
-                <p id="total-sales">RM 300000</p>
+            <div class="dashboard-box" id="total-month-sales-box">
+                <h3>Total Sales (<?= $currentMonth ?>)</h3>
+                <p id="total-sales">RM <?= number_format($totalSales, 2) ?></p>
             </div>
 
-            <div class="dashboard-box" id="sales-chart-box">
-                <h3>Sales Performance</h3>
-                <div class="chart" id="sales-chart"></div> <!-- 这里放置图表 -->
+            <div class="dashboard-box" id="total-sales-box">
+                <h3>Total Sales (<?= $currentYear ?>)</h3>
+                <p id="total-sales">RM <?= number_format($totalSalesYear, 2) ?></p>
             </div>
 
             <div class="dashboard-box" id="top-products-box">
@@ -61,7 +80,6 @@ $_title = 'Admin Dashboard - ' . htmlspecialchars($_user->name);
                     <li>User John flagged for review</li>
                 </ul>
             </div>
-
         </div>
     </div>
 </body>
