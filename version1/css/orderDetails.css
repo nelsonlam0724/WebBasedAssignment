@@ -1,5 +1,8 @@
-
 /* Form styling */
+form {
+    text-align: center;
+}
+
 form label {
     font-weight: bold;
     display: block;
@@ -9,15 +12,16 @@ form label {
 form div {
     margin-bottom: 15px;
     font-size: 1.1em;
+    text-align: center;
 }
 
 /* Table styling */
 table {
-    width: 100%;
+    width: 80%; /* Adjusted width */
     border-collapse: collapse;
-    margin: 20px 0;
+    margin: 20px auto; /* Center the table */
     font-size: 1em;
-    text-align: left;
+    text-align: center; /* Center the text */
 }
 
 table th, table td {
@@ -54,6 +58,8 @@ button {
     cursor: pointer;
     border-radius: 25px;
     transition: background-color 0.3s;
+    display: inline-block;
+    margin: 10px auto; /* Center button horizontally */
 }
 
 button:hover {
@@ -79,30 +85,38 @@ button:disabled {
     border: none;
     cursor: pointer;
     transition: background-color 0.3s;
+    display: inline-block;
+    margin: 10px auto;
 }
 
 .action-buttons button:hover {
     background-color: #723170;
 }
 
+/* Order details table styling */
 .order-details {
-    width: 30%;
+    width: 50%; /* Adjusted width */
     border-collapse: collapse;
-    margin: 20px 0;
+    margin: 20px auto; /* Center the table */
+    text-align: left;
 }
 
 .order-details th, .order-details td {
     padding: 10px;
     border: 1px solid #ddd;
-    text-align: left;
 }
 
 .order-details th {
     background-color: #4b26b0;
     font-weight: bold;
+    color: white;
 }
 
 .order-details td {
     background-color: #ffffff;
 }
 
+/* Centering the content inside the order-details table */
+.order-details th, .order-details td {
+    text-align: center; /* Center the content inside the cells */
+}
