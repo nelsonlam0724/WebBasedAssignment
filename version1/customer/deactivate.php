@@ -2,7 +2,7 @@
 include '../_base.php';
 include '../_head.php';
 
-auth('Role','Admin','Member');
+auth('Member');
 
 if (is_post()) {
     $deactivated_at = date('Y-m-d H:i:s'); // Get current time

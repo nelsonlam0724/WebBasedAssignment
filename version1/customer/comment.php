@@ -2,7 +2,7 @@
 include '../_base.php';
 include '../include/header.php'; 
 include '../include/sidebar.php';
-
+auth('Member');
 $id= req('id');
 $ordedsID = req('order_id');
 

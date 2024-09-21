@@ -2,7 +2,7 @@
 include '../_base.php';
 include '../_head.php';
 
-auth('Role','Admin','Member');
+auth('Member');
 // Initialize error array
 $_err = [];
 

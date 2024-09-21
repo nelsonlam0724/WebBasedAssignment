@@ -15,7 +15,7 @@ document.addEventListener('click', function (event) {
     // If the sidebar is open and the click is outside of the sidebar or the toggle button
     if (sidebar.classList.contains('show') && !isClickInsideSidebar && !isClickOnToggleBtn) {
         sidebar.classList.remove('show'); // Hide the sidebar
-        setTimeout(updateToggleButton, 300); // Delay the button update to match the transition duration
+        setTimeout(updateToggleButton, 400); // Delay the button update to match the transition duration
     }
 });
 

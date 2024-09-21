@@ -2,7 +2,7 @@
 include '../_base.php';
 include '../include/header.php'; 
 
-
+auth('Member');
 
 $getUserID = $_db->prepare('
     SELECT c.id, c.unit, p.name, p.price, p.product_id  

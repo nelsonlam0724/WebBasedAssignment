@@ -1,7 +1,7 @@
 <?php
 include '../_base.php';
 include '../_head.php';
-include 'sidebar.php'; 
+include '../include/sidebarAdmin.php'; 
 auth('Root', 'Admin');
 
 // Check if ID is provided in the URL
@@ -76,7 +76,7 @@ if ($current_role == 'Admin' && ($user->role == 'Root' || $user->role == 'Admin'
                         <?php if ($user->photo): ?>
                             <img src="../uploads/<?= htmlspecialchars($user->photo) ?>" alt="User Photo">
                         <?php else: ?>
-                            No photo available
+                            <img src="../photo/photo.jpg" alt="User Photo">
                         <?php endif; ?>
                     </td>
                 </tr>

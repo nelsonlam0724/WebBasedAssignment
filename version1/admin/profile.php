@@ -1,7 +1,7 @@
 <?php
 include '../_base.php';
 include '../_head.php';
-include 'sidebar.php'; 
+include '../include/sidebarAdmin.php'; 
 auth('Root','Admin');
 
 // Initialize error array

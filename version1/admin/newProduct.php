@@ -1,6 +1,6 @@
 <?php
 include '../_base.php';
-include 'sidebar.php';
+include '../include/sidebarAdmin.php'; 
 auth('Root', 'Admin');
 if (is_post()) {
     $name = req('name');
@@ -206,6 +206,3 @@ include '../_head.php';
 });
 </script>
 <script src="../js/productEdit.js"></script>
-
-<?php
-include '../_foot.php';

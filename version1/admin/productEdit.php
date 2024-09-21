@@ -2,7 +2,7 @@
 include '../_base.php';
 $_title = 'Product Details';
 include '../_head.php';
-include 'sidebar.php'; 
+include '../include/sidebarAdmin.php'; 
 
 auth('Root', 'Admin');
 
@@ -227,7 +227,3 @@ if (is_post()) {
 </form>
 
 <script src="../js/productEdit.js"></script>
-
-<?php
-include '../_foot.php';
-?>

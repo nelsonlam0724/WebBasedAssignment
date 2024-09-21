@@ -11,7 +11,7 @@ if (isset($_COOKIE['remember_token'])) {
 
     if ($u) {
         // Automatically log the user in if the token is valid
-        if ($u->role == 'Admin') {
+        if ($u->role == 'Admin' ||$u->role == 'Root') {
             $redirectUrl = 'admin/admin.php';
         } elseif ($u->role == 'Member' && $u->status == 'Active') {
             $redirectUrl = 'customer/customer.php';

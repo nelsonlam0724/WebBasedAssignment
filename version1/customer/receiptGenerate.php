@@ -1,5 +1,6 @@
 <?php
 include '../_base.php';
+auth('Member');
 $cartSelect =  $_SESSION['cartSelection'];
 $total = 0;
 

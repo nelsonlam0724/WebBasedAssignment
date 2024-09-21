@@ -1,5 +1,6 @@
 <?php 
 include '../_base.php';
+auth('Member');
 $order= $_SESSION['order_id'];
 $getPayment = $_db->prepare('
     SELECT * FROM payment_record WHERE order_id = ?

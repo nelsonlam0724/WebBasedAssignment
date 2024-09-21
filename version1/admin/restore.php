@@ -1,7 +1,6 @@
 <?php
 include '../_base.php';
-
-include 'sidebar.php'; 
+include '../include/sidebarAdmin.php'; 
 auth('Root', 'Admin');
 
 $role = $_user->role;

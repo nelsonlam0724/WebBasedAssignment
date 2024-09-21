@@ -1,7 +1,7 @@
 <?php
 include '../_base.php';
 include '../_head.php';
-include 'sidebar.php'; 
+include '../include/sidebarAdmin.php'; 
 auth('Root', 'Admin');
 
 // Retrieve the user ID from the query string
@@ -22,6 +22,16 @@ $address = $stm->fetch(PDO::FETCH_OBJ);
 
 $page = isset($_GET['page']) ? (int)$_GET['page'] : 1;
 $search_query = isset($_GET['search']) ? trim($_GET['search']) : '';
+
+// Determine the current user's role
+$current_role = $_user->role;
+$current_user_id = $_user->user_id;
+
+if ($current_role == 'Admin' && ($user->role == 'Root' || $user->role == 'Admin')) {
+    temp('info', 'You do not have permission to edit this user.');
+    redirect('admin.php');
+}
+
 $_title = 'User Details';
 ?>
 

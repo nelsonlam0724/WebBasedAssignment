@@ -4,7 +4,7 @@ include '../_head.php';
 include '../include/header.php';
 include '../include/sidebar.php';
 
-auth('Role', 'Admin', 'Member');
+auth('Member');
 // Fetch user profile information
 $user = $_SESSION['user'];
 $order_ID = req('order_id');

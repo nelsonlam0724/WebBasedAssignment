@@ -1,5 +1,4 @@
 <?php
-
 $user = $_SESSION['user']->name ?? 'guest';
 $userID = $_SESSION['user']->user_id  ?? '0';
 

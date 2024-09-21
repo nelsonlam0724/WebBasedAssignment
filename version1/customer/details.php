@@ -3,7 +3,7 @@ include '../_base.php';
 include '../include/header.php';
 include '../include/sidebar.php';
 
-auth('Role','Admin','Member');
+auth('Member');
 
 $user = $_SESSION['user'];
 

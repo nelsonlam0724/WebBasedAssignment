@@ -1,7 +1,7 @@
 <?php
 include '../_base.php';
 include '../_head.php';
-include 'sidebar.php'; 
+include '../include/sidebarAdmin.php'; 
 auth('Root', 'Admin'); // Allow both Root and Admin to access
 
 // Determine the logged-in user's role

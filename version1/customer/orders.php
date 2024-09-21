@@ -4,7 +4,7 @@ include '../include/header.php';
 include '../_head.php';
 include '../include/sidebar.php';
 
-auth('Role', 'Admin', 'Member');
+auth('Member');
 // Fetch user profile information
 $user = $_SESSION['user'];
 

@@ -2,7 +2,7 @@
 include '../_base.php';
 include '../_head.php';
 
-auth('Role', 'Admin', 'Member');
+auth('Member');
 $stm = $_db->prepare('SELECT * FROM address WHERE user_id = ?');
 $stm->execute([$_user->user_id]);
 $address = $stm->fetch(PDO::FETCH_OBJ);
