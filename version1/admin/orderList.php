@@ -168,6 +168,7 @@ $statuses = $statuses_stm->fetchAll(PDO::FETCH_COLUMN);
         </div>
         <div class="action-buttons">
             <a href="admin.php"><button>Back To Menu</button></a>
+            <a href="generateReport.php"><button>Generate Summary Seport</button></a>
         </div>
     </div>
 </body>
