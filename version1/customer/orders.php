@@ -11,18 +11,17 @@ $user = $_SESSION['user'];
 
 // Fetch pending orders
 $getPending = $_db->prepare('
-    SELECT o.*
+    SELECT DISTINCT o.*,p.name
     FROM orders AS o
     JOIN order_details AS od ON o.id = od.order_id
     JOIN product AS p ON od.product_id = p.product_id
     WHERE o.user_id = ?
-    ORDER BY id DESC
 ');
 $getPending->execute([$user->user_id]);
 $results = $getPending->fetchAll();
 
 // Fetch all orders for the user
-$stm = $_db->prepare('SELECT * FROM orders WHERE user_id = ?');
+$stm = $_db->prepare('SELECT DISTINCT o.* FROM orders AS o WHERE o.user_id = ?');
 $stm->execute([$user->user_id]);
 $arr = $stm->fetchAll();
 
@@ -40,12 +39,8 @@ $page = isset($_GET['page']) ? (int)$_GET['page'] : 1;
 $limit = 5; // Number of records per page
 
 // Start constructing the query
-$query = 'SELECT o.* FROM orders AS o JOIN order_details AS od ON o.id = od.order_id JOIN product AS p ON od.product_id = p.product_id WHERE 1=1';
-$params = [];
-
-// Filter by user ID
-$query .= ' AND o.user_id = ?';
-$params[] = $user->user_id;
+$query = 'SELECT DISTINCT o.* FROM orders AS o WHERE o.user_id = ?';
+$params = [$user->user_id];
 
 // Add status filter if provided
 if ($status_filter) {
@@ -78,7 +73,7 @@ $statuses = $statuses_stm->fetchAll(PDO::FETCH_COLUMN);
 <div class="container">
     <h1>Order</h1>
 
-    <p class="order-count">There are <?= count($results) ?> order(s)</p>
+    <p class="order-count">There are <?= count($arr) ?> order(s)</p>
 
     <!-- Filter and Sorting Options -->
     <div class="filter-sorting">
@@ -110,15 +105,15 @@ $statuses = $statuses_stm->fetchAll(PDO::FETCH_COLUMN);
 
     <!-- Orders Grid -->
     <div class="order-grid">
-        <?php foreach ($orders as $i => $order): ?>
+        <?php foreach ($orders as $order): ?>
             <?php if ($order->status != 'Pending' && $order->status != ''): ?>
                 <?php
-                // Fetch order details and product names
+                // Fetch order details (products) for the current order
                 $stm = $_db->prepare('
-                    SELECT i.*, p.name
-                    FROM order_details AS i, product AS p
-                    WHERE i.product_id = p.product_id
-                    AND i.order_id = ?
+                SELECT i.*, p.name
+                FROM order_details AS i
+                JOIN product AS p ON i.product_id = p.product_id
+                WHERE i.order_id = ?
                 ');
                 $stm->execute([$order->id]);
                 $order_details = $stm->fetchAll();
@@ -135,7 +130,6 @@ $statuses = $statuses_stm->fetchAll(PDO::FETCH_COLUMN);
                         <form method="post" action="../function/cancel_order.php">
                             <input type="hidden" name="order_ID" value="<?= $order->id ?>">
                             <input type="hidden" name="user_ID" value="<?= $order->user_id ?>">
-                            <input type="hidden" name="product_ID" value="<?= $order->product_id ?>">
                             <input type="submit" name="submit" value="Cancel Order" class="cancel-button" data-order>
                         </form>
                     </div>
@@ -171,7 +165,7 @@ $statuses = $statuses_stm->fetchAll(PDO::FETCH_COLUMN);
     <div class="pagination">
         <!-- Previous Page Link -->
         <?php if ($page > 1): ?>
-            <a href="?page=<?= $page - 1 ?>&sort_by=<?= urlencode($sort_by) ?>&status=<?= urlencode($status_filter) ?>&displ=<?= ($page == 1) ? $page : ($page - 1) * 5 ?>">Previous</a>
+            <a href="?page=<?= $page - 1 ?>&sort_by=<?= urlencode($sort_by) ?>&status=<?= urlencode($status_filter) ?>&displ=<?= ($page == 1) ? $page : ($page - 2) * 5 ?>">Previous</a>
         <?php endif; ?>
 
         <!-- Page Numbers -->
@@ -181,14 +175,14 @@ $statuses = $statuses_stm->fetchAll(PDO::FETCH_COLUMN);
         $end_page = min($total_pages, $page + $page_range);
 
         if ($start_page > 1): ?>
-            <a href="?page=1&sort_by=<?= urlencode($sort_by) ?>&status=<?= urlencode($status_filter) ?>">1</a>
+            <a href="?page=1&sort_by=<?= urlencode($sort_by) ?>&status=<?= urlencode($status_filter) ?>&displ=<?= ($page == 1) ? $page : ($page - 1)  ?>">1</a>
             <?php if ($start_page > 2): ?>
                 <span>...</span>
             <?php endif; ?>
         <?php endif; ?>
 
         <?php for ($i = $start_page; $i <= $end_page; $i++): ?>
-            <a href="?page=<?= $i ?>&sort_by=<?= urlencode($sort_by) ?>&status=<?= urlencode($status_filter) ?>&displ=<?= ($i == 1) ? $i : ($i - 1) * 5 ?>" class="<?= $i == $page ? 'current-page' : '' ?>">
+            <a href="?page=<?= $i ?>&sort_by=<?= urlencode($sort_by) ?>&status=<?= urlencode($status_filter) ?>&displ=<?= ($i == 1) ? $i-1 : ($i - 1) * 5 ?>" class="<?= $i == $page ? 'current-page' : '' ?>">
                 <?= $i ?>
             </a>
         <?php endfor; ?>
@@ -204,8 +198,7 @@ $statuses = $statuses_stm->fetchAll(PDO::FETCH_COLUMN);
 
         <!-- Next Page Link -->
         <?php if ($page < $total_pages): ?>
-            <a href="?page=<?= $page + 1 ?>&sort_by=<?= urlencode($sort_by) ?>&status=<?= urlencode($status_filter) ?>&displ=<?= ($page == 1) ? $page : ($page - 1) * 5 ?>">Next</a>
+            <a href="?page=<?= $page + 1 ?>&sort_by=<?= urlencode($sort_by) ?>&status=<?= urlencode($status_filter) ?>&displ=<?= ($page == 1) ? $page*5 : ($page - 1) * 5 ?>">Next</a>
         <?php endif; ?>
     </div>
 </div>
-
