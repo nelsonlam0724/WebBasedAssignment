@@ -95,22 +95,31 @@ if ($userID != '0') {
                 <h1> QIAN<span style="color:red">HO</span></h1>
             </div>
 
-            
+
 
             <div class="small-icon">
-            <div class="userAcc-block">
-                <div class="user-icon">
-                    <?php
-                    $img = ($_SESSION['user']->photo != null) ? "../uploads/" . $_SESSION['user']->photo : "https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_960_720.png";
-                    ?>
-                    <img style="  object-fit: cover;" src="<?= $img ?>" width="40" height="40">
-                </div>
-                <div class="text">
-                    <div class="text-first">
-                        <h6 data-user="<?= $userID ?>">Hi,<?= $user ?></h6>
+
+                <div class="list-containers">
+                    <div class="userAcc-block">
+                        <div class="user-icon">
+                            <?php
+                            $img = ($_SESSION['user']->photo != null) ? "../uploads/" . $_SESSION['user']->photo : "https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_960_720.png";
+                            ?>
+                            <img style="  object-fit: cover;" src="<?= $img ?>" width="40" height="40">
+                        </div>
+                        <div class="text">
+                            <div class="text-first">
+                                <h6 data-user="<?= $userID ?>">Hi,<?= $user ?><span> <i style="font-size:20px;padding:0px 5px" class="fa fa-caret-down"></i> </span></h6>
+                            </div>
+                        </div>
+
                     </div>
+
+                    <ul class="user-sec-list">
+                    <a class="als" href="customerProfile.php"><li><i class="fas fa-user"></i> Profile</li></a>
+                    <a class="als" href="../logout.php"><li> <i class="fas fa-sign-out-alt"></i> Logout </li></a>
+                    </ul>
                 </div>
-            </div>
 
                 <a href="../customer/cart.php">
                     <p style="font-size: 30px;cursor:pointer;color:black;" class="cart-icon">
@@ -125,6 +134,7 @@ if ($userID != '0') {
 
                 <span style="font-size:30px;cursor:pointer" class="openbtn">&#9776;</span>
                 <script src="../js/header.js"></script>
+
             </div>
         </div>
         <!-- <div class="second-row">
@@ -133,7 +143,3 @@ if ($userID != '0') {
 
         </div> -->
     </header>
-
-
-
-    
