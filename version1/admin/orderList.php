@@ -2,13 +2,14 @@
 include '../_base.php';
 include '../_head.php';
 require_once '../lib/SimplePager.php'; // Include SimplePager class
-include '../include/sidebarAdmin.php'; 
+include '../include/sidebarAdmin.php';
 
 auth('Root', 'Admin');
 
 $arr = $_db->query('SELECT * FROM orders')->fetchAll();
 
 // Initialize variables
+$search_query = isset($_GET['search']) ? trim($_GET['search']) : '';
 $status_filter = isset($_GET['status']) ? trim($_GET['status']) : '';
 $sort_by = isset($_GET['sort_by']) ? trim($_GET['sort_by']) : 'id';
 $sort_order = isset($_GET['sort_order']) ? trim($_GET['sort_order']) : 'ASC';
@@ -18,6 +19,12 @@ $limit = 10; // Number of records per page
 // Start constructing the query
 $query = 'SELECT * FROM orders WHERE 1=1';
 $params = [];
+
+if ($search_query) {
+    $query .= ' AND (id LIKE ? OR user_id LIKE ?)';
+    $params[] = '%' . $search_query . '%';
+    $params[] = '%' . $search_query . '%';
+}
 
 // Add status filter if provided
 if ($status_filter) {
@@ -50,6 +57,28 @@ $statuses = $statuses_stm->fetchAll(PDO::FETCH_COLUMN);
     <script src="../js/orders.js"></script>
     <link rel="stylesheet" href="../css/orderList.css"> <!-- Link the external CSS -->
     <title>Order List</title>
+    <script>
+        function submitSearch() {
+            document.getElementById('searchForm').submit();
+        }
+
+        function focusSearchInput() {
+            const searchInput = document.getElementById('searchInput');
+            searchInput.focus();
+        }
+
+        window.onload = function() {
+            const searchInput = document.getElementById('searchInput');
+            if ('<?= htmlspecialchars($search_query) ?>') {
+                setTimeout(() => {
+                    searchInput.focus();
+                    searchInput.setSelectionRange(searchInput.value.length, searchInput.value.length); // 将光标放在末尾
+                }, 0);
+            } else {
+                searchInput.focus();
+            }
+        };
+    </script>
 </head>
 
 <body>
@@ -57,6 +86,15 @@ $statuses = $statuses_stm->fetchAll(PDO::FETCH_COLUMN);
         <h1>Order List</h1>
 
         <p>There has <?= count($arr) ?> order(s)</p>
+
+        <!-- Search Form -->
+        <form action="orderList.php" method="get" id="searchForm">
+            <input type="text" id="searchInput" name="search" placeholder="Search by id" value="<?= htmlspecialchars($search_query) ?>" oninput="submitSearch()">
+            <input type="hidden" name="status" value="<?= htmlspecialchars($status_filter) ?>">
+            <input type="hidden" name="sort_by" value="<?= htmlspecialchars($sort_by) ?>">
+            <input type="hidden" name="sort_order" value="<?= htmlspecialchars($sort_order) ?>">
+            <input type="hidden" name="page" value="1"> <!-- Always start at page 1 for new searches -->
+        </form>
 
         <!-- Filter and Sorting Options -->
         <div class="filter-sorting">
