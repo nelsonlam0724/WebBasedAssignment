@@ -1,12 +1,12 @@
 <?php
 include '../_base.php';
-include 'sidebar.php'; 
+include 'sidebar.php';
 
 if (is_post()) {
     $name = req('name');
     $price = req('price');
     $quantity = req('quantity');
-    $photos = get_file_multiple('photo'); 
+    $photos = get_file_multiple('photo');
     $category_id = req('category_id');
     $desc = req('description');
     $weight = req('weight');
@@ -90,10 +90,9 @@ include '../_head.php';
 ?>
 
 <link rel="stylesheet" href="../css/product.css">
-<a href="productList.php"><button type="button">⬅️ Back to Product List</button></a>
 <h1>Add New Product</h1>
 <form method="post" class="form" enctype="multipart/form-data">
-    
+
     <label for="name">Product Name</label><br>
     <?= html_text('name', 'maxlength="100"') ?>
     <?= err('name') ?>
@@ -141,10 +140,57 @@ include '../_head.php';
     <?= err('category_id') ?>
     <br>
     <br>
-    <button type="submit">Submit</button>
+
+    <!-- Button to toggle New Category Input -->
+    <button type="button" id="new-category-btn">Add New Category</button>
+
+    <!-- New Category Input, initially hidden -->
+    <div id="new-category-input" style="display: none;">
+        <label for="new-category">New Category</label><br>
+        <input type="text" name="new_category" id="new-category" maxlength="100">
+        <?= err('new_category') ?>
+    </div>
+    <br>
+    <br>
+
+    <button type="submit" id="submit-button">Submit</button>
 </form>
 
-<script src="../js/product.js"></script>
+<script>
+    document.getElementById('new-category-btn').addEventListener('click', function() {
+        var newCategoryInput = document.getElementById('new-category-input');
+        if (newCategoryInput.style.display === 'none') {
+            newCategoryInput.style.display = 'block';
+        } else {
+            newCategoryInput.style.display = 'none';
+        }
+    });
+
+    $(document).ready(function () {
+    $('label.upload input[type=file]').on('change', e => {
+        const files = e.target.files;
+        const previewContainer = $('#image-previews');  // Container for image previews
+        const defaultPhoto = $('#default-photo');  // Default photo image
+    
+        previewContainer.empty();  // Clear previous previews
+    
+        // Remove or hide the default photo
+        if (defaultPhoto.length) {
+            defaultPhoto.remove();  // You can also use .hide() if you want to keep it in the DOM
+        }
+    
+        // Loop through selected files and display image previews
+        Array.from(files).forEach(file => {
+            if (file.type.startsWith('image/')) {
+                const img = $('<img>').addClass('preview-image').attr('src', URL.createObjectURL(file));
+                previewContainer.append(img);
+            }
+        });
+    });
+    
+});
+</script>
+<script src="../js/productEdit.js"></script>
 
 <?php
 include '../_foot.php';

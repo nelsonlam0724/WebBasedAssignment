@@ -1,7 +1,6 @@
 <?php
 include '../_base.php';
 require_once '../lib/SimplePager.php';
-include 'sidebar.php'; 
 
 $search_query = isset($_GET['search']) ? trim($_GET['search']) : '';
 $page = isset($_GET['page']) ? (int)$_GET['page'] : 1;
@@ -12,7 +11,7 @@ $status_filter = isset($_GET['status']) ? $_GET['status'] : '';
 $limit = 5;
 
 // Select product with category name using LEFT JOIN
-$sql = 'SELECT p.*, c.category_name FROM product p
+$sql = 'SELECT p.*, c.category_name, c.category_status FROM product p
 LEFT JOIN category c ON p.category_id = c.category_id WHERE 1=1';
 $params = [];
 
@@ -35,7 +34,6 @@ if ($status_filter) {
 $sql .= " ORDER BY p.$sort_by $sort_order";
 
 $pager = new SimplePager($sql, $params, $limit, $page);
-
 $product = $pager->result;
 $total_pages = $pager->page_count;
 
@@ -50,35 +48,19 @@ include '../_head.php';
 ?>
 
 <link rel="stylesheet" href="../css/product.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+
 <div class="container">
     <h1>Product List</h1>
-
-    <!-- Success/Error Messages -->
-    <?php if (isset($_SESSION['success_message'])): ?>
-        <div class="success-message">
-            <?= htmlspecialchars($_SESSION['success_message']); ?>
-            <?php unset($_SESSION['success_message']); ?>
-        </div>
-    <?php endif; ?>
-
-    <?php if (isset($_SESSION['error_message'])): ?>
-        <div class="error-message">
-            <?= htmlspecialchars($_SESSION['error_message']); ?>
-            <?php unset($_SESSION['error_message']); ?>
-        </div>
-    <?php endif; ?>
 
     <!-- Search Form -->
     <form action="productList.php" method="get" class="search-form">
         <input type="text" name="search" placeholder="Search" value="<?= htmlspecialchars($search_query) ?>">
-        <input type="hidden" name="sort_by" value="<?= htmlspecialchars($category_filter) ?>">
-        <input type="hidden" name="sort_order" value="<?= htmlspecialchars($status_filter) ?>">
         <input type="hidden" name="sort_by" value="<?= htmlspecialchars($sort_by) ?>">
         <input type="hidden" name="sort_order" value="<?= htmlspecialchars($sort_order) ?>">
-        <input type="hidden" name="page" value="1">
+        <input type="hidden" name="page" value="<?= htmlspecialchars($page) ?>">
         <button type="submit" class="form-button">Search</button>
     </form>
-
 
     <!-- Filter and Sorting Options -->
     <div class="filter-sorting">
@@ -127,7 +109,7 @@ include '../_head.php';
 
     <div class="table-wrapper">
         <!-- Product Table with Checkboxes -->
-        <form method="post" action="deactivateProduct.php">
+        <form method="post" action="deactivateProduct.php" onsubmit="return checkSelection(this);">
             <?php if ($product): ?>
                 <table>
                     <thead>
@@ -143,28 +125,46 @@ include '../_head.php';
                     <tbody>
                         <?php foreach ($product as $p): ?>
                             <tr>
-                                <!-- Disable checkbox for deactivated products -->
                                 <td>
-                                <input type="checkbox" name="product_ids[]" value="<?= $p->product_id ?>" class="product-checkbox">
+                                    <input type="checkbox" name="product_ids[]" value="<?= $p->product_id ?>" class="product-checkbox">
                                 </td>
                                 <td><?= htmlspecialchars($p->product_id) ?></td>
                                 <td><?= htmlspecialchars($p->name) ?></td>
-                                <td><?= htmlspecialchars($p->category_name) ?></td>
-                                <!-- Add Status Column -->
+                                <td>
+                                    <?= htmlspecialchars($p->category_name) ?>
+                                </td>
                                 <td><?= htmlspecialchars($p->status) ?></td>
                                 <td class="actions">
+                                    <!-- Category Activation/Deactivation -->
+                                    <?php if ($p->category_status === 'Activate'): ?>
+                                        <form method="post" action="deactivateCategory.php" class="inline-form">
+                                            <input type="hidden" name="category_id" value="<?= $p->category_id ?>">
+                                            <button id="deactivate-category-button" type="submit" formaction="deactivateCategory.php" onclick="return confirm('Are you sure you want to deactivate this category?');">Deactivate Category</button>
+                                        </form>
+                                    <?php else: ?>
+                                        <form method="post" action="activateCategory.php" class="inline-form">
+                                            <input type="hidden" name="category_id" value="<?= $p->category_id ?>">
+                                            <button id="activate-category-button" type="submit" formaction="activateCategory.php" onclick="return confirm('Are you sure you want to activate this category?');">Activate Category</button>
+                                        </form>
+                                    <?php endif; ?>
+
+                                    <!-- Product Edit Action -->
                                     <a href="productEdit.php?product_id=<?= $p->product_id ?>" class="edit-container">
-                                        <button type="button">Edit Details</button>
+                                        <button type="button" class="edit-button">
+                                            <i class="fas fa-edit"></i>
+                                        </button>
                                     </a>
                                 </td>
                             </tr>
                         <?php endforeach; ?>
                     </tbody>
-                </table>
 
+                </table>
                 <div class="action-buttons">
-                    <button type="submit" id="deactivate-selected" onclick="return confirm('Are you sure you want to deactivate the selected products?');">Deactivate</button>
-                    <button type="submit" formaction="activateProduct.php" id="activate-selected" onclick="return confirm('Are you sure you want to activate the selected products?');">Activate</button>
+                    <div class="action-buttons">
+                        <button type="submit" formaction="deactivateProduct.php" id="deactivate-selected" onclick="return confirm('Are you sure you want to deactivate the selected products?');">Deactivate</button>
+                        <button type="submit" formaction="activateProduct.php" id="activate-selected" onclick="return confirm('Are you sure you want to activate the selected products?');">Activate</button>
+                    </div>
                 </div>
 
                 <div class="pagination-container">
@@ -186,12 +186,9 @@ include '../_head.php';
                     <?php if ($page < $total_pages): ?>
                         <a href="?search=<?= urlencode($search_query) ?>&page=<?= $page + 1 ?>&sort_by=<?= urlencode($sort_by) ?>&sort_order=<?= urlencode($sort_order) ?>&category=<?= urlencode($category_filter) ?>&status=<?= urlencode($status_filter) ?>" class="pagination-button">Next</a>
                     <?php endif; ?>
-
                 </div>
             <?php else: ?>
-                <?php if (!$product): ?>
-                    <p class="no-results">No active products available for deactivation.</p>
-                <?php endif; ?>
+                <p class="no-results">No active products available for deactivation.</p>
             <?php endif; ?>
         </form>
 

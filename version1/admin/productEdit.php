@@ -2,7 +2,7 @@
 include '../_base.php';
 $_title = 'Product Details';
 include '../_head.php';
-include 'sidebar.php'; 
+
 $_err = [];
 
 $product_id = req('product_id');
@@ -12,10 +12,14 @@ if (!$product_id) {
     redirect('productList.php');
 }
 
-$stm = $_db->prepare('SELECT * FROM product WHERE product_id = ?');
+$stm = $_db->prepare('
+    SELECT p.*, c.category_name 
+    FROM product p 
+    LEFT JOIN category c ON p.category_id = c.category_id 
+    WHERE p.product_id = ?
+');
 $stm->execute([$product_id]);
 $product = $stm->fetch(PDO::FETCH_OBJ);
-
 $stm = $_db->prepare('SELECT image_id, product_photo FROM product_image WHERE product_id = ?');
 $stm->execute([$product_id]);
 $images = $stm->fetchAll();
@@ -35,6 +39,7 @@ if (is_post()) {
     $new_status = req('status');
     $new_product_photo = get_file_multiple('photo');
     $existing_image_ids = req('existing_image_ids');
+    $new_category_name = req('new_category_name');  // New category name if edited
 
     // Validation
     if (!$new_name) {
@@ -87,8 +92,14 @@ if (is_post()) {
 
     if (empty($_err)) {
         // Update product details
-        $stm = $_db->prepare('UPDATE product SET name = ?, price = ?, category_id = ?, quantity = ?, weight = ?, description = ? , status = ? WHERE product_id = ?');
+        $stm = $_db->prepare('UPDATE product SET name = ?, price = ?, category_id = ?, quantity = ?, weight = ?, description = ?, status = ? WHERE product_id = ?');
         $stm->execute([$new_name, $new_price, $new_category, $new_quantity, $new_weight, $new_description, $new_status, $product_id]);
+
+        // Update category name if it was edited
+        if ($new_category_name) {
+            $stm = $_db->prepare('UPDATE category SET category_name = ? WHERE category_id = ?');
+            $stm->execute([$new_category_name, $new_category]);
+        }
 
         // Update existing images
         if (!empty($existing_image_ids)) {
@@ -111,14 +122,20 @@ if (is_post()) {
 ?>
 
 <link rel="stylesheet" href="../css/product.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
 <a href="productList.php"><button type="button">⬅️ Back to Product List</button></a>
 <h1>Product Details</h1>
 
-<button type="button" id="edit-button">Edit</button>
-<button type="button" id="cancel-button" style="display: none;">Cancel</button>
-
 <form method="post" enctype="multipart/form-data" class="form" id="product-form">
     <table>
+    <div class="form-buttons">
+            <button type="button" id="edit-button">
+            <i class="fas fa-edit"></i>
+            </button>
+            <button type="button" id="cancel-button">
+            <i class="fas fa-times"></i>
+            </button>
+        </div>
         <tr>
             <th>Product Name:</th>
             <td>
@@ -134,20 +151,24 @@ if (is_post()) {
             </td>
         </tr>
         <tr>
-            <th>Category:</th>
-            <td>
-                <select name="category_id">
-                    <?php
-                    $categories = $_db->query('SELECT category_id, category_name FROM category')->fetchAll();
-                    foreach ($categories as $category) {
-                        $selected = ($category->category_id == $product->category_id) ? 'selected' : '';
-                        echo '<option value="' . htmlspecialchars($category->category_id) . '" ' . $selected . '>' . htmlspecialchars($category->category_name) . '</option>';
-                    }
-                    ?>
-                </select>
-                <?= isset($_err['category_id']) ? "<span class='error'>{$_err['category_id']}</span>" : '' ?>
-            </td>
-        </tr>
+    <th>Category:</th>
+    <td>
+        <select name="category_id" id="category-select">
+            <?php
+            $categories = $_db->query('SELECT category_id, category_name FROM category')->fetchAll();
+            foreach ($categories as $category) {
+                $selected = ($category->category_id == $product->category_id) ? 'selected' : '';
+                echo '<option value="' . htmlspecialchars($category->category_id) . '" ' . $selected . '>' . htmlspecialchars($category->category_name) . '</option>';
+            }
+            ?>
+        </select>
+
+        <input type="text" name="new_category_name" id="new-category-name" maxlength="100" style="display:none;" value="<?= htmlspecialchars($product->category_name) ?>">
+        <button type="button" id="edit-category-btn" style="display: none;">Edit Category</button>
+
+        <?= isset($_err['new_category_name']) ? "<span class='error'>{$_err['new_category_name']}</span>" : '' ?>
+    </td>
+</tr>
         <tr>
             <th>Quantity:</th>
             <td>
@@ -173,12 +194,8 @@ if (is_post()) {
             <th>Status:</th>
             <td>
                 <select name="status" id="status">
-                    <option value="<?= htmlspecialchars('Available') ?>" <?= $product->status == 'Available' ? 'selected' : '' ?>>
-                        <?= htmlspecialchars('Available') ?>
-                    </option>
-                    <option value="<?= htmlspecialchars('Unavailable') ?>" <?= $product->status == 'Unavailable' ? 'selected' : '' ?>>
-                        <?= htmlspecialchars('Unavailable') ?>
-                    </option>
+                    <option value="Available" <?= $product->status == 'Available' ? 'selected' : '' ?>>Available</option>
+                    <option value="Unavailable" <?= $product->status == 'Unavailable' ? 'selected' : '' ?>>Unavailable</option>
                 </select>
                 <?= isset($_err['status']) ? "<span class='error'>" . htmlspecialchars($_err['status']) . "</span>" : '' ?>
             </td>

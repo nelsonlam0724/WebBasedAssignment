@@ -155,7 +155,6 @@ $('.add-to-card').on('click',function(){
  }
 });
 
-
 $(document).ready(function() {
     const ratingElements = $('.rate');
     const starContainers = $('.star-rating-display');
@@ -179,28 +178,4 @@ $(document).ready(function() {
             starContainer.append(star);
         }
     }
-});
-
-$(document).ready(function () {
-    $('label.upload input[type=file]').on('change', e => {
-        const files = e.target.files;
-        const previewContainer = $('#image-previews');  // Container for image previews
-        const defaultPhoto = $('#default-photo');  // Default photo image
-    
-        previewContainer.empty();  // Clear previous previews
-    
-        // Remove or hide the default photo
-        if (defaultPhoto.length) {
-            defaultPhoto.remove();  // You can also use .hide() if you want to keep it in the DOM
-        }
-    
-        // Loop through selected files and display image previews
-        Array.from(files).forEach(file => {
-            if (file.type.startsWith('image/')) {
-                const img = $('<img>').addClass('preview-image').attr('src', URL.createObjectURL(file));
-                previewContainer.append(img);
-            }
-        });
-    });
-    
 });
