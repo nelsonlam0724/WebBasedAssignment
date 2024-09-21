@@ -2,6 +2,14 @@
 /*requestReset and verfiyCode*/
 /* Body and Form styling */
 /* Body and Form styling */
+* {
+    margin: 0;
+    padding: 0;
+    text-decoration: none;
+    list-style-type: none;
+    box-sizing: border-box;
+    user-select: none;
+}
 body {
     font-family: Arial, sans-serif;
     background-color: #f7f7f7; /* Changed to match previous design */

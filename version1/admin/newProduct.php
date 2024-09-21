@@ -8,6 +8,7 @@ if (is_post()) {
     $quantity = req('quantity');
     $photos = get_file_multiple('photo');
     $category_id = req('category_id');
+    $new_category = req('new_category');
     $desc = req('description');
     $weight = req('weight');
 
@@ -44,8 +45,12 @@ if (is_post()) {
         }
     }
 
-    if (!$category_id) {
+    if (!$category_id && !$new_category) {
         $_err['category_id'] = 'Required';
+    }
+    
+    if ($new_category && strlen($new_category) > 100) {
+        $_err['new_category'] = 'Maximum 100 characters';
     }
 
     if (!$desc) {
@@ -61,6 +66,16 @@ if (is_post()) {
     }
 
     if (!$_err) {
+        if ($new_category) {
+            $new_category_id = generateID('category', 'category_id', 'CT', 4); // Generate new category ID
+            $stm = $_db->prepare('
+            INSERT INTO category (category_id, category_name, category_status)
+            VALUES (?, ?, "Activate")
+            ');
+            $stm->execute([$new_category_id, $new_category]);
+            $category_id = $new_category_id; // Use the newly created category ID
+        }
+
         $product_id = generateID('product', 'product_id', 'P', 4);
         $stm = $_db->prepare('
         INSERT INTO product (product_id, name, price, category_id, quantity, description, weight, status)
@@ -68,7 +83,7 @@ if (is_post()) {
         ');
         $stm->execute([$product_id, $name, $price, $category_id, $quantity, $desc, $weight]);
 
-        $photos = array_slice($photos, 0, 5); // Limit to 3 images
+        $photos = array_slice($photos, 0, 5); // Limit to 5 images
 
         foreach ($photos as $p) {
             $photo = save_photo_admin($p); // Save each image
