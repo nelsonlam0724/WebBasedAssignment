@@ -198,7 +198,7 @@ $statuses = $statuses_stm->fetchAll(PDO::FETCH_COLUMN);
 
         <!-- Next Page Link -->
         <?php if ($page < $total_pages): ?>
-            <a href="?page=<?= $page + 1 ?>&sort_by=<?= urlencode($sort_by) ?>&status=<?= urlencode($status_filter) ?>&displ=<?= ($page == 1) ? $page*5 : ($page - 1) * 5 ?>">Next</a>
+            <a href="?page=<?= $page + 1 ?>&sort_by=<?= urlencode($sort_by) ?>&status=<?= urlencode($status_filter) ?>&displ=<?= ($page == 1) ? $page*5 : ($page) * 5 ?>">Next</a>
         <?php endif; ?>
     </div>
 </div>
