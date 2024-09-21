@@ -1,6 +1,7 @@
 <?php 
 include '../_base.php';
 include '../include/header.php'; 
+include '../include/sidebar.php';
 
 $id= req('id');
 $ordedsID = req('order_id');

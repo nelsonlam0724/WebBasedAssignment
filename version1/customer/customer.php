@@ -4,6 +4,7 @@ auth('Role','Admin','Member');
 // Fetch user profile information
 $_title = 'Customer Dashboard - ' . htmlspecialchars($_user->name);
 include '../include/header.php';
+include '../include/sidebar.php';
 ?>
 <!DOCTYPE html>
 <html lang="en">

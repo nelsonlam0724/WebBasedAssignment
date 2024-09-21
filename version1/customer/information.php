@@ -1,6 +1,7 @@
 <?php
 include '../_base.php';
 include '../include/header.php';
+include '../include/sidebar.php';
 
 auth('Role', 'Admin', 'Member');
 // Fetch user profile information
@@ -20,7 +21,7 @@ $results = $getPending->fetchAll();
 ?>
 
 <link rel="stylesheet" href="../css/information.css">
-<link rel="stylesheet" href="../css/orderItem.css">
+
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script src="../js/orders.js"></script>
 </head>
@@ -53,8 +54,8 @@ $results = $getPending->fetchAll();
                     <div class="item-details">
                         <div class="item-text">
                             <h2><?= $count + 1 ?>.Order ID : <?= $o->id ?></h2>
-                            <p>Total amount : RM <?= $o->total ?></p>
-                            <p>Date order : <?= $o->datetime ?></p>
+                            <p class="pp">Total amount : RM <?= $o->total ?></p>
+                            <p class="pp">Date order : <?= $o->datetime ?></p>
                             <a href="details.php?ship_id=<?= $o->ship_id ?>&order_id=<?= $o->id ?>"><button class="check-button">Check</button></a>
                         </div>
                     </div>
@@ -136,7 +137,7 @@ $results = $getPending->fetchAll();
                             <h3><?= $o->product_name  ?></h3>
                             <h3>unit : <?= $o->unit ?></h3>
                             <h3>price : <?= $o->odPrice ?></h3>
-                            <p style="color:orangered">Subtotal :RM <?= $o->subtotal ?></p>
+                            <p class="pp" style="color:orangered">Subtotal :RM <?= $o->subtotal ?></p>
                         </div>
 
                     </div>

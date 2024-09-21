@@ -3,6 +3,7 @@
 
 include '../_base.php';
 include '../include/header.php'; 
+include '../include/sidebar.php';
 
 
 $information = $_db->prepare('SELECT p.* ,f.* 
