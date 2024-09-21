@@ -1,7 +1,7 @@
 <?php
 include '../_base.php';
 
-// Check if product_ids are posted for activation
+// Check if product_ids are posted
 if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['product_ids'])) {
     $product_ids = $_POST['product_ids'];
 
@@ -9,7 +9,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['product_ids'])) {
         // Prepare placeholders for SQL
         $placeholders = implode(',', array_fill(0, count($product_ids), '?'));
 
-        // Prepare the SQL query to activate only inactive products
+        // Prepare the SQL query to activate only unavailable products
         $sql = "UPDATE product SET status = 'Available' WHERE product_id IN ($placeholders) AND status != 'Available'";
         $stm = $_db->prepare($sql);
 
@@ -31,8 +31,4 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['product_ids'])) {
         redirect('productList.php');
         exit;
     }
-} else {
-    temp('info', 'You cannot activate without selecting products.');
-    redirect('productList.php');
-    exit;
 }

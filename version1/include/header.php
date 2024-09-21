@@ -1,4 +1,5 @@
 <?php
+
 $user = $_SESSION['user']->name ?? 'guest';
 $userID = $_SESSION['user']->user_id  ?? '0';
 
@@ -27,8 +28,6 @@ if ($userID != '0') {
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.js"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
-
-    
     <link rel="stylesheet" href="../css/header.css">
 </head>
 <style>
@@ -93,7 +92,6 @@ if ($userID != '0') {
                 }
             </script>
 
-
             <div class="brand">
                 <h1> QIAN<span style="color:red">HO</span></h1>
             </div>
@@ -101,11 +99,9 @@ if ($userID != '0') {
             <div class="userAcc-block">
                 <div class="user-icon">
                     <?php
-                    $img = ($_SESSION['user']->photo != null) ? "../uploads/".$_SESSION['user']->photo : "https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_960_720.png";
- 
-
-?>
-                    <img style="  object-fit: cover;" src="<?=  $img ?>" width="40" height="40">
+                    $img = ($_SESSION['user']->photo != null) ? "../uploads/" . $_SESSION['user']->photo : "https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_960_720.png";
+                    ?>
+                    <img style="  object-fit: cover;" src="<?= $img ?>" width="40" height="40">
                 </div>
                 <div class="text">
                     <div class="text-first">
@@ -115,49 +111,48 @@ if ($userID != '0') {
             </div>
 
             <div class="small-icon">
-            <a href="../customer/cart.php">
-                <p style="font-size: 30px;cursor:pointer;color:black;" class="cart-icon">
-                    <i class='bx bx-cart'></i>
-                    <?php if ($userID != '0') { ?>
-                        <span style="font-size:10px;">
-                            <?= $result['total_records']  ?>
-                        </span>
-                    <?php } ?>
-                </P>
-            </a>
+                <a href="../customer/cart.php">
+                    <p style="font-size: 30px;cursor:pointer;color:black;" class="cart-icon">
+                        <i class='bx bx-cart'></i>
+                        <?php if ($userID != '0') { ?>
+                            <span style="font-size:10px;">
+                                <?= $result['total_records']  ?>
+                            </span>
+                        <?php } ?>
+                    </P>
+                </a>
 
-
-
-            <span style="font-size:30px;cursor:pointer" class="openbtn">&#9776;</span>
-           <script src="../js/header.js"></script>
+                <span style="font-size:30px;cursor:pointer" class="openbtn">&#9776;</span>
+                <script src="../js/header.js"></script>
             </div>
         </div>
+        <!-- <div class="second-row">
+
+         
+
+        </div> -->
     </header>
 
 
 
-<div id="mySidenav" class="sidenav">
-    <a href="javascript:void(0)" class="closebtn">&times;</a>
-    <div class="content">
-        <div class="profile">
-            <img style="object-fit: cover;" src="<?= $img ?>" width="80">
-            <h2 style="color:white"><?= $user ?></h2>
-            <p><?= $_SESSION['user']->email ?></p>
-        </div>
-        <div style="padding:50px 9px;">
-            <a class="al" href="customer.php"><i class="fa fa-home" ></i>  Home</a>
-            <a class="al" href="customerProfile.php"><i class="fas fa-user" ></i>   Profile</a>
-            <a class="al" href="product.php"><i class='fas fa-address-book' ></i>   Product</a>
-            <a class="al" href="information.php"> <i class="fas fa-shopping-bag"></i> My Purchase</a>
-            <a class="al" href="orders.php"><i class="fas fa-box"></i> My Order</a>
-            <a class="al" href="../logout.php"> <i class="fas fa-sign-out-alt"></i> Logout</a>
+    <div id="mySidenav" class="sidenav">
+        <a href="javascript:void(0)" class="closebtn">&times;</a>
+        <div class="content">
+            <div class="profile">
+                <img style="object-fit: cover;" src="<?= $img ?>" width="80">
+                <h2 style="color:white"><?= $user ?></h2>
+                <p><?= $_SESSION['user']->email ?></p>
+            </div>
+            <div style="padding:50px 9px;">
+
+                <a class="als" href="customer.php"><i class="fa fa-home"></i> Home</a>
+                <a class="als" href="customerProfile.php"><i class="fas fa-user"></i> Profile</a>
+                <a class="als" href="wishList.php"> <i class="fas fa-heart"></i> Wish List</a>
+                <a class="als" href="product.php"><i class='fas fa-address-book'></i> Product</a>
+                <a class="als" href="information.php"> <i class="fas fa-shopping-bag"></i> My Purchase</a>
+                <a class="als" href="orders.php"><i class="fas fa-box"></i> My Order</a>
+                <a class="als" href="../logout.php"> <i class="fas fa-sign-out-alt"></i> Logout</a>
+
+            </div>
         </div>
     </div>
-</div>
-
-
-
-
-
-
-

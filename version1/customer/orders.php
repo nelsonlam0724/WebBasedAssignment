@@ -68,6 +68,7 @@ $statuses = $statuses_stm->fetchAll(PDO::FETCH_COLUMN);
 <script src="../js/orders.js"></script>
 </head>
 <br><br><br><br><br><br><br><br>
+<div class="container">
 <h1>Order</h1>
 
 <p class="order-count">There has <?= count($arr) ?> orders(s)</p>
@@ -204,7 +205,7 @@ $statuses = $statuses_stm->fetchAll(PDO::FETCH_COLUMN);
         <a href="?page=<?= $page + 1 ?>&sort_by=<?= urlencode($sort_by) ?>&tab=5&status=<?= urlencode($status_filter) ?>">Next</a>
     <?php endif; ?>
 </div>
-
+</div>
 </body>
 
 </html>

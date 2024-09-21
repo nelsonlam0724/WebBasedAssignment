@@ -1,4 +1,3 @@
-
 document.getElementById('edit-button').addEventListener('click', function() {
     var formElements = document.querySelectorAll('#product-form input, #product-form select, #product-form textarea');
     formElements.forEach(function(element) {
@@ -9,6 +8,9 @@ document.getElementById('edit-button').addEventListener('click', function() {
     document.getElementById('submit-button').style.display = 'inline'; 
     document.getElementById('edit-button').style.display = 'none';
     document.getElementById('cancel-button').style.display = 'inline';
+
+    // Show the "Edit Category" button
+    document.getElementById('edit-category-btn').style.display = 'inline';
 });
 
 document.getElementById('cancel-button').addEventListener('click', function() {
@@ -21,7 +23,10 @@ document.getElementById('cancel-button').addEventListener('click', function() {
     document.getElementById('submit-button').style.display = 'none';
     document.getElementById('edit-button').style.display = 'inline';
     document.getElementById('cancel-button').style.display = 'none';
-    
+
+    // Hide the "Edit Category" button when canceling
+    document.getElementById('edit-category-btn').style.display = 'none';
+
     // Optional: reset form fields to original values
     document.getElementById('product-form').reset();
     document.getElementById('product-photo').src = '../uploads/<?= htmlspecialchars($product->product_photo) ?>';
@@ -32,25 +37,28 @@ document.querySelectorAll('#product-form input, #product-form select, #product-f
     element.disabled = true;
 });
 
+document.getElementById('edit-category-btn').addEventListener('click', function () {
+    var categoryInput = document.getElementById('edit-category-input');
+    categoryInput.style.display = (categoryInput.style.display === 'none') ? 'block' : 'none';
+});
 
-document.getElementById('submit-button').style.display = 'none'; // Hide the submit button by default
+document.addEventListener('DOMContentLoaded', function () {
+    const editCategoryBtn = document.getElementById('edit-category-btn');
+    const categorySelect = document.getElementById('category-select');
+    const categoryInput = document.getElementById('new-category-name');
 
-$(document).ready(function () {
-    $('label.upload input[type=file]').on('change', e => {
-        const f = e.target.files[0];
-        const img = $(e.target).siblings('img')[0];
-
-        if (!img) return;
-
-        img.dataset.src ??= img.src;
-
-        if (f?.type.startsWith('image/')) {
-            img.src = URL.createObjectURL(f);
+    editCategoryBtn.addEventListener('click', function () {
+        // Hide the category select dropdown and show the input text field
+        if (categorySelect.style.display === 'none') {
+            categorySelect.style.display = 'inline-block';
+            categoryInput.style.display = 'none';
+            editCategoryBtn.textContent = 'Edit Category';
         } else {
-            img.src = img.dataset.src;
-            e.target.value = '';
+            categorySelect.style.display = 'none';
+            categoryInput.style.display = 'inline-block';
+            editCategoryBtn.textContent = 'Cancel Edit';
         }
     });
-    photo_value
-
 });
+
+document.getElementById('submit-button').style.display = 'none'; // Hide the submit button by default
