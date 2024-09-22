@@ -49,11 +49,11 @@ foreach ($topSalesData as $data) {
 
 // Fetch the three most recent comments along with usernames
 $recentComments = $_db->query('
-    SELECT c.comment, c.datetime,c.user_id, u.name AS user_name
+    SELECT c.comment, c.datetime, c.product_id, c.user_id, u.name AS user_name
     FROM comment AS c
     JOIN user AS u ON c.user_id = u.user_id
     ORDER BY c.datetime DESC
-    LIMIT 3
+    LIMIT 1
 ')->fetchAll(PDO::FETCH_OBJ);
 
 $dates = [
@@ -63,7 +63,7 @@ $dates = [
 ];
 $labels = [];
 foreach ($dates as $date) {
-    $labels[] = $date->format('Y-m-d'); 
+    $labels[] = $date->format('Y-m-d');
 }
 $dataPoints = [];
 
@@ -95,23 +95,24 @@ $_title = 'Admin Dashboard - ' . htmlspecialchars($_user->name);
 <body>
     <div class="main-content" id="main-content">
         <h1 class="welcome">Welcome, <?= htmlspecialchars($_user->name) ?> to the Admin Dashboard</h1>
-        <p class="datetime">Today: <span id="current-datetime"></span></p>
+        <p class="datetime"><span id="current-datetime"></span></p>
 
         <div class="dashboard-grid">
-            <div class="dashboard-box" id="total-users-box">
+            <div class="dashboard-box center-content" id="total-users-box">
                 <h3>Total Users</h3>
                 <p id="total-users"><?= count($member) ?> user</p>
             </div>
 
-            <div class="dashboard-box" id="total-month-sales-box">
+            <div class="dashboard-box center-content" id="total-month-sales-box">
                 <h3>Total Month Sales (<?= $currentMonth ?>)</h3>
                 <p id="total-sales">RM <?= number_format($totalSales, 2) ?></p>
             </div>
 
-            <div class="dashboard-box" id="total-sales-box">
+            <div class="dashboard-box center-content" id="total-sales-box">
                 <h3>Total Year Sales (<?= $currentYear ?>)</h3>
                 <p id="total-sales">RM <?= number_format($totalSalesYear, 2) ?></p>
             </div>
+
 
             <a href="topProductSalesChart.php">
                 <div class="dashboard-box" id="top-products-box">
@@ -150,8 +151,10 @@ $_title = 'Admin Dashboard - ' . htmlspecialchars($_user->name);
                         <ul>
                             <?php foreach ($recentComments as $comment): ?>
                                 <li>
-                                    <strong><?= htmlspecialchars($comment->user_name) ?>(<?= htmlspecialchars($comment->user_id) ?>):</strong> <?= htmlspecialchars($comment->comment) ?>
+                                    <strong><?= htmlspecialchars($comment->user_name) ?>(<?= htmlspecialchars($comment->user_id) ?>):</strong>
+                                    <br><?= htmlspecialchars($comment->comment) ?>
                                     <br><small>Date: <?= htmlspecialchars($comment->datetime) ?></small>
+                                    <br><small>Product: <strong><?= htmlspecialchars($comment->product_id) ?></strong></small>
                                 </li>
                             <?php endforeach; ?>
                         </ul>
@@ -160,6 +163,7 @@ $_title = 'Admin Dashboard - ' . htmlspecialchars($_user->name);
                     <?php endif; ?>
                 </div>
             </a>
+
         </div>
     </div>
 </body>
