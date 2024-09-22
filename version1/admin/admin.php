@@ -53,7 +53,7 @@ $recentComments = $_db->query('
     FROM comment AS c
     JOIN user AS u ON c.user_id = u.user_id
     ORDER BY c.datetime DESC
-    LIMIT 1
+    LIMIT 3
 ')->fetchAll(PDO::FETCH_OBJ);
 
 $dates = [
