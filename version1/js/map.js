@@ -11,9 +11,21 @@ function updateInputValue(latlng) {
     fetch(`https://nominatim.openstreetmap.org/reverse?lat=${latlng.lat}&lon=${latlng.lng}&format=json`)
         .then(response => response.json())
         .then(data => {
-            document.getElementById('locationInput').value = data.display_name;
+      
+            let address = data.address;
+            document.getElementById('city').value = address.city || address.town || address.village || '';
+            document.getElementById('state').value = address.state || '';
+            document.getElementById('postal_code').value = address.postcode || '';
+            document.getElementById('street').value = address.road || address.neighbourhood || address.suburb || '';
+            document.getElementById('country').value = address.country || '';
+            document.getElementById('location_name').value = locationName;
+            console.log(address);
+        })
+        .catch(error => {
+            console.error('Error fetching location data:', error);
         });
 }
+
 
 function centerMapOnUserLocation() {
     if ('geolocation' in navigator) {
@@ -31,8 +43,8 @@ function centerMapOnUserLocation() {
     }
 }
 
-window.onload = centerMapOnUserLocation;
 
+window.onload = centerMapOnUserLocation;
 marker.on('dragend', function (event) {
     var latlng = marker.getLatLng();
     updateInputValue(latlng);

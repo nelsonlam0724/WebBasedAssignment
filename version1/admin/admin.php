@@ -56,6 +56,28 @@ $recentComments = $_db->query('
     LIMIT 3
 ')->fetchAll(PDO::FETCH_OBJ);
 
+$dates = [
+    new DateTime(),
+    (new DateTime())->modify('-1 day'),
+    (new DateTime())->modify('-2 days')
+];
+$labels = [];
+foreach ($dates as $date) {
+    $labels[] = $date->format('Y-m-d'); 
+}
+$dataPoints = [];
+
+foreach ($dates as $date) {
+    $dateString = $date->format('Y-m-d');
+    $query = 'SELECT SUM(total) AS total FROM orders WHERE DATE(datetime) = ?';
+    $stmt = $_db->prepare($query);
+    $stmt->execute([$dateString]);
+    $total = $stmt->fetchColumn() ?: 0;
+
+    $dataPoints[] = ['date' => $dateString, 'total' => $total];
+}
+
+
 $_title = 'Admin Dashboard - ' . htmlspecialchars($_user->name);
 ?>
 
@@ -107,10 +129,19 @@ $_title = 'Admin Dashboard - ' . htmlspecialchars($_user->name);
                 </div>
             </a>
 
-            <div class="dashboard-box" id="revenue-breakdown-box">
-                <h3>Revenue Breakdown</h3>
-                <div class="chart" id="revenue-breakdown"></div>
-            </div>
+            <a href="topSalesChart.php">
+                <div class="dashboard-box" id="revenue-breakdown-box">
+                    <h3>Revenue Breakdown</h3>
+                    <div class="chart" id="revenue-breakdown">
+                        <canvas id="barChart"></canvas>
+                        <script>
+                            const labels = <?= json_encode($labels); ?>;
+                            const data = <?= json_encode(array_column($dataPoints, 'total')); ?>;
+                        </script>
+                        <script src="../js/threeDay.js"></script>
+                    </div>
+                </div>
+            </a>
 
             <a href="commentList.php">
                 <div class="dashboard-box" id="recent-comment-box">

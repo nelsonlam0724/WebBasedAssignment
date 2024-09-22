@@ -1,7 +1,5 @@
 <?php 
 include '../_base.php';
-include '../include/header.php'; 
-include '../include/sidebar.php';
 auth('Member');
 $id= req('id');
 $ordedsID = req('order_id');
@@ -48,7 +46,6 @@ if (is_post()) {
         $_err['commentText'] = '(Please fill up the comment!)**';
     }
 
-
     if (!$_err) {
         $commentid = generateID('comment', 'comment_id', 'CM', 4);
         $stm = $_db->prepare('
@@ -56,13 +53,15 @@ if (is_post()) {
         VALUES (?,?, ?, ?, ?, ?, NOW())
         ');
 
-        $stm->execute([$commentid,$userID, $id, $commentText, $rating, $photoName]);
+        $stm->execute([$commentid,$_SESSION['user']->user_id, $id, $commentText, $rating, $photoName]);
 
         $updateStatus = $_db->prepare('
         UPDATE `order_details` SET commment_status = ? WHERE product_id = ? AND order_id = ?
         ');
 
         $updateStatus->execute(["Rated",$id,$ordedsID]);
+        redirect('customer.php');
+        temp('info','Thanks for your comment');
     }
 }
 ?>
@@ -90,13 +89,25 @@ label.photo_value img {
 </head>
 
 <body>
+    <?php 
+    include '../include/header.php'; 
+    include '../include/sidebar.php';
+      ?>
     <div class="custRateContainer">
-        <h1>Rate product</h1>
-        <p>
-            <div>
-                <?= $resultss->name ?>             
-            </div>
-            <img src="../uploads/<?= $resultss->photo?>" height="100" width="100">
+        <h1 style="padding:20px;">Rate product</h1>
+        <p style="display: flex;gap:20px">
+            <?php   
+            
+            $getProductImg = $_db->prepare('SELECT product_photo FROM product_image WHERE product_id = ?');
+            $getProductImg->execute([$resultss->product_id]);
+            $productImg = $getProductImg->fetch(PDO::FETCH_OBJ);
+            $productPhoto = $productImg ? $productImg->product_photo : '../images/photo.jpg';
+            
+            
+            ?>
+            <img src="../uploads/<?= $productPhoto ?>" height="100" width="100">
+           
+            <span style="color:black;"> <?= $resultss->name ?></br>RM <?= $resultss->price ?></span> </br>
         </p>
         <form method="post" id="rateForm" enctype="multipart/form-data">
             <div class="productQuality">

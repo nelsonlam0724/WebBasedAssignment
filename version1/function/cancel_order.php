@@ -7,9 +7,9 @@ $user = $_SESSION['user'];
 
 
 if (is_post()) {
-    // $email = $user->email;
-    // $subject = 'Order';
-    // $body = 'Order Canceled successfully! Your refund will be process in 3~5 working days.';
+    $email = $user->email;
+    $subject = 'Order';
+    $body = 'Order Canceled successfully! Your refund will be process in 3~5 working days.';
 
     $order_ID = $_POST['order_ID'];
     $product_ID = $_POST['product_ID'];
@@ -45,11 +45,11 @@ if (is_post()) {
 
 
 
-        // $m = get_mail();
-        // $m->addAddress($email);
-        // $m->Subject = $subject;
-        // $m->Body = $body;
-        // $m->send();
+        $m = get_mail();
+        $m->addAddress($email);
+        $m->Subject = $subject;
+        $m->Body = $body;
+        $m->send();
 
         temp('info', 'Order cancelled successfully!');
         redirect('../customer/orders.php');

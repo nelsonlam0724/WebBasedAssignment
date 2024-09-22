@@ -1,6 +1,6 @@
 <?php
 $order = $_SESSION['order_id'];
-
+$cartSelect =  $_SESSION['cartSelection'];
 
 if (is_post()) {
     $name = req('name');
@@ -50,6 +50,12 @@ if (is_post()) {
 
         $stm = $_db->prepare('UPDATE `orders` SET status = ? WHERE  id = ?');
         $stm->execute(["Paid",$order]);
+
+        $stm = $_db->prepare('DELETE FROM `carts` WHERE user_id = ? AND product_id = ?');
+
+        foreach ($cartSelect as $product_id => $unit) {
+            $stm->execute([$_SESSION['user']->user_id, $product_id ]);
+        }
 
         redirect("../message/thanks.php");
      } 

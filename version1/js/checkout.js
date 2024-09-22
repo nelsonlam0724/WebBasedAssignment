@@ -1,8 +1,12 @@
 function pop_up_form_address() {
     $(".update-address-fill").show();
-    $("#locationInput").val("");
-    $("#receipent_namej").val("");
-    $("#shippingPhonej").val("");
+    $("#postal_code").val("");
+    $("#street").val("");
+    $("#country").val("");
+    $("#city").val("");
+    $("#state").val("");
+    $("#unit").val("");
+    $("#location_name").val("");
     showMap();
 }
 
@@ -23,18 +27,22 @@ function showMap() {
 
 //address form-----------------------------------------------------------------------------------------------
 function save_address() {
-    const name = $.trim($("#receipent_namej").val());
-    const tel = $.trim($("#shippingPhonej").val());
+    const city = $.trim($("#city").val());
+    const postal = $.trim($("#postal_code").val());
     const state = $.trim($("#state").val());
-    const addressDetail = $.trim($("#locationInput").val());
+    const street = $.trim($("#street").val());
+    const country = $.trim($("#country").val());
+    const unit = $.trim($("#unit").val());
+    const detail = $.trim($("#location_name").val());
+    
 
-    if (name === "" || tel === "" || addressDetail === "" || state === "") {
+    // const addressDetail = $.trim($("#locationInput").val());
+
+    if (city === "" || postal === "" || street === "" || state === ""  || country === ""   || unit === "" || detail === "") {
         alert("Please fill in all fields!");
     } else {
-        const assembly_address = addressDetail + " " + state;
+        const assembly_address = unit + ", " + detail +", " + street + ", " + postal + ", "+ city + ", " + state + ", "+ country;
         $("#valueUpated").val(assembly_address);
-        $("#receipent_name").val(name);
-        $("#shippingPhone").val(tel);
         $(".owner-address").text(assembly_address);
         $(".update-address-fill").hide();
         alert("Updated successfully");
