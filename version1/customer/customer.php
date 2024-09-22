@@ -1,5 +1,6 @@
 <?php
 include '../_base.php';
+include '../_head.php';
 auth('Member');
 $_title = 'Customer Dashboard - ' . htmlspecialchars($_user->name);
 include '../include/header.php';

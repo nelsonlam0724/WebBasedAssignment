@@ -8,6 +8,8 @@ auth('Root', 'Admin');
 
 $arr = $_db->query('SELECT * FROM orders')->fetchAll();
 
+$dispnum = isset($_GET['displ']) ? trim($_GET['displ']) : '';
+
 // Initialize variables
 $search_query = isset($_GET['search']) ? trim($_GET['search']) : '';
 $status_filter = isset($_GET['status']) ? trim($_GET['status']) : '';
@@ -143,7 +145,7 @@ $statuses = $statuses_stm->fetchAll(PDO::FETCH_COLUMN);
             </tr>
             <?php foreach ($orders as $i => $order): ?>
                 <tr>
-                    <td><?= $i + 1 ?></td>
+                    <td><?= ++$dispnum ?></td>
                     <td><?= $order->id ?></td>
                     <td data-get="userDetails.php?user_id=<?= $order->user_id ?>"><?= $order->user_id ?></td>
                     <td><?= $order->datetime ?></td>
@@ -162,7 +164,7 @@ $statuses = $statuses_stm->fetchAll(PDO::FETCH_COLUMN);
         <div class="pagination">
             <!-- Previous Page Link -->
             <?php if ($page > 1): ?>
-                <a href="?page=<?= $page - 1 ?>&sort_by=<?= urlencode($sort_by) ?>&sort_order=<?= urlencode($sort_order) ?>&status=<?= urlencode($status_filter) ?>">Previous</a>
+                <a href="?page=<?= $page - 1 ?>&sort_by=<?= urlencode($sort_by) ?>&sort_order=<?= urlencode($sort_order) ?>&status=<?= urlencode($status_filter) ?>&displ=<?= ($page == 1) ? $page : ($page - 2) * 10 ?>">Previous</a>
             <?php endif; ?>
 
 
@@ -182,7 +184,7 @@ $statuses = $statuses_stm->fetchAll(PDO::FETCH_COLUMN);
 
 
             <?php for ($i = $start_page; $i <= $end_page; $i++): ?>
-                <a href="?page=<?= $i ?>&sort_by=<?= urlencode($sort_by) ?>&sort_order=<?= urlencode($sort_order) ?>&status=<?= urlencode($status_filter) ?>" class="<?= $i == $page ? 'current-page' : '' ?>">
+                <a href="?page=<?= $i ?>&sort_by=<?= urlencode($sort_by) ?>&sort_order=<?= urlencode($sort_order) ?>&status=<?= urlencode($status_filter) ?>&displ=<?= ($i == 1) ? $i - 1 : ($i - 1) * 10 ?>" class="<?= $i == $page ? 'current-page' : '' ?>">
                     <?= $i ?>
                 </a>
             <?php endfor; ?>
@@ -192,7 +194,7 @@ $statuses = $statuses_stm->fetchAll(PDO::FETCH_COLUMN);
                 <?php if ($end_page < $total_pages - 1): ?>
                     <span>...</span>
                 <?php endif; ?>
-                <a href="?page=<?= $total_pages ?>&sort_by=<?= urlencode($sort_by) ?>&sort_order=<?= urlencode($sort_order) ?>&status=<?= urlencode($status_filter) ?>">
+                <a href="?page=<?= $total_pages ?>&sort_by=<?= urlencode($sort_by) ?>&sort_order=<?= urlencode($sort_order) ?>&status=<?= urlencode($status_filter) ?>&displ=<?= ($page == 1) ? $page : ($page - 1) * 10 ?>">
                     <?= $total_pages ?>
                 </a>
             <?php endif; ?>
@@ -200,7 +202,7 @@ $statuses = $statuses_stm->fetchAll(PDO::FETCH_COLUMN);
 
             <!-- Next Page Link -->
             <?php if ($page < $total_pages): ?>
-                <a href="?page=<?= $page + 1 ?>&sort_by=<?= urlencode($sort_by) ?>&sort_order=<?= urlencode($sort_order) ?>&status=<?= urlencode($status_filter) ?>">Next</a>
+                <a href="?page=<?= $page + 1 ?>&sort_by=<?= urlencode($sort_by) ?>&sort_order=<?= urlencode($sort_order) ?>&status=<?= urlencode($status_filter) ?>&displ=<?= ($page == 1) ? $page * 10 : ($page) * 10 ?>">Next</a>
             <?php endif; ?>
 
         </div>

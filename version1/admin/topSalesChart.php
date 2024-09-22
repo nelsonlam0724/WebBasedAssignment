@@ -1,324 +1,183 @@
 <?php
 include '../_base.php';
 include '../_head.php';
+require_once '../lib/SimplePager.php';
 include '../include/sidebarAdmin.php';
 
-$topSalesData = $_db->query('
-    SELECT p.name AS product_name, SUM(od.unit) AS total_units, p.price AS product_price
-    FROM orders AS o
-    JOIN order_details AS od ON o.id = od.order_id
-    JOIN product AS p ON od.product_id = p.product_id
-    GROUP BY od.product_id
-    ORDER BY total_units DESC
-    LIMIT 10
-')->fetchAll(PDO::FETCH_OBJ);
+auth('Root', 'Admin');
 
-$productNames = [];
-$totalUnits = [];
-$totalPrices = [];
-
-// Initialize variables for date filtering
 $start_date = isset($_GET['start_date']) ? trim($_GET['start_date']) : '';
 $end_date = isset($_GET['end_date']) ? trim($_GET['end_date']) : '';
 
-// Start constructing the query
-$query = 'SELECT p.name AS product_name, SUM(od.unit) AS total_units, p.price AS product_price
-    FROM orders AS o
-    JOIN order_details AS od ON o.id = od.order_id
-    JOIN product AS p ON od.product_id = p.product_id
-    WHERE 1=1';
-$params = [];
+$period = 'year';
 
-if ($start_date) {
-    $query .= ' AND o.datetime >= ?';
-    $params[] = $start_date;
+if ($start_date && $end_date) {
+    $start = new DateTime($start_date);
+    $end = new DateTime($end_date);
+    $dateDiff = $start->diff($end);
+    $totalDays = $dateDiff->days;
+    $totalMonths = $dateDiff->m + ($dateDiff->y * 12);
+
+    if ($totalDays === 0) {
+        $period = 'week';
+    } elseif ($totalDays <= 7) {
+        $period = 'day';
+    } elseif ($totalMonths >= 2) {
+        $period = 'month';
+    } else {
+        $period = 'week';
+    }
+} else if ($start_date || $end_date) {
+    if ($start_date) {
+        $start = new DateTime($start_date);
+        $end = new DateTime();
+        $totalDays = $start->diff($end)->days;
+
+        if ($totalDays === 0) {
+            $period = 'week';
+        } elseif ($totalDays <= 7) {
+            $period = 'day';
+        } else {
+            $period = 'week';
+        }
+    } else if ($end_date) {
+        $end = new DateTime($end_date);
+        $start = (new DateTime())->modify('-1 month'); 
+        $totalDays = $end->diff($start)->days;
+
+        if ($totalDays <= 7) {
+            $period = 'day'; 
+        } else {
+            $period = 'week';
+        }
+    }
+} else {
+    $period = 'year'; 
 }
 
-if ($end_date) {
-    $query .= ' AND o.datetime <= ?';
-    $params[] = $end_date;
+
+$dataPoints = [];
+$labels = [];
+
+if ($period === 'day') {
+    for ($i = 0; $i <= $totalDays; $i++) {
+        $currentDate = clone $start;
+        $currentDate->modify("+$i days");
+        $currentDateString = $currentDate->format('Y-m-d');
+
+        $query = 'SELECT SUM(total) as total FROM orders WHERE DATE(datetime) = ?';
+        $stmt = $_db->prepare($query);
+        $stmt->execute([$currentDateString]);
+        $total = $stmt->fetchColumn() ?: 0;
+
+        $dataPoints[] = ['date' => $currentDateString, 'total' => $total];
+        $labels[] = $currentDateString;
+    }
+} elseif ($period === 'week') {
+    $currentMonthStart = (new DateTime($start->format('Y-m-01')));
+    $currentMonthEnd = (new DateTime($start->format('Y-m-t')));
+
+    $currentWeek = 1;
+    while ($currentMonthStart <= $currentMonthEnd) {
+        $weekStart = clone $currentMonthStart;
+        $weekEnd = clone $currentMonthStart->modify('+6 days');
+
+        if ($weekEnd > $currentMonthEnd) {
+            $weekEnd = $currentMonthEnd;
+        }
+
+        $query = 'SELECT SUM(total) as total FROM orders WHERE DATE(datetime) BETWEEN ? AND ?';
+        $stmt = $_db->prepare($query);
+        $stmt->execute([$weekStart->format('Y-m-d'), $weekEnd->format('Y-m-d')]);
+        $total = $stmt->fetchColumn() ?: 0;
+
+        $dataPoints[] = ['week' => $currentWeek, 'total' => $total];
+        $labels[] = "wk$currentWeek";
+
+        $currentWeek++;
+        $currentMonthStart->modify('+1 day');
+    }
+} elseif ($period === 'month') {
+    $currentStart = clone $start;
+    while ($currentStart <= $end) {
+        $month = $currentStart->format('Y-m');
+
+        $query = 'SELECT SUM(total) as total FROM orders WHERE DATE_FORMAT(datetime, "%Y-%m") = ?';
+        $stmt = $_db->prepare($query);
+        $stmt->execute([$month]);
+        $total = $stmt->fetchColumn() ?: 0;
+
+        $dataPoints[] = ['month' => $month, 'total' => $total];
+        $labels[] = $month;
+
+        $currentStart->modify('first day of next month');
+    }
+} elseif ($period === 'year') {
+    $currentYear = (int)date('Y');
+    for ($year = $currentYear - 5; $year <= $currentYear; $year++) {
+        $query = 'SELECT SUM(total) as total FROM orders WHERE YEAR(datetime) = ?';
+        $stmt = $_db->prepare($query);
+        $stmt->execute([$year]);
+        $total = $stmt->fetchColumn() ?: 0;
+
+        $dataPoints[] = ['year' => $year, 'total' => $total];
+        $labels[] = $year;
+    }
 }
 
-$query .= ' GROUP BY od.product_id ORDER BY total_units DESC LIMIT 10';
-
-$ord = $_db->prepare($query);
-$ord->execute($params);
-$orders = $ord->fetchAll();
-
-// foreach ($orders as $order) {
-//     $statuses[] = $order->status;
-//     $counts[] = $order->count;
-// }
-
-foreach ($orders as $data) {
-    $productNames[] = $data->product_name;
-    $totalUnits[] = $data->total_units;
-    $totalPrices[] = $data->total_units * $data->product_price; // Calculate total price
-}
 ?>
-
 <!DOCTYPE html>
 <html lang="en">
 
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Top Sales</title>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <style>
-        body {
-            margin-left: 200px;
-        }
-
-        .charts {
-            display: flex;
-            justify-content: space-around;
-            margin: 20px 0;
-        }
-
-        .chart-container {
-            width: 80%;
-            height: 400px;
-            margin: 20px;
-        }
-
-        h1 {
-            text-align: center;
-        }
-
-        h3 {
-            text-align: center;
-        }
-    </style>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="../js/orders.js"></script>
+    <link rel="stylesheet" href="../css/orderList.css"> <!-- Link the external CSS -->
+    <title>Summary Report</title>
 </head>
 
 <body>
+    <div class="container">
+        <h1>Summary Report</h1>
 
-    <h1>Top Sales</h1>
-    <!-- Filter and Sorting Options -->
-    <div class="filter-sorting">
-        <form action="topSalesChart.php" method="get">
-            <label for="start_date">Start Date:</label>
-            <input type="date" name="start_date" id="start_date" onchange="this.form.submit()" value="<?= htmlspecialchars($start_date) ?>">
-            
-            <label for="end_date">End Date:</label>
-            <input type="date" name="end_date" id="end_date" onchange="this.form.submit()" value="<?= htmlspecialchars($end_date) ?>">
-        </form>
+        <!-- Filter and Sorting Options -->
+        <div class="filter-sorting">
+            <form action="topSalesChart.php" method="get">
+                <label for="start_date">Start Date:</label>
+                <input type="date" name="start_date" id="start_date" onchange="this.form.submit()" value="<?= isset($_GET['start_date']) ? $_GET['start_date'] : '' ?>">
+
+                <label for="end_date">End Date:</label>
+                <input type="date" name="end_date" id="end_date" onchange="this.form.submit()" value="<?= isset($_GET['end_date']) ? $_GET['end_date'] : '' ?>">
+            </form>
+        </div>
+
+        <div class="container">
+            <h1>Sales Chart</h1>
+
+            <h2>Bar Chart</h2>
+            <canvas id="barChart"></canvas>
+
+            <h2>Pie Chart</h2>
+            <canvas id="pieChart"></canvas>
+        </div>
+
+        <br>
+        <script>
+            const labels = <?= json_encode($labels); ?>;
+            const data = <?= json_encode(array_column($dataPoints, 'total')); ?>;
+        </script>
+        <script src="../js/topSalesChart.js"></script>
+
+        <div class="action-buttons">
+            <a href="admin.php" class="action-button"><button>Back To Menu</button></a>
+            <a href="generateReport.php"><button>Summary Report</button></a>
+            <a href="statusChart.php" class="action-button"><button>Status Chart</button></a>
+            <a href="topProductSalesChart.php" class="action-button"><button>Top Product Sales Chart</button></a>
+        </div>
     </div>
-
-    <div class="charts">
-        <div class="chart-container">
-            <h3>Units Sold - Pie Chart</h3>
-            <canvas id="topSalesPieChart"></canvas>
-        </div>
-
-        <div class="chart-container">
-            <h3>Units Sold - Bar Chart</h3>
-            <canvas id="topSalesBarChart"></canvas>
-        </div>
-    </div>
-
-    <div class="charts">
-        <div class="chart-container">
-            <h3>Total Prices - Pie Chart</h3>
-            <canvas id="totalPricePieChart"></canvas>
-        </div>
-
-        <div class="chart-container">
-            <h3>Total Prices - Bar Chart</h3>
-            <canvas id="totalPriceBarChart"></canvas>
-        </div>
-    </div>
-
-    <script>
-        const productNames = <?php echo json_encode($productNames); ?>;
-        const totalUnits = <?php echo json_encode($totalUnits); ?>;
-        const totalPrices = <?php echo json_encode($totalPrices); ?>;
-
-        // Pie Chart for Units Sold
-        const ctxPie = document.getElementById('topSalesPieChart').getContext('2d');
-        const topSalesPieChart = new Chart(ctxPie, {
-            type: 'pie',
-            data: {
-                labels: productNames,
-                datasets: [{
-                    label: 'Top Sales (Units Sold)',
-                    data: totalUnits,
-                    backgroundColor: [
-                        'rgba(75, 192, 192, 0.2)',
-                        'rgba(255, 99, 132, 0.2)',
-                        'rgba(255, 205, 86, 0.2)',
-                        'rgba(54, 162, 235, 0.2)',
-                        'rgba(153, 102, 255, 0.2)',
-                        'rgba(255, 159, 64, 0.2)',
-                        'rgba(201, 203, 207, 0.2)',
-                        'rgba(99, 255, 132, 0.2)',
-                        'rgba(132, 99, 255, 0.2)',
-                        'rgba(255, 132, 99, 0.2)',
-                    ],
-                    borderColor: [
-                        'rgba(75, 192, 192, 1)',
-                        'rgba(255, 99, 132, 1)',
-                        'rgba(255, 205, 86, 1)',
-                        'rgba(54, 162, 235, 1)',
-                        'rgba(153, 102, 255, 1)',
-                        'rgba(255, 159, 64, 1)',
-                        'rgba(201, 203, 207, 1)',
-                        'rgba(99, 255, 132, 1)',
-                        'rgba(132, 99, 255, 1)',
-                        'rgba(255, 132, 99, 1)',
-                    ],
-                    borderWidth: 1
-                }]
-            },
-            options: {
-                responsive: true,
-                plugins: {
-                    legend: {
-                        position: 'right',
-                    }
-                }
-            }
-        });
-
-        // Bar Chart for Units Sold
-        const ctxBar = document.getElementById('topSalesBarChart').getContext('2d');
-        const topSalesBarChart = new Chart(ctxBar, {
-            type: 'bar',
-            data: {
-                labels: productNames,
-                datasets: [{
-                    label: 'Top Sales (Units Sold)',
-                    data: totalUnits,
-                    backgroundColor: [
-                        'rgba(75, 192, 192, 0.7)',
-                        'rgba(255, 99, 132, 0.7)',
-                        'rgba(255, 205, 86, 0.7)',
-                        'rgba(54, 162, 235, 0.7)',
-                        'rgba(153, 102, 255, 0.7)',
-                        'rgba(255, 159, 64, 0.7)',
-                        'rgba(201, 203, 207, 0.7)',
-                        'rgba(99, 255, 132, 0.7)',
-                        'rgba(132, 99, 255, 0.7)',
-                        'rgba(255, 132, 99, 0.7)',
-                    ],
-                    borderColor: [
-                        'rgba(75, 192, 192, 1)',
-                        'rgba(255, 99, 132, 1)',
-                        'rgba(255, 205, 86, 1)',
-                        'rgba(54, 162, 235, 1)',
-                        'rgba(153, 102, 255, 1)',
-                        'rgba(255, 159, 64, 1)',
-                        'rgba(201, 203, 207, 1)',
-                        'rgba(99, 255, 132, 1)',
-                        'rgba(132, 99, 255, 1)',
-                        'rgba(255, 132, 99, 1)',
-                    ],
-                    borderWidth: 1
-                }]
-            },
-            options: {
-                responsive: true,
-                scales: {
-                    y: {
-                        beginAtZero: true
-                    }
-                }
-            }
-        });
-
-        // Pie Chart for Total Prices
-        const ctxPricePie = document.getElementById('totalPricePieChart').getContext('2d');
-        const totalPricePieChart = new Chart(ctxPricePie, {
-            type: 'pie',
-            data: {
-                labels: productNames,
-                datasets: [{
-                    label: 'Total Prices',
-                    data: totalPrices,
-                    backgroundColor: [
-                        'rgba(75, 192, 192, 0.2)',
-                        'rgba(255, 99, 132, 0.2)',
-                        'rgba(255, 205, 86, 0.2)',
-                        'rgba(54, 162, 235, 0.2)',
-                        'rgba(153, 102, 255, 0.2)',
-                        'rgba(255, 159, 64, 0.2)',
-                        'rgba(201, 203, 207, 0.2)',
-                        'rgba(99, 255, 132, 0.2)',
-                        'rgba(132, 99, 255, 0.2)',
-                        'rgba(255, 132, 99, 0.2)',
-                    ],
-                    borderColor: [
-                        'rgba(75, 192, 192, 1)',
-                        'rgba(255, 99, 132, 1)',
-                        'rgba(255, 205, 86, 1)',
-                        'rgba(54, 162, 235, 1)',
-                        'rgba(153, 102, 255, 1)',
-                        'rgba(255, 159, 64, 1)',
-                        'rgba(201, 203, 207, 1)',
-                        'rgba(99, 255, 132, 1)',
-                        'rgba(132, 99, 255, 1)',
-                        'rgba(255, 132, 99, 1)',
-                    ],
-                    borderWidth: 1
-                }]
-            },
-            options: {
-                responsive: true,
-                plugins: {
-                    legend: {
-                        position: 'right',
-                    }
-                }
-            }
-        });
-
-        // Bar Chart for Total Prices
-        const ctxPriceBar = document.getElementById('totalPriceBarChart').getContext('2d');
-        const totalPriceBarChart = new Chart(ctxPriceBar, {
-            type: 'bar',
-            data: {
-                labels: productNames,
-                datasets: [{
-                    label: 'Total Prices',
-                    data: totalPrices,
-                    backgroundColor: [
-                        'rgba(75, 192, 192, 0.7)',
-                        'rgba(255, 99, 132, 0.7)',
-                        'rgba(255, 205, 86, 0.7)',
-                        'rgba(54, 162, 235, 0.7)',
-                        'rgba(153, 102, 255, 0.7)',
-                        'rgba(255, 159, 64, 0.7)',
-                        'rgba(201, 203, 207, 0.7)',
-                        'rgba(99, 255, 132, 0.7)',
-                        'rgba(132, 99, 255, 0.7)',
-                        'rgba(255, 132, 99, 0.7)',
-                    ],
-                    borderColor: [
-                        'rgba(75, 192, 192, 1)',
-                        'rgba(255, 99, 132, 1)',
-                        'rgba(255, 205, 86, 1)',
-                        'rgba(54, 162, 235, 1)',
-                        'rgba(153, 102, 255, 1)',
-                        'rgba(255, 159, 64, 1)',
-                        'rgba(201, 203, 207, 1)',
-                        'rgba(99, 255, 132, 1)',
-                        'rgba(132, 99, 255, 1)',
-                        'rgba(255, 132, 99, 1)',
-                    ],
-                    borderWidth: 1
-                }]
-            },
-            options: {
-                responsive: true,
-                scales: {
-                    y: {
-                        beginAtZero: true
-                    }
-                }
-            }
-        });
-    </script>
 </body>
 
 </html>

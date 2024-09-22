@@ -29,7 +29,10 @@ body {
     font-size: 18px;
     color: #777;
 }
-
+.main-content a{
+    color: rgb(0, 0, 0);
+    text-decoration: none;
+}
 /* 网格布局的CSS */
 .dashboard-grid {
     display: grid;

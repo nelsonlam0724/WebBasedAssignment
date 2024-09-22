@@ -1,30 +1,34 @@
 <?php
 include '../_base.php';
 auth('Root', 'Admin');
-if (is_post() && isset($_POST['category_id'])) {
-    $category_id = $_POST['category_id'];
+if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['category_ids'])) {
+    $category_ids = $_POST['category_ids'];
 
-    if (is_array($category_id)) {
-        $category_ids = $category_id;
+    // Check if category_ids is an array
+    if (is_array($category_ids) && !empty($category_ids)) {
+        // Prepare placeholders for SQL
+        $placeholders = implode(',', array_fill(0, count($category_ids), '?'));
+
+        // Prepare the SQL query to activate only unavailable categories
+        $sql = "UPDATE category SET category_status = 'Activate' WHERE category_id IN ($placeholders) AND category_status != 'Activate'";
+        $stm = $_db->prepare($sql);
+
+        if ($stm->execute($category_ids)) {
+            $affected_rows = $stm->rowCount();
+            if ($affected_rows > 0) {
+                temp('info', "$affected_rows categories have been activated successfully.");
+            } else {
+                temp('info', 'No categories were activated because they were already active.');
+            }
+        } else {
+            temp('info', 'Failed to activate the category(s).');
+        }
+
+        redirect('categoryList.php');
+        exit;
     } else {
-        $category_ids = [$category_id];
+        temp('info', 'No categories were selected for activation.');
+        redirect('categoryList.php');
+        exit;
     }
-
-    $stm = $_db->prepare('UPDATE category SET category_status = "Activate" WHERE category_id IN (' . implode(',', array_fill(0, count($category_ids), '?')) . ')');
-    $stm->execute($category_ids);
-
-    $category_names = [];
-    foreach ($category_ids as $id) {
-        $category_stm = $_db->prepare('SELECT category_name FROM category WHERE category_id = ?');
-        $category_stm->execute([$id]);
-        $category_name = $category_stm->fetchColumn();
-        $category_names[] = $category_name;
-    }
-
-    $message = "$category_name activated successfully.";
-    temp('info', $message);
-    redirect('productList.php');
-} else {
-    temp('info', 'No categories selected for activation.');
-    redirect('productList.php');
 }

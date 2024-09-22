@@ -7,8 +7,8 @@ include '../include/sidebarAdmin.php';
 auth('Root', 'Admin');
 
 $_err = [];
-
 $product_id = req('product_id');
+
 
 if (!$product_id) {
     temp('info', 'Product ID Not Found');
@@ -19,20 +19,21 @@ $stm = $_db->prepare('
     SELECT p.*, c.category_name 
     FROM product p 
     LEFT JOIN category c ON p.category_id = c.category_id 
-    WHERE p.product_id = ?
-');
+    WHERE p.product_id = ?'
+);
 $stm->execute([$product_id]);
 $product = $stm->fetch(PDO::FETCH_OBJ);
-$stm = $_db->prepare('SELECT image_id, product_photo FROM product_image WHERE product_id = ?');
-$stm->execute([$product_id]);
-$images = $stm->fetchAll();
 
 if (!$product) {
     redirect('productList.php');
 }
 
+$stm = $_db->prepare('SELECT image_id, product_photo FROM product_image WHERE product_id = ?');
+$stm->execute([$product_id]);
+$images = $stm->fetchAll();
+
 if (is_post()) {
-    // Validation and update logic
+    // Get form data
     $new_name = req('name');
     $new_price = req('price');
     $new_category = req('category_id');
@@ -40,52 +41,27 @@ if (is_post()) {
     $new_weight = req('weight');
     $new_description = req('description');
     $new_status = req('status');
-    $new_product_photo = get_file_multiple('photo');
     $existing_image_ids = req('existing_image_ids');
-    $new_category_name = req('new_category_name');  // New category name if edited
 
-    // Validation
-    if (!$new_name) {
-        $_err['name'] = 'Required';
-    } elseif (strlen($new_name) > 100) {
-        $_err['name'] = 'Maximum 100 characters';
-    }
+    // Validation logic
+    if (!$new_name) $_err['name'] = 'Required';
+    if (!$new_price) $_err['price'] = 'Required';
+    if (!$new_quantity) $_err['quantity'] = 'Required';
+    if (!$new_weight) $_err['weight'] = 'Required';
+    if (!$new_description) $_err['description'] = 'Required';
+    if (!$new_status) $_err['status'] = 'Required';
 
-    if (!$new_price) {
-        $_err['price'] = 'Required';
-    } elseif (!is_money($new_price)) {
-        $_err['price'] = 'Invalid price format';
-    } elseif ($new_price > 1000) {
-        $_err['price'] = 'Price too high';
-    }
-
-    if (!$new_quantity) {
-        $_err['quantity'] = 'Required';
-    }
-
-    if (!$new_weight) {
-        $_err['weight'] = 'Required';
-    } elseif (strlen($new_weight) > 100) {
-        $_err['weight'] = 'Maximum 100 characters';
-    }
-
-    if (!$new_description) {
-        $_err['description'] = 'Required';
-    } elseif (strlen($new_description) > 1000) {
-        $_err['description'] = 'Maximum 1000 characters';
-    }
-
-    if (!$new_status) {
-        $_err['status'] = 'Required';
-    }
-
-    if (!empty($new_product_photos)) {
-        foreach ($new_product_photos as $photo) {
-            if ($photo->error === UPLOAD_ERR_OK) {
-                if (!in_array($photo->type, ['image/jpeg', 'image/png'])) {
+    // Handle file uploads
+    $new_product_photos = $_FILES['photo'];
+    if (!empty($new_product_photos['name'][0])) {
+        foreach ($new_product_photos['tmp_name'] as $index => $tmp_name) {
+            if ($new_product_photos['error'][$index] === UPLOAD_ERR_OK) {
+                $file_type = $new_product_photos['type'][$index];
+                if (!in_array($file_type, ['image/jpeg', 'image/png'])) {
                     $_err['photo'] = 'All files must be JPEG or PNG';
                     break;
-                } elseif ($photo->size > 1 * 1024 * 1024) {
+                }
+                if ($new_product_photos['size'][$index] > 1 * 1024 * 1024) {
                     $_err['photo'] = 'Files must be 1MB or smaller';
                     break;
                 }
@@ -98,19 +74,13 @@ if (is_post()) {
         $stm = $_db->prepare('UPDATE product SET name = ?, price = ?, category_id = ?, quantity = ?, weight = ?, description = ?, status = ? WHERE product_id = ?');
         $stm->execute([$new_name, $new_price, $new_category, $new_quantity, $new_weight, $new_description, $new_status, $product_id]);
 
-        // Update category name if it was edited
-        if ($new_category_name) {
-            $stm = $_db->prepare('UPDATE category SET category_name = ? WHERE category_id = ?');
-            $stm->execute([$new_category_name, $new_category]);
-        }
-
         // Update existing images
         if (!empty($existing_image_ids)) {
             foreach ($existing_image_ids as $index => $image_id) {
-                if (isset($_FILES['photo']['tmp_name'][$index]) && !empty($_FILES['photo']['tmp_name'][$index])) {
-                    $file = $_FILES['photo']['tmp_name'][$index];
+                if (isset($new_product_photos['tmp_name'][$index]) && !empty($new_product_photos['tmp_name'][$index])) {
+                    $file = $new_product_photos['tmp_name'][$index];
                     if (file_exists($file)) {
-                        $photo_path = save_photo_admin($file);
+                        $photo_path = save_photo_admin($file); // Your function to save the photo
                         $stm = $_db->prepare('UPDATE product_image SET product_photo = ? WHERE image_id = ?');
                         $stm->execute([$photo_path, $image_id]);
                     }
@@ -131,13 +101,9 @@ if (is_post()) {
 
 <form method="post" enctype="multipart/form-data" class="form" id="product-form">
     <table>
-    <div class="form-buttons">
-            <button type="button" id="edit-button">
-            <i class="fas fa-edit"></i>
-            </button>
-            <button type="button" id="cancel-button">
-            <i class="fas fa-times"></i>
-            </button>
+        <div class="form-buttons">
+            <button type="button" id="edit-button"><i class="fas fa-edit"></i></button>
+            <button type="button" id="cancel-button" style="display: none;"><i class="fas fa-times"></i></button>
         </div>
         <tr>
             <th>Product Name:</th>
@@ -154,24 +120,20 @@ if (is_post()) {
             </td>
         </tr>
         <tr>
-    <th>Category:</th>
-    <td>
-        <select name="category_id" id="category-select">
-            <?php
-            $categories = $_db->query('SELECT category_id, category_name FROM category')->fetchAll();
-            foreach ($categories as $category) {
-                $selected = ($category->category_id == $product->category_id) ? 'selected' : '';
-                echo '<option value="' . htmlspecialchars($category->category_id) . '" ' . $selected . '>' . htmlspecialchars($category->category_name) . '</option>';
-            }
-            ?>
-        </select>
-
-        <input type="text" name="new_category_name" id="new-category-name" maxlength="100" style="display:none;" value="<?= htmlspecialchars($product->category_name) ?>">
-        <button type="button" id="edit-category-btn" style="display: none;">Edit Category</button>
-
-        <?= isset($_err['new_category_name']) ? "<span class='error'>{$_err['new_category_name']}</span>" : '' ?>
-    </td>
-</tr>
+            <th>Category:</th>
+            <td>
+                <select name="category_id" id="category-select">
+                    <?php
+                    $categories = $_db->query('SELECT category_id, category_name FROM category')->fetchAll();
+                    foreach ($categories as $category) {
+                        $selected = ($category->category_id == $product->category_id) ? 'selected' : '';
+                        echo '<option value="' . htmlspecialchars($category->category_id) . '" ' . $selected . '>' . htmlspecialchars($category->category_name) . '</option>';
+                    }
+                    ?>
+                </select>
+                <?= isset($_err['new_category_name']) ? "<span class='error'>{$_err['new_category_name']}</span>" : '' ?>
+            </td>
+        </tr>
         <tr>
             <th>Quantity:</th>
             <td>
