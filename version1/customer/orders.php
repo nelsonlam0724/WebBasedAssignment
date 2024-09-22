@@ -209,7 +209,7 @@ $statuses = $statuses_stm->fetchAll(PDO::FETCH_COLUMN);
             <?php endif; ?>
         <?php endif; ?>
 
-        <?php for ($i = $start_page; $i < $end_page; $i++): ?>
+        <?php for ($i = $start_page; $i <= $end_page; $i++): ?>
             <a href="?page=<?= $i ?>&sort_by=<?= urlencode($sort_by) ?>&status=<?= urlencode($status_filter) ?>&displ=<?= ($i - 1) * $limit ?>" class="<?= $i == $page ? 'current-page' : '' ?>">
                 <?= $i ?>
             </a>
@@ -225,7 +225,7 @@ $statuses = $statuses_stm->fetchAll(PDO::FETCH_COLUMN);
         <?php endif; ?>
 
         <!-- Next Page Link -->
-        <?php if ($page < $end_page-1): ?>
+        <?php if ($page < $total_pages): ?>
             <a href="?page=<?= $page + 1 ?>&sort_by=<?= urlencode($sort_by) ?>&status=<?= urlencode($status_filter) ?>&displ=<?= $page * $limit ?>">Next</a>
         <?php endif; ?>
     </div>
