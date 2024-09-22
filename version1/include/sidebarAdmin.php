@@ -25,7 +25,8 @@
             <li><a href="userList.php"><i class="fas fa-users"></i><span class="menu-text">User List</span></a></li>
             <li><a href="orderList.php"><i class="fas fa-list"></i><span class="menu-text">Order List</span></a></li>
             <li><a href="productList.php"><i class="fas fa-box"></i><span class="menu-text">Product List</span></a></li>
-            <li><a href="commentList.php"><i class="fas fa-tags"></i><span class="menu-text">Category List</span></a></li>
+            <li><a href="categoryList.php"><i class="fas fa-tags"></i><span class="menu-text">Category List</span></a></li>
+            <li><a href="commentList.php"><i class="fas fa-comments"></i><span class="menu-text">Comment List</span></a></li> <!-- New Comment List link -->
             <li><a href="backup.php"><i class="fas fa-database"></i><span class="menu-text">Backup</span></a></li>
             <li><a href="restore.php"><i class="fas fa-upload"></i><span class="menu-text">Restore</span></a></li>
             <li><a href="../logout.php"><i class="fas fa-sign-out-alt"></i><span class="menu-text">Logout</span></a></li>

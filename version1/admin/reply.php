@@ -2,6 +2,7 @@
 // Include the database connection
 include '../_base.php';
 include '../include/sidebarAdmin.php';
+auth('Root', 'Admin');
 // Get the comment ID from the query parameter
 $comment_id = isset($_GET['comment_id']) ? $_GET['comment_id'] : '';
 
