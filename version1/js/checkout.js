@@ -5,6 +5,8 @@ function pop_up_form_address() {
     $("#country").val("");
     $("#city").val("");
     $("#state").val("");
+    $("#unit").val("");
+    $("#location_name").val("");
     showMap();
 }
 
@@ -30,14 +32,16 @@ function save_address() {
     const state = $.trim($("#state").val());
     const street = $.trim($("#street").val());
     const country = $.trim($("#country").val());
+    const unit = $.trim($("#unit").val());
+    const detail = $.trim($("#location_name").val());
     
 
     // const addressDetail = $.trim($("#locationInput").val());
 
-    if (city === "" || postal === "" || street === "" || state === ""  || country === "") {
+    if (city === "" || postal === "" || street === "" || state === ""  || country === ""   || unit === "" || detail === "") {
         alert("Please fill in all fields!");
     } else {
-        const assembly_address = street + ", " + postal + ", "+ city + ", " + state + ", "+ country;
+        const assembly_address = unit + ", " + detail +", " + street + ", " + postal + ", "+ city + ", " + state + ", "+ country;
         $("#valueUpated").val(assembly_address);
         $(".owner-address").text(assembly_address);
         $(".update-address-fill").hide();

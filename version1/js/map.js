@@ -18,6 +18,7 @@ function updateInputValue(latlng) {
             document.getElementById('postal_code').value = address.postcode || '';
             document.getElementById('street').value = address.road || address.neighbourhood || address.suburb || '';
             document.getElementById('country').value = address.country || '';
+            document.getElementById('location_name').value = locationName;
             console.log(address);
         })
         .catch(error => {

@@ -167,6 +167,12 @@ include '../include/sidebar.php';  ?>
             </select> 
                 </div>
                 <div class="input-group">
+                    <input type="text" id="unit" placeholder="unit">
+                </div>
+                <div class="input-group">
+                    <input type="text" id="location_name" placeholder="Details Location">
+                </div>
+                <div class="input-group">
                     <input type="text" id="postal_code" placeholder="Postal Code">
                 </div>
                 <div class="input-group">
