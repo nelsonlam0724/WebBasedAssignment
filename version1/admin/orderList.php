@@ -160,13 +160,11 @@ $statuses = $statuses_stm->fetchAll(PDO::FETCH_COLUMN);
             <?php endforeach; ?>
         </table>
 
-        <!-- Pagination Links -->
         <div class="pagination">
             <!-- Previous Page Link -->
             <?php if ($page > 1): ?>
-                <a href="?page=<?= $page - 1 ?>&sort_by=<?= urlencode($sort_by) ?>&sort_order=<?= urlencode($sort_order) ?>&status=<?= urlencode($status_filter) ?>&displ=<?= ($page == 1) ? $page : ($page - 2) * 10 ?>">Previous</a>
+                <a href="?page=<?= $page - 1 ?>&sort_by=<?= urlencode($sort_by) ?>&status=<?= urlencode($status_filter) ?>&displ=<?= ($page - 2) * $limit ?>">Previous</a>
             <?php endif; ?>
-
 
             <!-- Page Numbers -->
             <?php
@@ -174,38 +172,34 @@ $statuses = $statuses_stm->fetchAll(PDO::FETCH_COLUMN);
             $start_page = max(1, $page - $page_range);
             $end_page = min($total_pages, $page + $page_range);
 
-
             if ($start_page > 1): ?>
-                <a href="?page=1&sort_by=<?= urlencode($sort_by) ?>&sort_order=<?= urlencode($sort_order) ?>&status=<?= urlencode($status_filter) ?>">1</a>
+                <a href="?page=1&sort_by=<?= urlencode($sort_by) ?>&status=<?= urlencode($status_filter) ?>&displ=0">1</a>
                 <?php if ($start_page > 2): ?>
                     <span>...</span>
                 <?php endif; ?>
             <?php endif; ?>
 
-
             <?php for ($i = $start_page; $i <= $end_page; $i++): ?>
-                <a href="?page=<?= $i ?>&sort_by=<?= urlencode($sort_by) ?>&sort_order=<?= urlencode($sort_order) ?>&status=<?= urlencode($status_filter) ?>&displ=<?= ($i == 1) ? $i - 1 : ($i - 1) * 10 ?>" class="<?= $i == $page ? 'current-page' : '' ?>">
+                <a href="?page=<?= $i ?>&sort_by=<?= urlencode($sort_by) ?>&status=<?= urlencode($status_filter) ?>&displ=<?= ($i - 1) * $limit ?>" class="<?= $i == $page ? 'current-page' : '' ?>">
                     <?= $i ?>
                 </a>
             <?php endfor; ?>
-
 
             <?php if ($end_page < $total_pages): ?>
                 <?php if ($end_page < $total_pages - 1): ?>
                     <span>...</span>
                 <?php endif; ?>
-                <a href="?page=<?= $total_pages ?>&sort_by=<?= urlencode($sort_by) ?>&sort_order=<?= urlencode($sort_order) ?>&status=<?= urlencode($status_filter) ?>&displ=<?= ($page == 1) ? $page : ($page - 1) * 10 ?>">
+                <a href="?page=<?= $total_pages ?>&sort_by=<?= urlencode($sort_by) ?>&status=<?= urlencode($status_filter) ?>&displ=<?= ($total_pages - 1) * $limit ?>">
                     <?= $total_pages ?>
                 </a>
             <?php endif; ?>
 
-
             <!-- Next Page Link -->
             <?php if ($page < $total_pages): ?>
-                <a href="?page=<?= $page + 1 ?>&sort_by=<?= urlencode($sort_by) ?>&sort_order=<?= urlencode($sort_order) ?>&status=<?= urlencode($status_filter) ?>&displ=<?= ($page == 1) ? $page * 10 : ($page) * 10 ?>">Next</a>
+                <a href="?page=<?= $page + 1 ?>&sort_by=<?= urlencode($sort_by) ?>&status=<?= urlencode($status_filter) ?>&displ=<?= $page * $limit ?>">Next</a>
             <?php endif; ?>
-
         </div>
+
         <div class="action-buttons">
             <a href="admin.php"><button>Back To Menu</button></a>
             <a href="generateReport.php"><button>Generate Summary Seport</button></a>
