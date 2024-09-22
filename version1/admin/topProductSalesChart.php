@@ -97,7 +97,7 @@ foreach ($orders as $data) {
     <h1>Top Sales</h1>
     <!-- Filter and Sorting Options -->
     <div class="filter-sorting">
-        <form action="topSalesChart.php" method="get">
+        <form action="topProductSalesChart.php" method="get">
             <label for="start_date">Start Date:</label>
             <input type="date" name="start_date" id="start_date" onchange="this.form.submit()" value="<?= htmlspecialchars($start_date) ?>">
             

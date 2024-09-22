@@ -84,7 +84,7 @@ $_title = 'Admin Dashboard - ' . htmlspecialchars($_user->name);
 
             <div class="dashboard-box" id="top-products-box">
                 <h3>Top Products</h3>
-                <a href="topSalesChart.php">
+                <a href="topProductSalesChart.php">
                     <div class="chart" id="top-products-chart">
                         <canvas id="topSalesBarChart"></canvas>
                         <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
