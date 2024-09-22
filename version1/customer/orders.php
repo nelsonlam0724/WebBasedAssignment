@@ -39,8 +39,8 @@ $page = isset($_GET['page']) ? (int)$_GET['page'] : 1;
 $limit = 5; // Number of records per page
 
 // Start constructing the query
-$query = 'SELECT DISTINCT o.* FROM orders AS o JOIN order_details AS od ON o.id = od.order_id JOIN product AS p ON od.product_id = p.product_id WHERE o.user_id = ? AND o.status != ?';
-$params = [$user->user_id,'Pending'];
+$query = 'SELECT DISTINCT o.* FROM orders AS o JOIN order_details AS od ON o.id = od.order_id JOIN product AS p ON od.product_id = p.product_id WHERE o.user_id = ?';
+$params = [$user->user_id];
 
 //search product
 if ($search_product) {
