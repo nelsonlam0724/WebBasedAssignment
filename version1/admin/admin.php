@@ -35,7 +35,7 @@ $topSalesData = $_db->query('
     GROUP BY od.product_id
     ORDER BY total_units DESC
     LIMIT 3
-')->fetchAll(PDO::FETCH_OBJ); // Fetch all top 3 records
+')->fetchAll(PDO::FETCH_OBJ);
 
 $productNames = [];
 $totalUnits = [];
@@ -44,12 +44,21 @@ $totalPrices = [];
 foreach ($topSalesData as $data) {
     $productNames[] = $data->product_name;
     $totalUnits[] = $data->total_units;
-    $totalPrices[] = $data->total_units * $data->product_price; // Calculate total price
+    $totalPrices[] = $data->total_units * $data->product_price;
 }
 
+// Fetch the three most recent comments along with usernames
+$recentComments = $_db->query('
+    SELECT c.comment, c.datetime,c.user_id, u.name AS user_name
+    FROM comment AS c
+    JOIN user AS u ON c.user_id = u.user_id
+    ORDER BY c.datetime DESC
+    LIMIT 3
+')->fetchAll(PDO::FETCH_OBJ);
 
 $_title = 'Admin Dashboard - ' . htmlspecialchars($_user->name);
 ?>
+
 <!DOCTYPE html>
 <html lang="en">
 
@@ -82,9 +91,9 @@ $_title = 'Admin Dashboard - ' . htmlspecialchars($_user->name);
                 <p id="total-sales">RM <?= number_format($totalSalesYear, 2) ?></p>
             </div>
 
-            <div class="dashboard-box" id="top-products-box">
-                <h3>Top Products</h3>
-                <a href="topSalesChart.php">
+            <a href="topProductSalesChart.php">
+                <div class="dashboard-box" id="top-products-box">
+                    <h3>Top Products</h3>
                     <div class="chart" id="top-products-chart">
                         <canvas id="topSalesBarChart"></canvas>
                         <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
@@ -94,23 +103,32 @@ $_title = 'Admin Dashboard - ' . htmlspecialchars($_user->name);
                             const totalPrices = <?php echo json_encode($totalPrices); ?>;
                         </script>
                         <script src="../js/topThree.js"></script>
-                    </div> <!-- 这里放置图表 -->
-                </a>
-            </div>
+                    </div>
+                </div>
+            </a>
 
             <div class="dashboard-box" id="revenue-breakdown-box">
                 <h3>Revenue Breakdown</h3>
-                <div class="chart" id="revenue-breakdown"></div> <!-- 这里放置图表 -->
+                <div class="chart" id="revenue-breakdown"></div>
             </div>
 
-            <div class="dashboard-box" id="recent-activity-box">
-                <h3>Recent Activity</h3>
-                <ul>
-                    <li>User Jane Doe registered</li>
-                    <li>Order #12345 placed</li>
-                    <li>User John flagged for review</li>
-                </ul>
-            </div>
+            <a href="commentList.php">
+                <div class="dashboard-box" id="recent-comment-box">
+                    <h3>Recent Comments</h3>
+                    <?php if ($recentComments): ?>
+                        <ul>
+                            <?php foreach ($recentComments as $comment): ?>
+                                <li>
+                                    <strong><?= htmlspecialchars($comment->user_name) ?>(<?= htmlspecialchars($comment->user_id) ?>):</strong> <?= htmlspecialchars($comment->comment) ?>
+                                    <br><small>Date: <?= htmlspecialchars($comment->datetime) ?></small>
+                                </li>
+                            <?php endforeach; ?>
+                        </ul>
+                    <?php else: ?>
+                        <p>No comments available.</p>
+                    <?php endif; ?>
+                </div>
+            </a>
         </div>
     </div>
 </body>

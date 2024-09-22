@@ -49,6 +49,7 @@ include '../_head.php';
 ?>
 
 <link rel="stylesheet" href="../css/product.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
 
 <div class="container">
     <h1>Product List</h1>
@@ -135,19 +136,6 @@ include '../_head.php';
                                 </td>
                                 <td><?= htmlspecialchars($p->status) ?></td>
                                 <td class="actions">
-                                    <!-- Category Activation/Deactivation -->
-                                    <?php if ($p->category_status === 'Activate'): ?>
-                                        <form method="post" action="deactivateCategory.php" class="inline-form">
-                                            <input type="hidden" name="category_id" value="<?= $p->category_id ?>">
-                                            <button id="deactivate-category-button" type="submit" formaction="deactivateCategory.php" onclick="return confirm('Are you sure you want to deactivate this category?');">Deactivate Category</button>
-                                        </form>
-                                    <?php else: ?>
-                                        <form method="post" action="activateCategory.php" class="inline-form">
-                                            <input type="hidden" name="category_id" value="<?= $p->category_id ?>">
-                                            <button id="activate-category-button" type="submit" formaction="activateCategory.php" onclick="return confirm('Are you sure you want to activate this category?');">Activate Category</button>
-                                        </form>
-                                    <?php endif; ?>
-
                                     <!-- Product Edit Action -->
                                     <a href="productEdit.php?product_id=<?= $p->product_id ?>" class="edit-container">
                                         <button type="button" class="edit-button">

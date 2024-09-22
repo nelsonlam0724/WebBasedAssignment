@@ -2,7 +2,7 @@
 include '../_base.php';
 include '../_head.php';
 include '../include/sidebarAdmin.php';
-
+auth('Root', 'Admin');
 $topSalesData = $_db->query('
     SELECT p.name AS product_name, SUM(od.unit) AS total_units, p.price AS product_price
     FROM orders AS o

@@ -1,0 +1,130 @@
+/* Body Styles */
+body {
+    font-family: Arial, sans-serif;
+    background-color: #f4f4f4;
+}
+
+h1 {
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+.container {
+    max-width: 800px;
+    margin: auto;
+    padding: 0 15px;
+}
+
+form {
+    margin-bottom: 20px;
+    text-align: center;
+}
+
+input[type="text"] {
+    width: 200px;
+    padding: 10px;
+    font-size: 14px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    margin-right: 10px;
+}
+
+.form-button {
+    padding: 10px;
+    font-size: 14px;
+    border: none;
+    background-color: #007bff;
+    color: white;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+.container button {
+    background-color: #007bff;
+    color: white;
+    padding: 10px 20px; /* Increase padding for a larger button */
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    text-decoration: none; /* Remove underline */
+    font-size: 16px; /* Increase font size */
+}
+
+.container button:hover {
+    background-color: #0056b3; /* Darker shade on hover */
+}
+
+.form-button:hover {
+    background-color: #0056b3;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-bottom: 20px;
+    border-radius: 8px;
+    overflow: hidden;
+}
+
+tr:hover {
+    background-color: rgb(221, 221, 221);
+}
+
+th{
+    background-color: rgb(149, 149, 149);
+}
+
+th, td {
+    padding: 10px;
+    text-align: center;
+    border: 1px solid #f4b5b5;
+}
+
+.no-results {
+    text-align: center;
+    font-size: 16px;
+    color: #6c757d;
+}
+
+.pagination {
+    text-align: center;
+    margin: 20px 0;
+}
+
+.pagination a {
+    padding: 10px 15px;
+    margin: 0 5px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    background-color: #f9f9f9;
+    color: #007bff;
+    text-decoration: none;
+}
+
+.pagination a:hover {
+    background-color: #007bff;
+    color: white;
+}
+
+.pagination .current-page {
+    margin: 0 5px;
+    border: 1px solid #007bff;
+    background-color: #007bff;
+    color: #ffffff;
+    border-radius: 4px;
+}
+
+.actions button{
+    width: 100%;
+    margin: 0;
+}
+
+.action-buttons {
+    text-align: center;
+    margin: 20px 0;
+}
+
+.action-buttons a button {
+    width: 200px;
+    margin: 5px;
+}

@@ -2,7 +2,7 @@
 include '../_base.php';
 include '../_head.php';
 include '../include/sidebarAdmin.php';
-
+auth('Root', 'Admin');
 $statuses = [];
 $counts = [];
 

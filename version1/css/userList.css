@@ -76,6 +76,9 @@ table {
 tr:hover{
     background-color: rgb(221, 221, 221);
 }
+th{
+    background-color: rgb(149, 149, 149);
+}
 th, td {
     padding: 10px;
     text-align: center;
