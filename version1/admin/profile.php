@@ -1,8 +1,8 @@
 <?php
 include '../_base.php';
 include '../_head.php';
-include '../include/sidebarAdmin.php'; 
-auth('Root','Admin');
+include '../include/sidebarAdmin.php';
+auth('Root', 'Admin');
 
 // Initialize error array
 $_err = [];
@@ -13,7 +13,7 @@ if (is_post()) {
     $value = req('value');
     $currentEmail = req('email');
     $email = req('email');
-    
+
     switch ($field) {
         case 'email':
             if (strlen($value) > 100) {
@@ -42,7 +42,7 @@ if (is_post()) {
         case 'name':
             if (strlen($value) > 100) {
                 $_err['name'] = 'Maximum 100 characters';
-                temp('info','Maximum 100 characters.');
+                temp('info', 'Maximum 100 characters.');
             } else {
                 $stm = $_db->prepare('UPDATE user SET name = ? WHERE user_id = ?');
                 $stm->execute([$value, $_user->user_id]);
@@ -53,7 +53,7 @@ if (is_post()) {
         case 'password':
             if (strlen($value) < 5 || strlen($value) > 100) {
                 $_err['password'] = 'Between 5-100 characters';
-                temp('info','Between 5-100 characters.');
+                temp('info', 'Between 5-100 characters.');
             } else {
                 $hashed_password = password_hash($value, PASSWORD_DEFAULT);
                 $stm = $_db->prepare('UPDATE user SET password = ? WHERE user_id = ?');
@@ -61,39 +61,50 @@ if (is_post()) {
             }
             break;
 
-            case 'birthday':
-                if (!$value) {
-                    $_err['birthday'] = 'Required';
-                } else if (!is_birthday($value)) {
-                    $_err['birthday'] = 'Invalid date format';
+        case 'contact_num':
+            if (!preg_match('/^[0]{1}[1]{1}[0-9]{1}-[0-9]{7,8}$/', $value)) {
+                $_err['contact_num'] = 'Contact number must follow the pattern 01X-XXXXXXX.';
+                temp('info', 'Contact number must be formatted as 01X-XXXXXXX.');
+            } else {
+                $stm = $_db->prepare('UPDATE user SET contact_num = ? WHERE user_id = ?');
+                $stm->execute([$value, $_user->user_id]);
+                $_user->contact_num = $value; 
+            }
+            break;
+
+        case 'birthday':
+            if (!$value) {
+                $_err['birthday'] = 'Required';
+            } else if (!is_birthday($value)) {
+                $_err['birthday'] = 'Invalid date format';
+            } else {
+                $birthdate_parts = explode('-', $value);
+                if (!checkdate($birthdate_parts[1], $birthdate_parts[2], $birthdate_parts[0])) {
+                    $_err['birthday'] = 'Invalid date';
                 } else {
-                    $birthdate_parts = explode('-', $value);
-                    if (!checkdate($birthdate_parts[1], $birthdate_parts[2], $birthdate_parts[0])) {
-                        $_err['birthday'] = 'Invalid date';
+                    $input_date = new DateTime($value);
+                    $today = new DateTime();  // Today's date
+
+                    // Set the time of both dates to the start of the day to ensure accurate comparison
+                    $input_date->setTime(0, 0, 0);
+                    $today->setTime(0, 0, 0);
+
+                    if ($input_date > $today) {
+                        $_err['birthday'] = 'Date must be before today';
                     } else {
-                        $input_date = new DateTime($value);
-                        $today = new DateTime();  // Today's date
-            
-                        // Set the time of both dates to the start of the day to ensure accurate comparison
-                        $input_date->setTime(0, 0, 0);
-                        $today->setTime(0, 0, 0);
-            
-                        if ($input_date > $today) {
-                            $_err['birthday'] = 'Date must be before today';
-                        } else {
-                            // Update the database if no errors
-                            $stm = $_db->prepare('UPDATE user SET birthday = ? WHERE user_id = ?');
-                            $stm->execute([$value, $_user->user_id]);
-                            $_user->birthday = $value;
-                        }
+                        // Update the database if no errors
+                        $stm = $_db->prepare('UPDATE user SET birthday = ? WHERE user_id = ?');
+                        $stm->execute([$value, $_user->user_id]);
+                        $_user->birthday = $value;
                     }
                 }
-                break;            
+            }
+            break;
 
         case 'gender':
             if (!is_gender($value)) {
                 $_err['gender'] = 'Invalid gender';
-                temp('info','Invalid gender.');
+                temp('info', 'Invalid gender.');
             } else {
                 $stm = $_db->prepare('UPDATE user SET gender = ? WHERE user_id = ?');
                 $stm->execute([$value, $_user->user_id]);
@@ -106,10 +117,10 @@ if (is_post()) {
             $allowed_types = ['image/jpeg', 'image/png'];
             if (!in_array($photo['type'], $allowed_types)) {
                 $_err['photo'] = 'Invalid file type. Only JPEG and PNG are allowed.';
-                temp('info','Invalid file type. Only JPEG and PNG are allowed.');
+                temp('info', 'Invalid file type. Only JPEG and PNG are allowed.');
             } else if ($photo['size'] > 2 * 1024 * 1024) { // 2MB max size
                 $_err['photo'] = 'File size exceeds 2MB.';
-                temp('info','File size exceeds 2MB.');
+                temp('info', 'File size exceeds 2MB.');
             } else {
                 $photo_name = save_photo_admin($photo);
                 $stm = $_db->prepare('UPDATE user SET photo = ? WHERE user_id = ?');
@@ -161,6 +172,11 @@ $_title = 'Admin Profile';
                 <td><span class="edit-icon" onclick="toggleEditForm('password', event)">&#9998;</span></td>
             </tr>
             <tr>
+                <td><strong>Phone Number:</strong></td>
+                <td><?= htmlspecialchars($_user->contact_num) ?></td>
+                <td><span class="edit-icon" onclick="toggleEditForm('contact_num', event)">&#9998;</span></td>
+            </tr>
+            <tr>
                 <td><strong>Birthday:</strong></td>
                 <td><?= htmlspecialchars($_user->birthday) ?></td>
                 <td><span class="edit-icon" onclick="toggleEditForm('birthday', event)">&#9998;</span></td>
@@ -207,6 +223,17 @@ $_title = 'Admin Profile';
                 <input type="password" name="value" id="password_value">
                 <button type="submit">Update</button>
                 <button type="button" class="cancel" onclick="hideEditForm('password')">Cancel</button>
+            </form>
+        </div>
+
+        <div id="edit_contact_num_form" class="edit-form">
+            <form method="post">
+                <input type="hidden" name="update_part" value="true">
+                <input type="hidden" name="field" value="contact_num">
+                <label for="contact_num_value">New Phone Number:</label>
+                <input type="text" name="value" id="contact_num_value" value="<?= htmlspecialchars($_user->contact_num) ?>">
+                <button type="submit">Update</button>
+                <button type="button" class="cancel" onclick="hideEditForm('contact_num')">Cancel</button>
             </form>
         </div>
 

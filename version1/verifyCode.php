@@ -46,7 +46,7 @@ include '_head.php';
     <label for="code">Enter the 6-digit verification code:</label>
     <?= html_text('code', 'maxlength="6"') ?>
     <?= err('code') ?>
-    
+
     <section>
         <button type="submit">Verify</button>
         <button type="reset">Reset</button>
@@ -54,5 +54,5 @@ include '_head.php';
 </form>
 
 <div class="action-buttons">
-            <a href="login.php"><button>Back to Login</button></a>
-        </div>
+    <a href="logout.php"><button>Back to Login</button></a>
+</div>

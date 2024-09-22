@@ -16,7 +16,7 @@ if (is_post()) {
         // Store the code and expiration in the database
         $stmt = $_db->prepare('
                 INSERT INTO token (verification_code, email, expire) 
-                VALUES (?, ?, DATE_ADD(NOW(), INTERVAL 15 MINUTE))
+                VALUES (?, ?, DATE_ADD(NOW(), INTERVAL 1 MINUTE))
                 ON DUPLICATE KEY UPDATE 
                 verification_code = VALUES(verification_code), 
                 expire = VALUES(expire)
@@ -30,7 +30,7 @@ if (is_post()) {
         $m->Subject = 'Account Recovery Verification';
         $m->Body = "
             <p>Here is your verification code: <strong>$verification_code</strong></p>
-            <p>This code will expire in 15 minutes.</p>
+            <p>This code will expire in 1 minutes.</p>
         ";
 
         try {
@@ -65,5 +65,5 @@ include '_head.php';
     </section>
 </form>
 <div class="action-buttons">
-    <a href="login.php"><button>Back to Login</button></a>
+    <a href="logout.php"><button>Back to Login</button></a>
 </div>

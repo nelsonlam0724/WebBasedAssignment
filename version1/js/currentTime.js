@@ -1,29 +1,33 @@
-        // Function to update the date and time
-        function updateDateTime() {
-            const now = new Date();
+// Function to update the date, time, and day of the week
+function updateDateTime() {
+    const now = new Date();
 
-            // Format the date (YYYY-MM-DD)
-            const year = now.getFullYear();
-            const month = (now.getMonth() + 1).toString().padStart(2, '0'); // Months are 0-based
-            const day = now.getDate().toString().padStart(2, '0');
+    // Format the date (YYYY-MM-DD)
+    const year = now.getFullYear();
+    const month = (now.getMonth() + 1).toString().padStart(2, '0'); // Months are 0-based
+    const day = now.getDate().toString().padStart(2, '0');
 
-            // Format the time (HH:MM:SS)
-            const hours = now.getHours().toString().padStart(2, '0');
-            const minutes = now.getMinutes().toString().padStart(2, '0');
-            const seconds = now.getSeconds().toString().padStart(2, '0');
+    // Get the day of the week
+    const daysOfWeek = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+    const dayOfWeek = daysOfWeek[now.getDay()]; // Returns a number (0-6)
 
-            const dateString = `${year}-${month}-${day}`;
-            const timeString = `${hours}:${minutes}:${seconds}`;
+    // Format the time (HH:MM:SS)
+    const hours = now.getHours().toString().padStart(2, '0');
+    const minutes = now.getMinutes().toString().padStart(2, '0');
+    const seconds = now.getSeconds().toString().padStart(2, '0');
 
-            // Combine date and time
-            const dateTimeString = `${dateString} ${timeString}`;
+    const dateString = `${year}-${month}-${day}`;
+    const timeString = `${hours}:${minutes}:${seconds}`;
 
-            // Update the span content with the current date and time
-            document.getElementById('current-datetime').textContent = dateTimeString;
-        }
+    // Combine day, date, and time
+    const dateTimeString = `${dayOfWeek}, ${dateString} ${timeString}`;
 
-        // Update the date and time every second
-        setInterval(updateDateTime);
+    // Update the span content with the current day, date, and time
+    document.getElementById('current-datetime').textContent = dateTimeString;
+}
 
-        // Set the initial date and time when the page loads
-        updateDateTime();
+// Update the date and time every second
+setInterval(updateDateTime);
+
+// Set the initial date and time when the page loads
+updateDateTime();

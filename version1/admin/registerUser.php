@@ -1,7 +1,7 @@
 <?php
 include '../_base.php';
 include '../_head.php';
-include '../include/sidebarAdmin.php'; 
+include '../include/sidebarAdmin.php';
 auth('Root', 'Admin'); // Allow both Root and Admin to access
 
 // Determine the logged-in user's role
@@ -17,6 +17,7 @@ if (is_post()) {
     $f = get_file('photo');
     $gender = req('gender');
     $birthday = req('birthday');
+    $contact_num = req('contact_num');
 
     // Address
     $street = req('street');
@@ -73,6 +74,13 @@ if (is_post()) {
         $_err['gender'] = 'Invalid gender';
     }
 
+    // Validate: contact_num
+    if (!$contact_num) {
+        $_err['contact_num'] = 'Required';
+    } else if (!preg_match('/^[0]{1}[1]{1}[0-9]{1}-[0-9]{7,8}$/', $contact_num)) {
+        $_err['contact_num'] = 'Invalid contact number format. Should be like 01X-XXXXXXX.';
+    }
+
     // Validate: birthday
     if (!$birthday) {
         $_err['birthday'] = 'Required';
@@ -109,10 +117,10 @@ if (is_post()) {
         $photo = save_photo_admin($f);
         $user_id = generateID('user', 'user_id', 'U', 4);
         $stm = $_db->prepare('
-            INSERT INTO user (user_id, email, password, name, gender, birthday, photo, role, status)
-            VALUES (?, ?, SHA1(?), ?, ?, ?, ?, ?, "Active")
+            INSERT INTO user (user_id, email, password, contact_num, name, gender, birthday, photo, role, status)
+            VALUES (?, ?, SHA1(?), ?, ?, ?, ?, ?, ?, "Active")
         ');
-        $stm->execute([$user_id, $email, $password, $name, $gender, $birthday, $photo, $role]);
+        $stm->execute([$user_id, $email, $password, $contact_num, $name, $gender, $birthday, $photo, $role]);
         $address_id = generateID('address', 'address_id', 'A', 4);
         // Insert into address table if any address field is provided
         if ($street || $city || $state || $postal_code || $country) {
@@ -150,21 +158,32 @@ $_title = 'Register User';
             <!-- Left Column -->
             <div class="form-left">
                 <label for="name">Name:</label>
-                <?= html_text('name', 'maxlength="100"') ?>
+                <?= html_text('name', 'maxlength="100" placeholder="Enter your full name"') ?>
                 <?= err('name') ?>
 
                 <label for="email">Email:</label>
-                <?= html_text('email', 'maxlength="100"') ?>
+                <?= html_text('email', 'maxlength="100" placeholder="Enter your email"') ?>
                 <?= err('email') ?>
                 <br>
 
                 <label for="password">Password:</label>
-                <?= html_password('password', 'maxlength="100"') ?>
+                <?= html_password('password', 'maxlength="100" placeholder="Enter your password"') ?>
                 <?= err('password') ?>
 
                 <label for="confirm">Confirm Password:</label>
-                <?= html_password('confirm', 'maxlength="100"') ?>
+                <?= html_password('confirm', 'maxlength="100" placeholder="Confirm your password"') ?>
                 <?= err('confirm') ?>
+
+                <label for="contact_num">Phone Number:</label>
+                <?= html_text('contact_num', 'maxlength="12" placeholder="Enter your phone number"') ?>
+                <?= err('contact_num') ?>
+            </div>
+
+            <!-- Middle Column -->
+            <div class="form-middle">
+                <label for="birthday">Birthday:</label>
+                <?= html_date('birthday', 'required placeholder="Select your birthday"') ?>
+                <?= err('birthday') ?>
 
                 <label for="gender">Gender:</label>
                 <?php
@@ -176,13 +195,6 @@ $_title = 'Register User';
                 html_select('gender', $genderOptions);
                 ?>
                 <?= err('gender') ?>
-            </div>
-
-            <!-- Middle Column -->
-            <div class="form-middle">
-                <label for="birthday">Birthday:</label>
-                <?= html_date('birthday', 'required') ?>
-                <?= err('birthday') ?>
 
                 <?php if ($current_role == 'Root'): ?>
                     <label for="role">Role:</label>
@@ -194,14 +206,12 @@ $_title = 'Register User';
                     html_select('role', $roleOptions);
                     ?>
                     <?= err('role') ?>
-
                 <?php else: ?>
                     <input type="hidden" name="role" value="Member">
                 <?php endif; ?>
-
-                <label for="photo">Photo:</label>
+                
                 <label class="upload">
-                    <?= html_file('photo', 'image/*', 'hidden') ?>
+                    <?= html_file('photo', 'image/* ','hidden') ?>
                     <img src="../images/photo.jpg" alt="Profile Photo">
                 </label>
                 <?= err('photo') ?>
@@ -210,25 +220,26 @@ $_title = 'Register User';
             <!-- Right Column -->
             <div class="form-right">
                 <label for="street">Street:</label>
-                <?= html_text('street', 'maxlength="255"') ?>
+                <?= html_text('street', 'maxlength="255" placeholder="Enter your street address"') ?>
                 <?= err('street') ?>
 
                 <label for="city">City:</label>
-                <?= html_text('city', 'maxlength="100"') ?>
+                <?= html_text('city', 'maxlength="100" placeholder="Enter your city"') ?>
                 <?= err('city') ?>
 
                 <label for="state">State:</label>
-                <?= html_text('state', 'maxlength="100"') ?>
+                <?= html_text('state', 'maxlength="100" placeholder="Enter your state"') ?>
                 <?= err('state') ?>
 
                 <label for="postal_code">Postal Code:</label>
-                <?= html_text('postal_code', 'maxlength="20"') ?>
+                <?= html_text('postal_code', 'maxlength="20" placeholder="Enter your postal code"') ?>
                 <?= err('postal_code') ?>
 
                 <label for="country">Country:</label>
-                <?= html_text('country', 'maxlength="100"') ?>
+                <?= html_text('country', 'maxlength="100" placeholder="Enter your country"') ?>
                 <?= err('country') ?>
             </div>
+
         </div>
         <section class="form-actions">
             <button type="submit">Register</button>

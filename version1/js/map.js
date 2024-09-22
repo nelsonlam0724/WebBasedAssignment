@@ -13,14 +13,12 @@ function updateInputValue(latlng) {
         .then(data => {
       
             let address = data.address;
-            
-       
             document.getElementById('city').value = address.city || address.town || address.village || '';
             document.getElementById('state').value = address.state || '';
             document.getElementById('postal_code').value = address.postcode || '';
             document.getElementById('street').value = address.road || address.neighbourhood || address.suburb || '';
-
-          
+            document.getElementById('country').value = address.country || '';
+            document.getElementById('location_name').value = locationName;
             console.log(address);
         })
         .catch(error => {
@@ -47,7 +45,6 @@ function centerMapOnUserLocation() {
 
 
 window.onload = centerMapOnUserLocation;
-
 marker.on('dragend', function (event) {
     var latlng = marker.getLatLng();
     updateInputValue(latlng);

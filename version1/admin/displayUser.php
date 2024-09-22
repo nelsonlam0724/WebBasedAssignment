@@ -63,6 +63,10 @@ $_title = 'User Details';
                     <td><?= htmlspecialchars($user->email) ?></td>
                 </tr>
                 <tr>
+                    <th>Phone Number</th>
+                    <td><?= htmlspecialchars($user->contact_num) ?></td>
+                </tr>
+                <tr>
                     <th>Role</th>
                     <td><?= htmlspecialchars($user->role) ?></td>
                 </tr>

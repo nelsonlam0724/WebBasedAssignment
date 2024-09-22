@@ -80,7 +80,7 @@ include '../include/sidebar.php'; ?>
                         $getProductImg = $_db->prepare('SELECT product_photo FROM product_image WHERE product_id = ?');
                         $getProductImg->execute([$c['product_id']]);
                         $productImg = $getProductImg->fetch(PDO::FETCH_OBJ);
-                        $productPhoto = $productImg ? $productImg->product_photo : 'default_image.jpg';  
+                        $productPhoto = $productImg ? $productImg->product_photo : '../images/photo.jpg';  
                     
                     ?>
                 
