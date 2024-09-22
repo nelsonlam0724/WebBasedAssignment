@@ -1,10 +1,10 @@
 <?php
 include '../_base.php';
 include '../_head.php';
-require_once '../lib/SimplePager.php'; 
-include '../include/sidebarAdmin.php'; 
+require_once '../lib/SimplePager.php';
+include '../include/sidebarAdmin.php';
 
-auth('Root', 'Admin');  
+auth('Root', 'Admin');
 
 $current_role = $_user->role;
 $current_user_id = $_user->user_id;
@@ -82,6 +82,28 @@ $_title = 'User List';
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="../css/userList.css">
     <title><?= htmlspecialchars($_title) ?></title>
+    <script>
+        function submitSearch() {
+            document.getElementById('searchForm').submit();
+        }
+
+        function focusSearchInput() {
+            const searchInput = document.getElementById('searchInput');
+            searchInput.focus();
+        }
+
+        window.onload = function() {
+            const searchInput = document.getElementById('searchInput');
+            if ('<?= htmlspecialchars($search_query) ?>') {
+                setTimeout(() => {
+                    searchInput.focus();
+                    searchInput.setSelectionRange(searchInput.value.length, searchInput.value.length); // 将光标放在末尾
+                }, 0);
+            } else {
+                searchInput.focus();
+            }
+        };
+    </script>
 </head>
 
 <body>
@@ -89,14 +111,13 @@ $_title = 'User List';
         <h1><?= htmlspecialchars($_title) ?></h1>
 
         <!-- Search Form -->
-        <form action="userList.php" method="get">
-            <input type="text" name="search" placeholder="Search by name" value="<?= htmlspecialchars($search_query) ?>">
+        <form action="userList.php" method="get" id="searchForm">
+            <input type="text" id="searchInput" name="search" placeholder="Search by name" value="<?= htmlspecialchars($search_query) ?>" oninput="submitSearch()">
             <input type="hidden" name="role" value="<?= htmlspecialchars($role_filter) ?>">
             <input type="hidden" name="status" value="<?= htmlspecialchars($status_filter) ?>">
             <input type="hidden" name="sort_by" value="<?= htmlspecialchars($sort_by) ?>">
             <input type="hidden" name="sort_order" value="<?= htmlspecialchars($sort_order) ?>">
             <input type="hidden" name="page" value="1"> <!-- Always start at page 1 for new searches -->
-            <button type="submit" class="form-button">Search</button>
         </form>
 
         <!-- Filter and Sorting Options -->
