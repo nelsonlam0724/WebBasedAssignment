@@ -39,7 +39,14 @@ $CategoryResults = $getCategory->fetchAll();
     </p>
     <div class="filter-container">
       <p class="filter-button">
-        Filter <i class='bx bx-filter'></i>
+        <?php 
+      
+         $getCategoryName = $_db->prepare('SELECT * FROM category WHERE category_id = ?');
+         $getCategoryName->execute([$category]);
+         $CategoryNameResults = $getCategoryName->fetch();
+         
+         echo (empty($CategoryNameResults->category_name)) ? "Filter" : htmlspecialchars($CategoryNameResults->category_name); 
+         ?> <i class='bx bx-filter'></i>
       </p>
       <ul class="filter-list">
         <a href="../customer/product.php">

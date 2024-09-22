@@ -28,6 +28,19 @@ foreach ($salesDataYear as $order) {
     $totalSalesYear += $order->total;
 }
 
+$topSalesData = $_db->query('
+    SELECT p.name AS product_name, SUM(od.unit) AS total_units, p.price AS product_price
+    FROM order_details AS od
+    JOIN product AS p ON od.product_id = p.product_id
+    GROUP BY od.product_id
+    ORDER BY total_units DESC
+    LIMIT 1
+')->fetch(PDO::FETCH_OBJ); // Fetch a single record
+
+$productName = $topSalesData->product_name;
+$totalUnits = $topSalesData->total_units;
+$totalPrice = $totalUnits * $topSalesData->product_price; // Calculate total price
+
 $_title = 'Admin Dashboard - ' . htmlspecialchars($_user->name);
 ?>
 <!DOCTYPE html>
@@ -64,7 +77,11 @@ $_title = 'Admin Dashboard - ' . htmlspecialchars($_user->name);
 
             <div class="dashboard-box" id="top-products-box">
                 <h3>Top Products</h3>
-                <div class="chart" id="top-products-chart"></div> <!-- 这里放置图表 -->
+                <a href="topSalesChart.php"><div class="chart" id="top-products-chart">
+                    <label>Product Name: <?= $productName ?></label><br>
+                    <label>Total Sold: <?= $totalUnits ?></label><br>
+                    <label>Total Sales: <?= $totalPrice ?></label>
+                </div> <!-- 这里放置图表 --></a>
             </div>
 
             <div class="dashboard-box" id="revenue-breakdown-box">

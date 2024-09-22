@@ -1,7 +1,7 @@
 <?php
 include '../_base.php';
-include '../include/header.php';
-include '../include/sidebar.php';
+
+
 auth('Member');
 $cartSelect =  $_SESSION['cartSelection'];
 $total = 0;
@@ -23,8 +23,6 @@ if (!empty($productIds)) {
     $stmt->execute();
     $products = $stmt->fetchAll(PDO::FETCH_ASSOC);
 }
-
-
 
 if (is_post()) {
 
@@ -80,7 +78,7 @@ if (is_post()) {
         VALUES (?, NOW(), ?, ?, ?, ?, ?)
     ');
         $total = floatval($total);
-        $stm->execute([$orderid, $userID, $shipid, "Pending", $count, $total]);
+        $stm->execute([$orderid, $_SESSION['user']->user_id, $shipid, "Pending", $count, $total]);
 
         $stm = $_db->prepare('
         INSERT INTO order_details (order_id, product_id, price, unit, subtotal, commment_status)
@@ -99,7 +97,7 @@ if (is_post()) {
         INSERT INTO `payment_record` (id, user_id, amount, method, order_id) 
         VALUES (?, ?, ?, ?, ?)
     ');
-        $stm->execute([$pay_id, $userID, $total, $paymentMethod, $orderid]);
+        $stm->execute([$pay_id,  $_SESSION['user']->user_id, $total, $paymentMethod, $orderid]);
 
         $_db->commit();
 
@@ -120,7 +118,9 @@ if (is_post()) {
 
 
 <body class="body1">
-<?php include '../include/sidebar.php';  ?>
+<?php 
+include '../include/header.php';
+include '../include/sidebar.php';  ?>
 
     <div class="update-address-fill">
 

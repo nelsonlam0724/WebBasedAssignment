@@ -44,7 +44,7 @@ $results = $getPending->fetchAll();
             $orderss = $stm->fetchAll(PDO::FETCH_ASSOC);
 
             foreach ($orderss as $order) {
-                $stm = $_db->prepare("UPDATE orders SET status = 'Cancel' WHERE id = :id");
+                $stm = $_db->prepare("UPDATE orders SET status = 'Cancelled' WHERE id = :id");
                 $stm->bindParam(':id', $order['id'], PDO::PARAM_STR);
                 $stm->execute();
             }
