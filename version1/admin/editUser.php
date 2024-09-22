@@ -1,7 +1,7 @@
 <?php
 include '../_base.php';
 include '../_head.php';
-include '../include/sidebarAdmin.php'; 
+include '../include/sidebarAdmin.php';
 auth('Root', 'Admin');
 
 // Check if ID is provided in the URL
@@ -37,6 +37,7 @@ if (is_post()) {
     // Capture and validate input
     $new_email = req('email');
     $new_name = req('name');
+    $new_contact_num = req('contact_num');
     $new_role = req('role');
     $new_gender = req('gender');
     $new_birthday = req('birthday');
@@ -87,6 +88,13 @@ if (is_post()) {
         }
     }
 
+    // Validate: contact_num
+    if (!$new_contact_num) {
+        $_err['contact_num'] = 'Required';
+    } else if (!preg_match('/^[0]{1}[1]{1}[0-9]{1}-[0-9]{7,8}$/', $new_contact_num)) {
+        $_err['contact_num'] = 'Invalid contact number format. Should be like 01X-XXXXXXX.';
+    }
+
     // Password validation
     if (!empty($password)) {
         if ($password !== $confirm_password) {
@@ -126,8 +134,8 @@ if (is_post()) {
             temp('info', 'You cannot banned yourself.');
             redirect();
         } else {
-            $stm = $_db->prepare('UPDATE user SET email = ?, name = ?, password = ?, role = ?, gender = ?, birthday = ?, photo = ?, status = ? WHERE user_id = ?');
-            $stm->execute([$new_email, $new_name, $hashed_password, $new_role, $new_gender, $new_birthday, $photo_name, $new_status, $user_id]);
+            $stm = $_db->prepare('UPDATE user SET email = ?, name = ?, contact_num = ? , password = ?, role = ?, gender = ?, birthday = ?, photo = ?, status = ? WHERE user_id = ?');
+            $stm->execute([$new_email, $new_name, $new_contact_num, $hashed_password, $new_role, $new_gender, $new_birthday, $photo_name, $new_status, $user_id]);
             // Update address details
             if ($address) {
                 $stm = $_db->prepare('UPDATE address SET street = ?, city = ?, state = ?, postal_code = ?, country = ? WHERE user_id = ?');
@@ -186,6 +194,29 @@ $_title = 'Edit User';
                 </div>
 
                 <div class="form-group">
+                    <label for="contact_num">Phone Number:</label>
+                    <input type="contact_num" name="contact_num" id="contact_num" maxlength="12" value="<?= htmlspecialchars($user->contact_num) ?>">
+                    <?= isset($_err['contact_num']) ? "<span class='error'>{$_err['contact_num']}</span>" : '' ?>
+                </div>
+
+                <div class="form-group">
+                    <label for="gender">Gender:</label>
+                    <select name="gender" id="gender">
+                        <option value="Male" <?= $user->gender == 'Male' ? 'selected' : '' ?>>Male</option>
+                        <option value="Female" <?= $user->gender == 'Female' ? 'selected' : '' ?>>Female</option>
+                    </select>
+                    <?= isset($_err['gender']) ? "<span class='error'>{$_err['gender']}</span>" : '' ?>
+                </div>
+            </div>
+
+            <div class="form-middle">
+                <div class="form-group">
+                    <label for="birthday">Birthday:</label>
+                    <input type="date" name="birthday" id="birthday" value="<?= htmlspecialchars($user->birthday) ?>" required>
+                    <?= isset($_err['birthday']) ? "<span class='error'>{$_err['birthday']}</span>" : '' ?>
+                </div>
+
+                <div class="form-group">
                     <?php if ($current_role == 'Root' && $user_id == $current_user_id): ?>
                         <label for="role">Role:</label>
                         <input type="text" name="role" id="role" value="<?= htmlspecialchars($user->role) ?>" readonly>
@@ -202,17 +233,6 @@ $_title = 'Edit User';
                 </div>
 
                 <div class="form-group">
-                    <label for="gender">Gender:</label>
-                    <select name="gender" id="gender">
-                        <option value="Male" <?= $user->gender == 'Male' ? 'selected' : '' ?>>Male</option>
-                        <option value="Female" <?= $user->gender == 'Female' ? 'selected' : '' ?>>Female</option>
-                    </select>
-                    <?= isset($_err['gender']) ? "<span class='error'>{$_err['gender']}</span>" : '' ?>
-                </div>
-            </div>
-
-            <div class="form-middle">
-                <div class="form-group">
                     <label for="status">Status:</label>
                     <select name="status" id="status">
                         <option value="Active" <?= $user->status == 'Active' ? 'selected' : '' ?>>Active</option>
@@ -220,13 +240,6 @@ $_title = 'Edit User';
                     </select>
                     <?= isset($_err['status']) ? "<span class='error'>{$_err['status']}</span>" : '' ?>
                 </div>
-
-                <div class="form-group">
-                    <label for="birthday">Birthday:</label>
-                    <input type="date" name="birthday" id="birthday" value="<?= htmlspecialchars($user->birthday) ?>" required>
-                    <?= isset($_err['birthday']) ? "<span class='error'>{$_err['birthday']}</span>" : '' ?>
-                </div>
-
                 <label for="photo">Photo:</label>
                 <div class="form-group upload">
                     <label class="upload">

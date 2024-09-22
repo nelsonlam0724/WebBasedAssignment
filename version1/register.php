@@ -16,6 +16,7 @@ if (is_post()) {
     $f = get_file('photo');
     $gender = req('gender');
     $birthday = req('birthday');
+    $contact_num = req('contact_num');
     // Address
     $street = req('street');
     $city = req('city');
@@ -66,6 +67,13 @@ if (is_post()) {
         $_err['gender'] = 'Invalid gender';
     }
 
+    // Validate: contact_num
+    if (!$contact_num) {
+        $_err['contact_num'] = 'Required';
+    } else if (!preg_match('/^[0]{1}[1]{1}[0-9]{1}-[0-9]{7,8}$/', $contact_num)) {
+        $_err['contact_num'] = 'Invalid contact number format. Should be like 01X-XXXXXXX.';
+    }
+
     // Validate: birthday
     if (!$birthday) {
         $_err['birthday'] = 'Required';
@@ -105,10 +113,10 @@ if (is_post()) {
         $photo = save_photo($f);
         $user_id = generateID('user', 'user_id', 'U', 4);
         $stm = $_db->prepare('
-            INSERT INTO user (user_id, email, password, name, gender, birthday, photo, role, status)
-            VALUES (?, ?, SHA1(?), ?, ?, ?, ?, "Member", "Active")
+            INSERT INTO user (user_id, email, password, contact_num, name, gender, birthday, photo, role, status)
+            VALUES (?, ?, SHA1(?), ?, ?, ?, ?, ?, "Member", "Active")
         ');
-        $stm->execute([$user_id, $email, $password, $name, $gender, $birthday, $photo]);
+        $stm->execute([$user_id, $email, $password, $contact_num, $name, $gender, $birthday, $photo]);
 
         $address_id = generateID('address', 'address_id', 'A', 4);
         // Insert into address table if any address field is provided
@@ -145,8 +153,8 @@ include '_head.php';
 </head>
 
 <body>
-    <form method="post" class="form" enctype="multipart/form-data">
     <h1>Register New Member</h1>
+    <form method="post" class="form" enctype="multipart/form-data">
         <div class="form-container">
             <div class="form-left">
                 <label for="email">Email:</label>
@@ -164,6 +172,14 @@ include '_head.php';
                 <?= html_password('confirm', 'maxlength="100"') ?>
                 <?= err('confirm') ?>
 
+                <label for="contact_num">Phone Number:</label>
+                <?= html_text('contact_num', 'maxlength="12" placeholder="Enter your phone number"') ?>
+                <?= err('contact_num') ?>
+            </div>
+
+            <!-- Middle Column -->
+            <div class="form-middle">
+
                 <label for="gender">Gender:</label>
                 <?php
                 $genderOptions = [
@@ -174,16 +190,12 @@ include '_head.php';
                 html_select('gender', $genderOptions);
                 ?>
                 <?= err('gender') ?>
-            </div>
 
-            <!-- Middle Column -->
-            <div class="form-middle">
                 <label for="birthday">Birthday:</label>
                 <?= html_date('birthday', 'required') ?>
                 <?= err('birthday') ?>
 
 
-                <label for="photo">Photo:</label>
                 <label class="upload">
                     <?= html_file('photo', 'image/*', 'hidden') ?>
                     <img src="images/photo.jpg" alt="Profile Photo">
@@ -220,7 +232,7 @@ include '_head.php';
         </section>
     </form>
     <div class="action-buttons">
-        <a href="login.php"><button>Back to Login</button></a>
+        <a href="logout.php"><button>Back to Login</button></a>
     </div>
 </body>
 

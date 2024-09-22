@@ -2,16 +2,16 @@
 
 label.upload img {
     border: 1px solid #333;
-    width: 175px;
-    height: 175px;
+    width: 150px;
+    height: 150px;
     object-fit: cover;
     cursor: pointer;
 }
 
 label.photo_value img {
     border: 1px solid #333;
-    width: 200px;
-    height: 200px;
+    width: 150px;
+    height: 150px;
     border-radius: 50%;
     object-fit: cover;
     margin-top: 10px;

@@ -51,5 +51,5 @@ include '_head.php';
 </form>
 
 <div class="action-buttons">
-    <a href="login.php"><button>Back to Login</button></a>
+    <a href="logout.php"><button>Back to Login</button></a>
 </div>

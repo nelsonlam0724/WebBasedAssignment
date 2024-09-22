@@ -20,7 +20,7 @@ h1 {
     padding: 20px;
     border-radius: 10px;
     box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-    width: 875px;
+    width: 600px;
 }
 
 .form-container {
@@ -29,7 +29,7 @@ h1 {
     gap: 10px;
 }
 
-.form-left, .form-middle, .form-right {
+.form-left, .form-right {
     padding: 10px;
     border: 1px solid #ddd;
 }
@@ -95,8 +95,8 @@ a button:hover {
 
 .upload img {
     border: 1px solid #333;
-    width: 150px;
-    height: 150px;
+    width: 200px;
+    height: 200px;
     border-radius: 50%;
     object-fit: cover;
     margin-top: 10px;

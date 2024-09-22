@@ -13,6 +13,7 @@ if (is_post()) {
     // Capture and validate input
     $email = req('email');
     $name = req('name');
+    $contact_num = req('contact_num');
     $password = req('password');
     $confirm = req('confirm');
     $birthday = req('birthday');
@@ -23,6 +24,7 @@ if (is_post()) {
     $state = req('state');
     $postal_code = req('postal_code');
     $country = req('country');
+
     // Validation: email
     if (!$email) {
         $_err['email'] = 'Required';
@@ -94,6 +96,13 @@ if (is_post()) {
         $_err['gender'] = 'Invalid gender';
     }
 
+    // Validate: contact_num
+    if (!$contact_num) {
+        $_err['contact_num'] = 'Required';
+    } else if (!preg_match('/^[0]{1}[1]{1}[0-9]{1}-[0-9]{7,8}$/', $contact_num)) {
+        $_err['contact_num'] = 'Invalid contact number format. Should be like 01X-XXXXXXX.';
+    }
+
     // Validation: photo (file)
     if (!empty($photo['name']) && $photo['error'] === UPLOAD_ERR_OK) {
         // If a new file is uploaded, validate it
@@ -112,22 +121,14 @@ if (is_post()) {
         if (!empty($photo['name']) && $photo['error'] === UPLOAD_ERR_OK) {
             $photo_name = save_photo_admin($photo);
         }
-
         // Update query with photo
-        $stm = $_db->prepare('UPDATE user SET email = ?, name = ?, password = ?, birthday = ?, gender = ?, photo = ? WHERE user_id = ?');
-        $stm->execute([$email, $name, $hashed_password, $birthday, $gender, $photo_name, $_user->user_id]);
-        if ($address) {
-            $stm = $_db->prepare('UPDATE address SET street = ?, city = ?, state = ?, postal_code = ?, country = ? WHERE user_id = ?');
-            $stm->execute([$street, $city, $state, $postal_code, $country, $_user->user_id]);
-        } else {
-            $address_id = generateID('address', 'address_id', 'A', 4);
-            $stm = $_db->prepare('INSERT INTO address (address_id ,user_id, street, city, state, postal_code, country) VALUES (?, ?, ?, ?, ?, ?, ?)');
-            $stm->execute([$address_id, $_user->user_id, $street, $city, $state, $postal_code, $country]);
-        }
+        $stm = $_db->prepare('UPDATE user SET email = ?, name = ?,contact_num = ? , password = ?, birthday = ?, gender = ?, photo = ? WHERE user_id = ?');
+        $stm->execute([$email, $name, $contact_num, $hashed_password, $birthday, $gender, $photo_name, $_user->user_id]);
         // Update session data
         $_SESSION['user'] = (object) array_merge((array)$_SESSION['user'], [
             'email' => $email,
             'name' => $name,
+            'contact_num' => $contact_num,
             'birthday' => $birthday,
             'gender' => $gender,
             'photo' => $photo_name, // Update session with the new or existing photo
@@ -184,6 +185,15 @@ $_title = 'Edit Profile';
                     </div>
 
                     <div class="form-group">
+                        <label for="contact_num">Phone Number:</label>
+                        <input type="contact_num" name="contact_num" id="contact_num" value="<?= htmlspecialchars($_user->contact_num) ?>" maxlength="12" >
+                        <?= isset($_err['contact_num']) ? "<span class='error'>{$_err['contact_num']}</span>" : '' ?>
+                    </div>
+
+                </div>
+
+                <div class="form-middle">
+                    <div class="form-group">
                         <label for="gender">Gender:</label>
                         <select name="gender" id="gender" required>
                             <option value="Male" <?= $_user->gender == 'Male' ? 'selected' : '' ?>>Male</option>
@@ -191,9 +201,6 @@ $_title = 'Edit Profile';
                         </select>
                         <?= isset($_err['gender']) ? "<span class='error'>{$_err['gender']}</span>" : '' ?>
                     </div>
-                </div>
-
-                <div class="form-middle">
                     <div class="form-group">
                         <label for="birthday">Birthday:</label>
                         <input type="date" name="birthday" id="birthday" value="<?= htmlspecialchars($_user->birthday) ?>" required>

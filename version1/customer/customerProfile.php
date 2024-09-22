@@ -59,6 +59,17 @@ if (is_post()) {
             }
             break;
 
+        case 'contact_num':
+            if (!preg_match('/^[0]{1}[1]{1}[0-9]{1}-[0-9]{7,8}$/', $value)) {
+                $_err['contact_num'] = 'Contact number must follow the pattern 01X-XXXXXXX.';
+                temp('info', 'Contact number must be formatted as 01X-XXXXXXX.');
+            } else {
+                $stm = $_db->prepare('UPDATE user SET contact_num = ? WHERE user_id = ?');
+                $stm->execute([$value, $_user->user_id]);
+                $_user->contact_num = $value;
+            }
+            break;
+
         case 'birthday':
             if (!$value) {
                 $_err['birthday'] = 'Required';
@@ -162,6 +173,11 @@ $_title = 'Member Profile';
                 <td><span class="edit-icon" onclick="toggleEditForm('password', event)">&#9998;</span></td>
             </tr>
             <tr>
+                <td><strong>Phone Number:</strong></td>
+                <td><?= htmlspecialchars($_user->contact_num) ?></td>
+                <td><span class="edit-icon" onclick="toggleEditForm('contact_num', event)">&#9998;</span></td>
+            </tr>
+            <tr>
                 <td><strong>Birthday:</strong></td>
                 <td><?= htmlspecialchars($_user->birthday) ?></td>
                 <td><span class="edit-icon" onclick="toggleEditForm('birthday', event)">&#9998;</span></td>
@@ -208,6 +224,17 @@ $_title = 'Member Profile';
                 <input type="password" name="value" id="password_value">
                 <button type="submit">Update</button>
                 <button type="button" class="cancel" onclick="hideEditForm('password')">Cancel</button>
+            </form>
+        </div>
+
+        <div id="edit_contact_num_form" class="edit-form">
+            <form method="post">
+                <input type="hidden" name="update_part" value="true">
+                <input type="hidden" name="field" value="contact_num">
+                <label for="contact_num_value">New Phone Number:</label>
+                <input type="text" name="value" id="contact_num_value" value="<?= htmlspecialchars($_user->contact_num) ?>">
+                <button type="submit">Update</button>
+                <button type="button" class="cancel" onclick="hideEditForm('contact_num')">Cancel</button>
             </form>
         </div>
 
