@@ -74,7 +74,7 @@ $CategoryResults = $getCategory->fetchAll();
         $getProductImg = $_db->prepare('SELECT product_photo FROM product_image WHERE product_id = ?');
         $getProductImg->execute([$i->product_id]);
         $productImg = $getProductImg->fetch(PDO::FETCH_OBJ);
-        $productPhoto = $productImg ? $productImg->product_photo : 'default_image.jpg';
+        $productPhoto = $productImg ? $productImg->product_photo : '../images/photo.jpg';
       ?>
         <div class="items-card cards">
           <img src="../uploads/<?= $productPhoto ?>" width="100" height="200">

@@ -46,20 +46,31 @@ $comment = $getComment->fetchAll();
       </div>
     <p id="demo" style="font-size: 20px;"></p>
     </div>
+
+
     <div class="box2">
-      <div class="items-name">
-        <h1><?= $product->name ?></h1>
-      </div>
-      <div class="item-description">
-        <p><?= $product->description ?></p>
-      </div>
-      <div class="btn-field">
-        <a href="#">
-          <div class="btn-buy">Buy Now</div>
-        </a>
-        <div class="add-to-card add_card" data-add="<?= $product->product_id ?>">Add to Cart</div>
-      </div>
+     
+
+      <div class="product-title"><?= $product->name ?></div>
+      
+    <div class="product-description">
+        <?= $product->description ?>
     </div>
+  
+   
+    <div class="price">RM <?= $product->price ?></div>
+    <button class="add-to-card add_card" data-add="<?= $product->product_id ?>">ADD TO CART</button>
+    </div>
+
+
+
+
+
+
+
+
+
+    
   </div>
   <div class="review-field">
     <h3>Reviews</h3>

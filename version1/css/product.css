@@ -478,7 +478,7 @@ button#add-new:hover, button#back-to-menu:hover {
 }
 
 .pro-page a.active {
-    background: #007bff;
+    background: #333;
     color: white;
 }
 

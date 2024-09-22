@@ -63,7 +63,13 @@ $results = $getPending->fetchAll();
                 </div>
             <?php $count++;
             endforeach ?>
+         
+         <?php
+                  if($results==NULL){
+                    echo "No orders yet";
+                  }
 
+  ?>
 
         </div>
 
@@ -103,7 +109,12 @@ $results = $getPending->fetchAll();
             <?php $counts++;
             endforeach  ?>
 
+<?php
+                  if($shipResults==NULL){
+                    echo "No Orders Yet";
+                  }
 
+  ?>
         </div>
 
         <input class="input" name="tabs" type="radio" id="tab-4" />
@@ -129,9 +140,14 @@ $results = $getPending->fetchAll();
             <?php $count = 0;
             foreach ($results as $o): ?>
                 <div class="item-container">
-
+                   <?php   
+                    $getProductImg = $_db->prepare('SELECT product_photo FROM product_image WHERE product_id = ?');
+                    $getProductImg->execute([$o->product_id]);
+                    $productImg = $getProductImg->fetch(PDO::FETCH_OBJ);
+                    $productPhoto = $productImg ? $productImg->product_photo : '../images/photo.jpg';
+                   ?>
                     <div class="item-details">
-                        <img src="<?= $o->photo ?>" alt="" class="item-image" width="100" height="100">
+                        <img src="../uploads/<?= $productPhoto ?>" alt="" class="item-image" width="100" height="100">
                         <div class="item-text">
                             <h2>Product ID :<?= $o->product_id ?></h2>
                             <h3><?= $o->product_name  ?></h3>
@@ -145,7 +161,12 @@ $results = $getPending->fetchAll();
                     <a href="comment.php?id=<?= $o->product_id ?>&order_id=<?= $o->order_id ?>"><button class="rate-button" style="width:150px">Rate</button></a>
                 </div>
             <?php endforeach; ?>
+            <?php
+                  if($results==NULL){
+                    echo "No product to rate";
+                  }
 
+  ?>
         </div>
 
         

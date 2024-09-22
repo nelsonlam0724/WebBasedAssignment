@@ -12,6 +12,7 @@
             <a class="als" href="wishList.php"> <i class="fas fa-heart"></i> Wish List</a>
             <a class="als" href="product.php"><i class='fas fa-address-book'></i> Product</a>
             <a class="als" href="information.php"> <i class="fas fa-shopping-bag"></i> My Purchase</a>
+            <a class="als" href="address.php"><i class="fa fa-map-marker"></i> Edit/Add Adrress</a>
             <a class="als" href="orders.php"><i class="fas fa-box"></i> My Order</a>
            
         </div>
