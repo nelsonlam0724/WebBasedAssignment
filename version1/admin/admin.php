@@ -73,12 +73,12 @@ $_title = 'Admin Dashboard - ' . htmlspecialchars($_user->name);
             </div>
 
             <div class="dashboard-box" id="total-month-sales-box">
-                <h3>Total Sales (<?= $currentMonth ?>)</h3>
+                <h3>Total Month Sales (<?= $currentMonth ?>)</h3>
                 <p id="total-sales">RM <?= number_format($totalSales, 2) ?></p>
             </div>
 
             <div class="dashboard-box" id="total-sales-box">
-                <h3>Total Sales (<?= $currentYear ?>)</h3>
+                <h3>Total Year Sales (<?= $currentYear ?>)</h3>
                 <p id="total-sales">RM <?= number_format($totalSalesYear, 2) ?></p>
             </div>
 

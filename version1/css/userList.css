@@ -72,17 +72,14 @@ table {
     border-radius: 8px;
     overflow: hidden;
 }
+
 tr:hover{
-    background-color: yellow;
+    background-color: rgb(221, 221, 221);
 }
 th, td {
     padding: 10px;
     text-align: center;
-    border: 1px solid #ddd;
-}
-
-th {
-    background-color: #f4f4f4;
+    border: 1px solid #f4b5b5;
 }
 
 table th a {
