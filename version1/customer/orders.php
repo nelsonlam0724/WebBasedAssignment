@@ -40,13 +40,13 @@ $page = isset($_GET['page']) ? (int)$_GET['page'] : 1;
 $limit = 5; // Number of records per page
 
 // Start constructing the query
-$query = 'SELECT DISTINCT o.* FROM orders AS o WHERE o.user_id = ?';
+$query = 'SELECT DISTINCT o.* FROM orders AS o JOIN order_details AS od ON o.id = od.order_id JOIN product AS p ON od.product_id = p.product_id WHERE o.user_id = ?';
 $params = [$user->user_id];
 
 //search product
 if ($search_product) {
-    $query = ' AND p.name = ?';
-    $params[] = $search_product;
+    $query .= ' AND (p.name LIKE ?)';
+    $params[] = '%' . $search_product . '%';
 }
 
 // Add status filter if provided
@@ -80,13 +80,15 @@ $statuses = $statuses_stm->fetchAll(PDO::FETCH_COLUMN);
     }
 
     function focusSearchInput() {
-        const search_product = document.getElementById('searchInput');
+        const search_product = document.getElementById('search_product');
         search_product.focus();
     }
 
     window.onload = function() {
         const search_product = document.getElementById('search_product');
-        if ('<?= htmlspecialchars($search_product) ?>') {
+        const searchValue = '<?= htmlspecialchars($search_product) ?>';
+
+        if (searchValue) {
             setTimeout(() => {
                 search_product.focus();
                 search_product.setSelectionRange(search_product.value.length, search_product.value.length); // 将光标放在末尾
