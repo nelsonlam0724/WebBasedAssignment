@@ -3,11 +3,17 @@
 include '../_base.php';
 include '../include/sidebarAdmin.php';
 auth('Root', 'Admin');
+
 // Get the comment ID from the query parameter
 $comment_id = isset($_GET['comment_id']) ? $_GET['comment_id'] : '';
 
-// Fetch comment details
-$query = "SELECT * FROM comment WHERE comment_id = :comment_id";
+// Fetch comment details along with the user name
+$query = "
+    SELECT c.*, u.name AS user_name 
+    FROM comment AS c 
+    JOIN user AS u ON c.user_id = u.user_id 
+    WHERE c.comment_id = :comment_id
+";
 $stmt = $_db->prepare($query);
 $stmt->bindParam(':comment_id', $comment_id, PDO::PARAM_STR);
 $stmt->execute();
@@ -87,6 +93,7 @@ if (is_post()) {
     <div class="container">
         <h1>Comment Reply</h1>
         <p><strong>Comment ID:</strong> <?= htmlspecialchars($comment->comment_id) ?></p>
+        <p><strong>User Name:</strong> <?= htmlspecialchars($comment->user_name) ?></p>
         <p><strong>Product ID:</strong> <?= htmlspecialchars($comment->product_id) ?></p>
         <p><strong>Date:</strong> <?= htmlspecialchars($comment->datetime) ?></p>
         <p><strong>Comment:</strong> <?= htmlspecialchars($comment->comment) ?></p>
@@ -113,4 +120,3 @@ if (is_post()) {
     </div>
 </body>
 </html>
-
