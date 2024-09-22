@@ -9,26 +9,11 @@ auth('Member');
 // Fetch user profile information
 $user = $_SESSION['user'];
 
-// Fetch pending orders
-$getPending = $_db->prepare('
-    SELECT DISTINCT o.*,p.name
-    FROM orders AS o
-    JOIN order_details AS od ON o.id = od.order_id
-    JOIN product AS p ON od.product_id = p.product_id
-    WHERE o.user_id = ?
-');
-$getPending->execute([$user->user_id]);
-$results = $getPending->fetchAll();
-
-// Fetch all orders for the user
-$stm = $_db->prepare('SELECT DISTINCT o.* FROM orders AS o WHERE o.user_id = ?');
-$stm->execute([$user->user_id]);
-$arr = $stm->fetchAll();
-
-
 // Include SimplePager for pagination
 require_once '../lib/SimplePager.php';
 
+$pend = 'Pending';
+$koso = '';
 $dispnum = isset($_GET['displ']) ? trim($_GET['displ']) : '';
 
 // Initialize variables
@@ -39,8 +24,16 @@ $page = isset($_GET['page']) ? (int)$_GET['page'] : 1;
 $limit = 5; // Number of records per page
 
 // Start constructing the query
-$query = 'SELECT DISTINCT o.* FROM orders AS o JOIN order_details AS od ON o.id = od.order_id JOIN product AS p ON od.product_id = p.product_id WHERE o.user_id = ?';
-$params = [$user->user_id];
+$query = 'SELECT DISTINCT o.* FROM orders AS o JOIN order_details AS od ON o.id = od.order_id JOIN product AS p ON od.product_id = p.product_id WHERE o.user_id = ? AND o.status != ? AND o.status != ?';
+$params = [$user->user_id, 'Pending', ''];
+
+$getcou = $_db->prepare($query);
+$getcou->execute($params);
+$getcout = $getcou->fetchAll();
+
+$query .= ' AND o.status != ? AND o.status != ?';
+$params[] = $pend;
+$params[] = '';
 
 //search product
 if ($search_product) {
@@ -90,7 +83,7 @@ $statuses = $statuses_stm->fetchAll(PDO::FETCH_COLUMN);
         if (searchValue) {
             setTimeout(() => {
                 search_product.focus();
-                search_product.setSelectionRange(search_product.value.length, search_product.value.length); 
+                search_product.setSelectionRange(search_product.value.length, search_product.value.length);
             }, 0);
         } else {
             search_product.focus();
@@ -98,17 +91,17 @@ $statuses = $statuses_stm->fetchAll(PDO::FETCH_COLUMN);
     };
 </script>
 </head>
-<br><br><br><br><br><br><br><br>
+<br><br><br><br><br>
 
 <div class="container">
     <h1>Order</h1>
 
+    There are <?= count($getcout) ?> order(s)
     <!-- Search Form -->
     <form action="orders.php" method="get" id="searchForm">
         <input type="text" id="search_product" name="search_product" placeholder="Search by product name" value="<?= htmlspecialchars($search_product) ?>" oninput="submitSearch()">
         <input type="hidden" name="status" value="<?= htmlspecialchars($status_filter) ?>">
         <input type="hidden" name="sort_by" value="<?= htmlspecialchars($sort_by) ?>">
-        <input type="hidden" name="page" value="1"> <!-- Always start at page 1 for new searches -->
     </form>
 
     <!-- Filter and Sorting Options -->
@@ -216,7 +209,7 @@ $statuses = $statuses_stm->fetchAll(PDO::FETCH_COLUMN);
             <?php endif; ?>
         <?php endif; ?>
 
-        <?php for ($i = $start_page; $i <= $end_page; $i++): ?>
+        <?php for ($i = $start_page; $i < $end_page; $i++): ?>
             <a href="?page=<?= $i ?>&sort_by=<?= urlencode($sort_by) ?>&status=<?= urlencode($status_filter) ?>&displ=<?= ($i - 1) * $limit ?>" class="<?= $i == $page ? 'current-page' : '' ?>">
                 <?= $i ?>
             </a>
@@ -232,7 +225,7 @@ $statuses = $statuses_stm->fetchAll(PDO::FETCH_COLUMN);
         <?php endif; ?>
 
         <!-- Next Page Link -->
-        <?php if ($page < $total_pages): ?>
+        <?php if ($page < $end_page-1): ?>
             <a href="?page=<?= $page + 1 ?>&sort_by=<?= urlencode($sort_by) ?>&status=<?= urlencode($status_filter) ?>&displ=<?= $page * $limit ?>">Next</a>
         <?php endif; ?>
     </div>
