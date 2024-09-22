@@ -81,8 +81,8 @@ $CategoryResults = $getCategory->fetchAll();
           <div class="text2">
             <p class="product-name space"><?= $i->name ?></p>
             <p class="product-price space">RM <?= $i->price ?></p>
-            <p class="product-stock space"><?= $i->name ?> Stock</p>
-            <p class="product-sold space">22 sold</p>
+            <p class="product-stock space"><?= $i->quantity ?> Stock</p>
+          
           </div>
           <div class="button-select">
             <div class="wishlist" data-productid="<?= $i->product_id ?>">
