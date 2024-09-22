@@ -33,6 +33,7 @@ require_once '../lib/SimplePager.php';
 $dispnum = isset($_GET['displ']) ? trim($_GET['displ']) : '';
 
 // Initialize variables
+$search_product = isset($_GET['search_product']) ? trim($_GET['search_product']) : '';
 $status_filter = isset($_GET['status']) ? trim($_GET['status']) : '';
 $sort_by = isset($_GET['sort_by']) ? trim($_GET['sort_by']) : 'id';
 $page = isset($_GET['page']) ? (int)$_GET['page'] : 1;
@@ -41,6 +42,12 @@ $limit = 5; // Number of records per page
 // Start constructing the query
 $query = 'SELECT DISTINCT o.* FROM orders AS o WHERE o.user_id = ?';
 $params = [$user->user_id];
+
+//search product
+if ($search_product) {
+    $query = ' AND p.name = ?';
+    $params[] = $search_product;
+}
 
 // Add status filter if provided
 if ($status_filter) {
@@ -67,6 +74,28 @@ $statuses = $statuses_stm->fetchAll(PDO::FETCH_COLUMN);
 <link rel="stylesheet" href="../css/orderItem.css">
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script src="../js/orders.js"></script>
+<script>
+    function submitSearch() {
+        document.getElementById('searchForm').submit();
+    }
+
+    function focusSearchInput() {
+        const search_product = document.getElementById('searchInput');
+        search_product.focus();
+    }
+
+    window.onload = function() {
+        const search_product = document.getElementById('search_product');
+        if ('<?= htmlspecialchars($search_product) ?>') {
+            setTimeout(() => {
+                search_product.focus();
+                search_product.setSelectionRange(search_product.value.length, search_product.value.length); // 将光标放在末尾
+            }, 0);
+        } else {
+            search_product.focus();
+        }
+    };
+</script>
 </head>
 <br><br><br><br><br><br><br><br>
 
@@ -74,6 +103,14 @@ $statuses = $statuses_stm->fetchAll(PDO::FETCH_COLUMN);
     <h1>Order</h1>
 
     <p class="order-count">There are <?= count($arr) ?> order(s)</p>
+
+    <!-- Search Form -->
+    <form action="orders.php" method="get" id="searchForm">
+        <input type="text" id="search_product" name="search_product" placeholder="Search by product name" value="<?= htmlspecialchars($search_product) ?>" oninput="submitSearch()">
+        <input type="hidden" name="status" value="<?= htmlspecialchars($status_filter) ?>">
+        <input type="hidden" name="sort_by" value="<?= htmlspecialchars($sort_by) ?>">
+        <input type="hidden" name="page" value="1"> <!-- Always start at page 1 for new searches -->
+    </form>
 
     <!-- Filter and Sorting Options -->
     <div class="filter-sorting">
@@ -182,7 +219,7 @@ $statuses = $statuses_stm->fetchAll(PDO::FETCH_COLUMN);
         <?php endif; ?>
 
         <?php for ($i = $start_page; $i <= $end_page; $i++): ?>
-            <a href="?page=<?= $i ?>&sort_by=<?= urlencode($sort_by) ?>&status=<?= urlencode($status_filter) ?>&displ=<?= ($i == 1) ? $i-1 : ($i - 1) * 5 ?>" class="<?= $i == $page ? 'current-page' : '' ?>">
+            <a href="?page=<?= $i ?>&sort_by=<?= urlencode($sort_by) ?>&status=<?= urlencode($status_filter) ?>&displ=<?= ($i == 1) ? $i - 1 : ($i - 1) * 5 ?>" class="<?= $i == $page ? 'current-page' : '' ?>">
                 <?= $i ?>
             </a>
         <?php endfor; ?>
@@ -198,7 +235,7 @@ $statuses = $statuses_stm->fetchAll(PDO::FETCH_COLUMN);
 
         <!-- Next Page Link -->
         <?php if ($page < $total_pages): ?>
-            <a href="?page=<?= $page + 1 ?>&sort_by=<?= urlencode($sort_by) ?>&status=<?= urlencode($status_filter) ?>&displ=<?= ($page == 1) ? $page*5 : ($page) * 5 ?>">Next</a>
+            <a href="?page=<?= $page + 1 ?>&sort_by=<?= urlencode($sort_by) ?>&status=<?= urlencode($status_filter) ?>&displ=<?= ($page == 1) ? $page * 5 : ($page) * 5 ?>">Next</a>
         <?php endif; ?>
     </div>
 </div>
