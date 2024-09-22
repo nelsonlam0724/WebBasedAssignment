@@ -64,6 +64,7 @@ foreach ($orders as $data) {
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Top Sales</title>
+    <link rel="stylesheet" href="../css/orderList.css"> <!-- Link the external CSS -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
         body {
@@ -100,7 +101,7 @@ foreach ($orders as $data) {
         <form action="topProductSalesChart.php" method="get">
             <label for="start_date">Start Date:</label>
             <input type="date" name="start_date" id="start_date" onchange="this.form.submit()" value="<?= htmlspecialchars($start_date) ?>">
-            
+
             <label for="end_date">End Date:</label>
             <input type="date" name="end_date" id="end_date" onchange="this.form.submit()" value="<?= htmlspecialchars($end_date) ?>">
         </form>
@@ -135,7 +136,15 @@ foreach ($orders as $data) {
         const totalUnits = <?php echo json_encode($totalUnits); ?>;
         const totalPrices = <?php echo json_encode($totalPrices); ?>;
     </script>
-    <script src="../js/topSales.js"></script>
+    <script src="../js/topProductSalesChart.js"></script>
+
+    <div class="action-buttons">
+        <a href="admin.php" class="action-button"><button>Back To Menu</button></a>
+        <a href="generateReport.php"><button>Summary Report</button></a>
+        <a href="statusChart.php" class="action-button"><button>Status Chart</button></a>
+        <a href="topSalesChart.php" class="action-button"><button>Top Sales Chart</button></a>
+    </div>
+
 </body>
 
 </html>

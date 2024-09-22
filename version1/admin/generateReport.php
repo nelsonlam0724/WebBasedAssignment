@@ -91,10 +91,12 @@ $orders = $ord->fetchAll();
             </tr>
         </table>
         <br>
+        
         <div class="action-buttons">
             <a href="admin.php"><button>Back To Menu</button></a>
             <a href="statusChart.php"><button>Status Chart</button></a>
-            <a href="topProductSalesChart.php"><button>Top Sales Chart</button></a>
+            <a href="topProductSalesChart.php"><button>Top Product Sales Chart</button></a>
+            <a href="topSalesChart.php"><button>Top Sales Chart</button></a>
         </div>
     </div>
 </body>

@@ -83,3 +83,11 @@ h1 {
     background-color: #0056b3;
 }
     
+.actions button, .active button, .deactivate button  {
+    width: 100%; /* Make buttons fill the column width */
+    margin: 0; /* Remove extra margin */
+}
+
+.actions button {
+    background-color: #007bff;
+}

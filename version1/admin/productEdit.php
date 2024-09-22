@@ -10,6 +10,7 @@ $_err = [];
 
 $product_id = req('product_id');
 
+
 if (!$product_id) {
     temp('info', 'Product ID Not Found');
     redirect('productList.php');
