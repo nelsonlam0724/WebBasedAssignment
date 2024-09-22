@@ -1,7 +1,7 @@
 <?php
 include '../_base.php';
 include '../_head.php';
-include '../include/sidebarAdmin.php'; 
+include '../include/sidebarAdmin.php';
 auth('Root', 'Admin');
 
 $member = $_db->query('SELECT * FROM user WHERE role = "Member"')->fetchAll();
@@ -34,12 +34,19 @@ $topSalesData = $_db->query('
     JOIN product AS p ON od.product_id = p.product_id
     GROUP BY od.product_id
     ORDER BY total_units DESC
-    LIMIT 1
-')->fetch(PDO::FETCH_OBJ); // Fetch a single record
+    LIMIT 3
+')->fetchAll(PDO::FETCH_OBJ); // Fetch all top 3 records
 
-$productName = $topSalesData->product_name;
-$totalUnits = $topSalesData->total_units;
-$totalPrice = $totalUnits * $topSalesData->product_price; // Calculate total price
+$productNames = [];
+$totalUnits = [];
+$totalPrices = [];
+
+foreach ($topSalesData as $data) {
+    $productNames[] = $data->product_name;
+    $totalUnits[] = $data->total_units;
+    $totalPrices[] = $data->total_units * $data->product_price; // Calculate total price
+}
+
 
 $_title = 'Admin Dashboard - ' . htmlspecialchars($_user->name);
 ?>
@@ -77,11 +84,18 @@ $_title = 'Admin Dashboard - ' . htmlspecialchars($_user->name);
 
             <div class="dashboard-box" id="top-products-box">
                 <h3>Top Products</h3>
-                <a href="topSalesChart.php"><div class="chart" id="top-products-chart">
-                    <label>Product Name: <?= $productName ?></label><br>
-                    <label>Total Sold: <?= $totalUnits ?></label><br>
-                    <label>Total Sales: <?= $totalPrice ?></label>
-                </div> <!-- 这里放置图表 --></a>
+                <a href="topSalesChart.php">
+                    <div class="chart" id="top-products-chart">
+                        <canvas id="topSalesBarChart"></canvas>
+                        <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+                        <script>
+                            const productNames = <?php echo json_encode($productNames); ?>;
+                            const totalUnits = <?php echo json_encode($totalUnits); ?>;
+                            const totalPrices = <?php echo json_encode($totalPrices); ?>;
+                        </script>
+                        <script src="../js/topThree.js"></script>
+                    </div> <!-- 这里放置图表 -->
+                </a>
             </div>
 
             <div class="dashboard-box" id="revenue-breakdown-box">
