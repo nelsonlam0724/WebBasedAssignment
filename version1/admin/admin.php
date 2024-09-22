@@ -61,7 +61,10 @@ $dates = [
     (new DateTime())->modify('-1 day'),
     (new DateTime())->modify('-2 days')
 ];
-$labels = ['Today', 'Yesterday', 'Day Before Yesterday'];
+$labels = [];
+foreach ($dates as $date) {
+    $labels[] = $date->format('Y-m-d'); 
+}
 $dataPoints = [];
 
 foreach ($dates as $date) {
