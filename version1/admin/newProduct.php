@@ -86,7 +86,7 @@ if (is_post()) {
         $photos = array_slice($photos, 0, 5); // Limit to 5 images
 
         foreach ($photos as $p) {
-            $photo = save_photo_admin($p); // Save each image
+            $photo = save_photo($p); // Save each image
             $image_id = generateID('product_image', 'image_id', 'I', 4);
             $stm = $_db->prepare('
             INSERT INTO product_image (image_id, product_id, product_photo)
@@ -156,31 +156,10 @@ include '../_head.php';
     <br>
     <br>
 
-    <!-- Button to toggle New Category Input -->
-    <button type="button" id="new-category-btn">Add New Category</button>
-
-    <!-- New Category Input, initially hidden -->
-    <div id="new-category-input" style="display: none;">
-        <label for="new-category">New Category</label><br>
-        <input type="text" name="new_category" id="new-category" maxlength="100">
-        <?= err('new_category') ?>
-    </div>
-    <br>
-    <br>
-
     <button type="submit" id="submit-button">Submit</button>
 </form>
 
 <script>
-    document.getElementById('new-category-btn').addEventListener('click', function() {
-        var newCategoryInput = document.getElementById('new-category-input');
-        if (newCategoryInput.style.display === 'none') {
-            newCategoryInput.style.display = 'block';
-        } else {
-            newCategoryInput.style.display = 'none';
-        }
-    });
-
     $(document).ready(function () {
     $('label.upload input[type=file]').on('change', e => {
         const files = e.target.files;
@@ -205,4 +184,6 @@ include '../_head.php';
     
 });
 </script>
-<script src="../js/productEdit.js"></script>
+
+<?php
+include '../_foot.php';
