@@ -14,7 +14,6 @@
             <a class="als" href="information.php"> <i class="fas fa-shopping-bag"></i> My Purchase</a>
             <a class="als" href="orders.php"><i class="fas fa-box"></i> My Order</a>
            
-
         </div>
     </div>
 </div>

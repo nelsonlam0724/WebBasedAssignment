@@ -1,6 +1,6 @@
 <?php 
 include '../_base.php';
-include '../include/header.php'; 
+
 
 auth('Member');
 
@@ -11,7 +11,7 @@ $getUserID = $_db->prepare('
     WHERE c.user_id = ? 
 ');
 
-$getUserID->execute([$userID]);
+$getUserID->execute([$_SESSION['user']->user_id]);
 $results = $getUserID->fetchAll(PDO::FETCH_ASSOC);
 
 $cart = [];
@@ -38,7 +38,7 @@ if (is_post()) {
     }
 
     $_SESSION['cartSelection'] = $cartSelected;
-    header('Location: checkout.php');
+    redirect('checkout.php');
     exit();
 }
 
@@ -50,7 +50,9 @@ if (is_post()) {
 
 <body>
 
-<?php include '../include/sidebar.php'; ?>
+<?php 
+include '../include/header.php';
+include '../include/sidebar.php'; ?>
 
 <div class="container">
 
