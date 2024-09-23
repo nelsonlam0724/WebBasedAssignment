@@ -26,7 +26,7 @@ if (is_post()) {
         $new_category_id = generateID('category', 'category_id', 'CT', 4); // Generate new category ID
         $stm = $_db->prepare('
             INSERT INTO category (category_id, category_name, category_status)
-            VALUES (?, ?, "Activate")
+            VALUES (?, ?, "Available")
         ');
         $stm->execute([$new_category_id, $new_category]);
 

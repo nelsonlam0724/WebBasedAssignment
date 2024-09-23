@@ -14,7 +14,7 @@ $limit = 5;
 $min_stock = 1; // Minimum stock threshold
 
 // Select product with category name and check for low stock using LEFT JOIN
-$sql = 'SELECT p.*, c.category_name, c.category_status FROM product p
+$sql = 'SELECT p.* FROM product p
 LEFT JOIN category c ON p.category_id = c.category_id WHERE 1=1';
 $params = [];
 
