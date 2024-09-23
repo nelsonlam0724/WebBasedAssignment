@@ -36,7 +36,7 @@ h1 {
 }
 
 /* Table */
-table {
+.table {
     width: 100%;
     border-collapse: separate; /* Use separate to allow for border-radius */
     border-spacing: 0;
@@ -47,8 +47,8 @@ table {
     box-shadow: 0 2px 12px rgba(0, 0, 0, 0.1); /* Soft shadow for a fancy look */
 }
 
-table th,
-table td {
+.table th,
+.table td {
     padding: 7px 10px;
     text-align: center;
     border-bottom: 1px solid #e0e0e0; /* Consistent borders */
@@ -56,7 +56,7 @@ table td {
     transition: background-color 0.3s ease; /* Smooth hover transition */
 }
 
-table th {
+.table th {
     background-color: #bebebe;
     color: #333;
     font-weight: 600;
@@ -64,45 +64,44 @@ table th {
     border-right: 2px solid #ddd; /* Solid line between columns */
 }
 
-table td {
+.table td {
     background-color: #fff;
     color: black;
     font-size: 0.95rem;
     border-right: 2px solid #ddd; /* Solid line between columns */
 }
 
-table tr:hover td {
+.table tr:hover td {
     background-color: rgb(222, 222, 222); /* Light background on hover */
 }
 
-/* Image thumbnail styles */
-.thumbnail {
-    width: 50px;
-    height: 50px;
-    cursor: pointer;
+.hover-container {
+    position: relative;
+    display: inline-block;
 }
 
-/* Popup image on hover */
-.image-preview-container {
-    position: relative;
+.hover-popup {
+    position: absolute;
+    top: 50%;
+    left: 100%;
+    transform: translate(5px, -50%);
+    z-index: 1;
+    border: 1px solid #333;
+    display: none;
+    background-color: #fff;
+    padding: 5px;
+}
+
+.hover-container:hover .hover-popup {
+    display: block;
 }
 
 .popup-image {
-    position: absolute;
-    top: -100px; /* Position the popup above the thumbnail */
-    left: 50px;
-    width: 200px; /* Adjust the size as needed */
+    width: 100px;
     height: auto;
-    display: none; /* Initially hidden */
-    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.2);
-    border: 1px solid #ddd;
 }
 
-.image-preview-container:hover .popup-image {
-    display: block; /* Show image on hover */
-}
-
-table td.actions {
+.table td.actions {
     display: flex;
     justify-content: space-around;
     align-items: center;
@@ -112,24 +111,32 @@ table td.actions {
     padding: 10px 5px;
 }
 
-table th:first-child,
-table td:first-child {
+.table th:first-child,
+.table td:first-child {
     border-top-left-radius: 10px; /* Top-left rounded corner */
 }
 
-table th:last-child,
-table td:last-child {
+.table th:last-child,
+.table td:last-child {
     border-top-right-radius: 10px; /* Top-right rounded corner */
     border-right: none; /* Solid line between columns */
 }
 
-table tr:last-child td:first-child {
+.table tr:last-child td:first-child {
     border-bottom-left-radius: 10px; /* Bottom-left rounded corner */
 }
 
-table tr:last-child td:last-child {
+.table tr:last-child td:last-child {
     border-bottom-right-radius: 10px; /* Bottom-right rounded corner */
     border-right: none; /* Solid line between columns */
+}
+
+.table .low-stock {
+    background-color: #f8d7da; /* Highlight low stock rows in light red */
+}
+.table .low-stock-alert {
+    color: #dc3545; /* Red color for the low stock alert */
+    font-weight: bold;
 }
 
 /* Input Fields */
@@ -639,12 +646,4 @@ form.inline-form button#activate-category-button {
 
 form.inline-form button#activate-category-button:hover {
     background-color: #04741a;
-}
-
-.low-stock {
-    background-color: #f8d7da; /* Highlight low stock rows in light red */
-}
-.low-stock-alert {
-    color: #dc3545; /* Red color for the low stock alert */
-    font-weight: bold;
 }

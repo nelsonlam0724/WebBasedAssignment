@@ -16,3 +16,30 @@ function checkSelection(form) {
     return true; // Allow form submission
 }
 
+$(document).ready(function() {
+    $('.product-row').hover(function(event) {
+        // Get the image source
+        const photoSrc = $(this).data('photo');
+        const imagePreview = $('#image-preview');
+
+        if (photoSrc) {
+            // Set the image and position
+            imagePreview.html('<img src="../uploads/' + photoSrc + '" alt="Product Image">');
+            imagePreview.css({
+                top: event.pageY + 10 + 'px', // Position the image slightly below the cursor
+                left: event.pageX + 10 + 'px'
+            }).show();
+        }
+    }, function() {
+        // Hide the image preview when not hovering
+        $('#image-preview').hide();
+    });
+
+    // Ensure the image follows the mouse movement
+    $('.product-row').mousemove(function(event) {
+        $('#image-preview').css({
+            top: event.pageY + 10 + 'px',
+            left: event.pageX + 10 + 'px'
+        });
+    });
+});
