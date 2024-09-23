@@ -2,7 +2,7 @@
 include '../_base.php';
 $_title = 'Product Details';
 include '../_head.php';
-include '../include/sidebarAdmin.php'; 
+include '../include/sidebarAdmin.php';
 
 auth('Root', 'Admin');
 
@@ -15,7 +15,8 @@ if (!$product_id) {
     redirect('productList.php');
 }
 
-$stm = $_db->prepare('
+$stm = $_db->prepare(
+    '
     SELECT p.*, c.category_name 
     FROM product p 
     LEFT JOIN category c ON p.category_id = c.category_id 
@@ -53,40 +54,48 @@ if (is_post()) {
 
     // Handle file uploads
     $new_product_photos = $_FILES['photo'];
-    if (!empty($new_product_photos['name'][0])) {
-        foreach ($new_product_photos['tmp_name'] as $index => $tmp_name) {
-            if ($new_product_photos['error'][$index] === UPLOAD_ERR_OK) {
-                $file_type = $new_product_photos['type'][$index];
-                if (!in_array($file_type, ['image/jpeg', 'image/png'])) {
+    if (!empty($_FILES['photo'])) {
+        foreach ($_FILES['photo']['tmp_name'] as $image_id => $tmp_name) {
+            if (!empty($tmp_name) && $_FILES['photo']['error'][$image_id] === UPLOAD_ERR_OK) {
+                $file_type = $_FILES['photo']['type'][$image_id];
+                if (in_array($file_type, ['image/jpeg', 'image/png'])) {
+                    if ($_FILES['photo']['size'][$image_id] <= 1 * 1024 * 1024) {
+                        $photo_path = save_photo_admin($tmp_name);  // Function to save the image
+                        // Update the specific image
+                        $stm = $_db->prepare('UPDATE product_image SET product_photo = ? WHERE image_id = ?');
+                        $stm->execute([$photo_path, $image_id]);
+                    } else {
+                        $_err['photo'] = 'Files must be 1MB or smaller';
+                    }
+                } else {
                     $_err['photo'] = 'All files must be JPEG or PNG';
-                    break;
-                }
-                if ($new_product_photos['size'][$index] > 1 * 1024 * 1024) {
-                    $_err['photo'] = 'Files must be 1MB or smaller';
-                    break;
                 }
             }
         }
     }
+
 
     if (empty($_err)) {
         // Update product details
         $stm = $_db->prepare('UPDATE product SET name = ?, price = ?, category_id = ?, quantity = ?, weight = ?, description = ?, status = ? WHERE product_id = ?');
         $stm->execute([$new_name, $new_price, $new_category, $new_quantity, $new_weight, $new_description, $new_status, $product_id]);
 
-        // Update existing images
         if (!empty($existing_image_ids)) {
             foreach ($existing_image_ids as $index => $image_id) {
+                // Check if a new file has been uploaded for this image
                 if (isset($new_product_photos['tmp_name'][$index]) && !empty($new_product_photos['tmp_name'][$index])) {
                     $file = $new_product_photos['tmp_name'][$index];
                     if (file_exists($file)) {
-                        $photo_path = save_photo_admin($file); // Your function to save the photo
+                        $photo_path = save_photo_admin($file);
+                        
+                        // Update the specific image with the new photo
                         $stm = $_db->prepare('UPDATE product_image SET product_photo = ? WHERE image_id = ?');
                         $stm->execute([$photo_path, $image_id]);
                     }
                 }
             }
         }
+        
 
         temp('info', 'Product Details Updated');
         redirect('productList.php');
@@ -95,7 +104,6 @@ if (is_post()) {
 ?>
 
 <link rel="stylesheet" href="../css/product.css">
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
 <a href="productList.php"><button type="button">⬅️ Back to Product List</button></a>
 <h1>Product Details</h1>
 
@@ -168,22 +176,21 @@ if (is_post()) {
         <tr>
             <th>Product Photos:</th>
             <td>
-                <label class="upload">
-                    <input type="file" name="photo[]" id="photo" accept="image/*" multiple>
-                    <div id="product-photos">
-                        <div class="image-container">
-                            <?php foreach ($images as $img): ?>
-                                <div class="image-wrapper">
-                                    <img src="../uploads/<?= htmlspecialchars($img->product_photo) ?>" alt="Product Photo" class="product-photo-preview">
-                                    <input type="hidden" name="existing_image_ids[]" value="<?= htmlspecialchars($img->image_id) ?>">
-                                </div>
-                            <?php endforeach; ?>
+                <div id="product-photos">
+                    <?php foreach ($images as $index => $img): ?>
+                        <div class="image-wrapper">
+                        <label class="upload" tabindex="0">
+                            <img src="../uploads/<?= htmlspecialchars($img->product_photo) ?>" alt="Product Photo" class="product-photo-preview">
+                            <input type="hidden" name="existing_image_ids[<?= $index ?>]" value="<?= htmlspecialchars($img->image_id) ?>">
+                            <input type="file" name="photo[<?= $index ?>]" id="photo-<?= $index ?>" accept="image/*">
+                        </label>
                         </div>
-                    </div>
-                </label>
-                <?= isset($_err['photo']) ? "<span class='error'>{$_err['photo']}</span>" : '' ?>
+                    <?php endforeach; ?>
+                </div>
             </td>
         </tr>
+
+
     </table>
     <button type="submit" id="submit-button" style="display: none;">Update Product</button>
 </form>

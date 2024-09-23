@@ -86,7 +86,7 @@ if (is_post()) {
         $photos = array_slice($photos, 0, 5); // Limit to 5 images
 
         foreach ($photos as $p) {
-            $photo = save_photo($p); // Save each image
+            $photo = save_photo_admin($p); // Save each image
             $image_id = generateID('product_image', 'image_id', 'I', 4);
             $stm = $_db->prepare('
             INSERT INTO product_image (image_id, product_id, product_photo)
@@ -163,17 +163,14 @@ include '../_head.php';
     $(document).ready(function () {
     $('label.upload input[type=file]').on('change', e => {
         const files = e.target.files;
-        const previewContainer = $('#image-previews');  // Container for image previews
-        const defaultPhoto = $('#default-photo');  // Default photo image
+        const previewContainer = $('#image-previews');  
+        const defaultPhoto = $('#default-photo'); 
     
-        previewContainer.empty();  // Clear previous previews
+        previewContainer.empty(); 
     
-        // Remove or hide the default photo
         if (defaultPhoto.length) {
-            defaultPhoto.remove();  // You can also use .hide() if you want to keep it in the DOM
+            defaultPhoto.remove(); 
         }
-    
-        // Loop through selected files and display image previews
         Array.from(files).forEach(file => {
             if (file.type.startsWith('image/')) {
                 const img = $('<img>').addClass('preview-image').attr('src', URL.createObjectURL(file));
