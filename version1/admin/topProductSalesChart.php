@@ -45,11 +45,6 @@ $ord = $_db->prepare($query);
 $ord->execute($params);
 $orders = $ord->fetchAll();
 
-// foreach ($orders as $order) {
-//     $statuses[] = $order->status;
-//     $counts[] = $order->count;
-// }
-
 foreach ($orders as $data) {
     $productNames[] = $data->product_name;
     $totalUnits[] = $data->total_units;
