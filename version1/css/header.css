@@ -17,7 +17,7 @@ header{
     position: fixed;
     z-index:10;
     background-color:white;
-    top:0;display: none;
+    top:0;
  }
 
  a{
