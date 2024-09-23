@@ -66,23 +66,6 @@ if (is_post()) {
 }
 ?>
 <style>
-label.upload img {
-    border: 1px solid #333;
-    width: 200px;
-    height: 200px;
-    object-fit: cover;
-    cursor: pointer;
-}
-
-label.photo_value img {
-    border: 1px solid #333;
-    width: 200px;
-    height: 200px;
-    border-radius: 50%;
-    object-fit: cover;
-    margin-top: 10px;
-    cursor: pointer;
-}
 
 </style>
 <link rel="stylesheet" href="../css/comment.css">

@@ -82,28 +82,7 @@ $_title = 'User List';
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="../css/userList.css">
     <title><?= htmlspecialchars($_title) ?></title>
-    <script>
-        function submitSearch() {
-            document.getElementById('searchForm').submit();
-        }
-
-        function focusSearchInput() {
-            const searchInput = document.getElementById('searchInput');
-            searchInput.focus();
-        }
-
-        window.onload = function() {
-            const searchInput = document.getElementById('searchInput');
-            if ('<?= htmlspecialchars($search_query) ?>') {
-                setTimeout(() => {
-                    searchInput.focus();
-                    searchInput.setSelectionRange(searchInput.value.length, searchInput.value.length); // 将光标放在末尾
-                }, 0);
-            } else {
-                searchInput.focus();
-            }
-        };
-    </script>
+    <script src="../js/search.js"></script>
 </head>
 
 <body>

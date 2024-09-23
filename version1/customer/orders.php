@@ -66,30 +66,7 @@ $statuses = $statuses_stm->fetchAll(PDO::FETCH_COLUMN);
 <link rel="stylesheet" href="../css/orderItem.css">
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script src="../js/orders.js"></script>
-<script>
-    function submitSearch() {
-        document.getElementById('searchForm').submit();
-    }
-
-    function focusSearchInput() {
-        const search_product = document.getElementById('search_product');
-        search_product.focus();
-    }
-
-    window.onload = function() {
-        const search_product = document.getElementById('search_product');
-        const searchValue = '<?= htmlspecialchars($search_product) ?>';
-
-        if (searchValue) {
-            setTimeout(() => {
-                search_product.focus();
-                search_product.setSelectionRange(search_product.value.length, search_product.value.length);
-            }, 0);
-        } else {
-            search_product.focus();
-        }
-    };
-</script>
+<script src="../js/srcProduct.js"></script>
 </head>
 <br><br><br><br><br>
 
