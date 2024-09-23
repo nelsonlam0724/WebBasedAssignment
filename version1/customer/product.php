@@ -16,7 +16,7 @@ $CategoryResults = $getCategory->fetchAll();
 $query = 'SELECT p.* FROM product p 
           JOIN category c ON p.category_id = c.category_id 
           WHERE c.category_status = ?';
-$params = ['available'];
+$params = ['activate'];
 
 if ($category) {
   $query .= ' AND p.category_id = ?';
