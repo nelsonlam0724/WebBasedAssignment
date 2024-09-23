@@ -62,7 +62,6 @@ if (is_post()) {
     }
 
 
-
     if (!$_err) {
 
         $_db->beginTransaction();
@@ -94,6 +93,11 @@ if (is_post()) {
     ');
         foreach ($cartSelect as $product_id => $unit) {
             $stm->execute([$orderid, $product_id, $product_id, $unit, "Pending"]);
+            $stmt = $_db->prepare('SELECT quantity FROM product WHERE product_id = ?');
+            $stmt->execute([$product_id]);
+            $productStock = $stmt->fetch();
+            $stmt = $_db->prepare('UPDATE product SET quantity = ? WHERE product_id = ?');
+            $stmt->execute([ $productStock->quantity - $unit, $product_id]);
         }
 
         $_db->commit();
@@ -108,6 +112,11 @@ if (is_post()) {
         $stm->execute([$pay_id,  $_SESSION['user']->user_id, $total, $paymentMethod, $orderid]);
 
         $_db->commit();
+
+        $stm = $_db->prepare('DELETE FROM `carts` WHERE user_id = ? AND product_id = ?');
+        foreach ($cartSelect as $product_id => $unit) {
+            $stm->execute([$_SESSION['user']->user_id, $product_id ]);
+        }
 
         $_SESSION['order_id'] = $orderid;
         redirect('payment.php');
@@ -126,61 +135,61 @@ if (is_post()) {
 
 
 <body class="body1">
-<?php 
-include '../include/header.php';
-include '../include/sidebar.php';  ?>
- 
-    <div class="update-address-fill" >
+    <?php
+    include '../include/header.php';
+    include '../include/sidebar.php';  ?>
+
+    <div class="update-address-fill">
 
         <div class="address-form">
             <!-- <h1>Contact :</h1>
             <input type="text" id="receipent_namej" name="lname" placeholder="Name" />
-            <input type="tel" id="shippingPhonej" name="lname" placeholder="Phone number" pattern="[0-9]{3}-[0-9]{3}-[0-9]{4}" /> --> 
+            <input type="tel" id="shippingPhonej" name="lname" placeholder="Phone number" pattern="[0-9]{3}-[0-9]{3}-[0-9]{4}" /> -->
 
 
             <h1>Address :</h1>
-          
+
             <div id="maps" style="border:1px solid black"></div>
-                <br>
-                <div class="input-group">
-                    <input type="text" id="city" placeholder="City">
-                </div>
-                <div class="input-group">
+            <br>
+            <div class="input-group">
+                <input type="text" id="city" placeholder="City">
+            </div>
+            <div class="input-group">
                 <select name="state" id="state">
-                <option value="">Select a state or territory</option>
-                <option value="Johor">Johor</option>
-                <option value="Kedah">Kedah</option>
-                <option value="Kelantan">Kelantan</option>
-                <option value="Melaka">Melaka</option>
-                <option value="Negeri Sembilan">Negeri Sembilan</option>
-                <option value="Pahang">Pahang</option>
-                <option value="Penang">Penang</option>
-                <option value="Perak">Perak</option>
-                <option value="Perlis">Perlis</option>
-                <option value="Sabah">Sabah</option>
-                <option value="Sarawak">Sarawak</option>
-                <option value="Selangor">Selangor</option>
-                <option value="Terengganu">Terengganu</option>
-                <option value="Kuala Lumpur,Wilayah Persekutuan">Wilayah Persekutuan</option>
-                <option value="Labuan">Labuan</option>
-                <option value="Putrajaya">Putrajaya</option>
-            </select> 
-                </div>
-                <div class="input-group">
-                    <input type="text" id="unit" placeholder="unit">
-                </div>
-                <div class="input-group">
-                    <input type="text" id="location_name" placeholder="Details Location">
-                </div>
-                <div class="input-group">
-                    <input type="text" id="postal_code" placeholder="Postal Code">
-                </div>
-                <div class="input-group">
-                    <input type="text" id="street" placeholder="street">
-                </div>
-                <div class="input-group">
-                    <input type="text" id="country" placeholder="country">
-                </div>
+                    <option value="">Select a state or territory</option>
+                    <option value="Johor">Johor</option>
+                    <option value="Kedah">Kedah</option>
+                    <option value="Kelantan">Kelantan</option>
+                    <option value="Melaka">Melaka</option>
+                    <option value="Negeri Sembilan">Negeri Sembilan</option>
+                    <option value="Pahang">Pahang</option>
+                    <option value="Penang">Penang</option>
+                    <option value="Perak">Perak</option>
+                    <option value="Perlis">Perlis</option>
+                    <option value="Sabah">Sabah</option>
+                    <option value="Sarawak">Sarawak</option>
+                    <option value="Selangor">Selangor</option>
+                    <option value="Terengganu">Terengganu</option>
+                    <option value="Kuala Lumpur,Wilayah Persekutuan">Wilayah Persekutuan</option>
+                    <option value="Labuan">Labuan</option>
+                    <option value="Putrajaya">Putrajaya</option>
+                </select>
+            </div>
+            <div class="input-group">
+                <input type="text" id="unit" placeholder="unit">
+            </div>
+            <div class="input-group">
+                <input type="text" id="location_name" placeholder="Details Location">
+            </div>
+            <div class="input-group">
+                <input type="text" id="postal_code" placeholder="Postal Code">
+            </div>
+            <div class="input-group">
+                <input type="text" id="street" placeholder="street">
+            </div>
+            <div class="input-group">
+                <input type="text" id="country" placeholder="country">
+            </div>
 
 
             <!-- <select name="state" id="state">
@@ -202,7 +211,7 @@ include '../include/sidebar.php';  ?>
                 <option value="Labuan">Labuan</option>
                 <option value="Putrajaya">Putrajaya</option>
             </select> -->
-<!-- 
+            <!-- 
             <div id="maps" style="border:1px solid black"></div>
             <input type="text" id="locationInput" placeholder="Enter location"> -->
 
@@ -221,7 +230,7 @@ include '../include/sidebar.php';  ?>
             <h1>
                 Checkout
             </h1>
-            <?php $addressValues = $resultsAddress->street.", ".$resultsAddress->postal_code.", ".$resultsAddress->city.", ".$resultsAddress->state.", ".$resultsAddress->country;  ?>
+            <?php $addressValues = $resultsAddress->street . ", " . $resultsAddress->postal_code . ", " . $resultsAddress->city . ", " . $resultsAddress->state . ", " . $resultsAddress->country;  ?>
             <div class="details">
                 <div class="address-detail">
                     <div class="text-address">
@@ -235,9 +244,9 @@ include '../include/sidebar.php';  ?>
                     <div class="update-address" style="font-size: 15px;">
                         <p onclick="pop_up_form_address()"> Change address <i class="fa fa-angle-double-right"></i></p>
                     </div>
-                  
-                    <input type="hidden" name="valueUpated" id="valueUpated" value="<?= $addressValues ?>"/>
-                
+
+                    <input type="hidden" name="valueUpated" id="valueUpated" value="<?= $addressValues ?>" />
+
 
                 </div>
                 <div class="nice_border"></div>
@@ -285,7 +294,7 @@ include '../include/sidebar.php';  ?>
                     $count = 0;
                     $discount = 0;
                     foreach ($products as $product):
-                    
+
                         $productId = $product['product_id'];
                         $quantity = isset($cartSelect[$productId]) ? $cartSelect[$productId] : 0;
                         $subtotal += $product['price'] * $quantity;
@@ -293,7 +302,7 @@ include '../include/sidebar.php';  ?>
                         $getProductImg = $_db->prepare('SELECT product_photo FROM product_image WHERE product_id = ?');
                         $getProductImg->execute([$productId]);
                         $productImg = $getProductImg->fetch(PDO::FETCH_OBJ);
-                        $productPhoto = $productImg ? $productImg->product_photo : '../images/photo.jpg';  
+                        $productPhoto = $productImg ? $productImg->product_photo : '../images/photo.jpg';
                     ?>
                         <tr>
                             <td><?= $count + 1 ?></td>

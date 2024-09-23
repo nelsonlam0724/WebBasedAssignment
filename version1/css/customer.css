@@ -55,10 +55,11 @@
 
 
 .products {
-    width: 1000px; 
+    width: 100%; 
+    padding:50px;
     overflow-x: auto; 
     display: grid; 
-    grid-template-columns: repeat(auto-fill, minmax(200px, 10fr)); 
+    grid-template-columns: repeat(5, 1fr); /* Three columns with equal width */
     gap: 55px; 
     transition: transform 0.5s ease;
 }

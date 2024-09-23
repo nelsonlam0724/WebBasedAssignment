@@ -50,7 +50,7 @@ $(document).ready(function(){
             type: 'POST',
             data: {user: userID, product: productID},
             success: function(response) {
-                fetchCart();
+                fetchCart();     
             }
         });
     });

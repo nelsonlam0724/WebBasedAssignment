@@ -38,16 +38,28 @@ $results = $getPending->fetchAll();
             <?php
             $current_time = time();
 
-            $stm = $_db->prepare("SELECT id FROM orders WHERE status = ? AND created_at < NOW() - INTERVAL 1 MINUTE");
-
-            $stm->execute(['Pending']);
-            $orderss = $stm->fetchAll(PDO::FETCH_ASSOC);
-
-            foreach ($orderss as $order) {
-                $stm = $_db->prepare("UPDATE orders SET status = 'Cancelled' WHERE id = :id");
-                $stm->bindParam(':id', $order['id'], PDO::PARAM_STR);
-                $stm->execute();
-            }
+            $stm = $_db->prepare("
+            SELECT o.id, od.product_id, od.unit 
+            FROM orders AS o 
+            JOIN order_details AS od ON o.id = od.order_id
+            WHERE o.status = ? AND o.created_at < NOW() - INTERVAL 1 MINUTE
+        ");
+        $stm->execute(['Pending']);
+        $orders = $stm->fetchAll(PDO::FETCH_ASSOC);
+        
+        foreach ($orders as $order) {
+            $stm = $_db->prepare("UPDATE orders SET status = 'Cancelled' WHERE id = :id");
+            $stm->bindParam(':id', $order['id'], PDO::PARAM_STR);
+            $stm->execute();
+        
+            $stmt = $_db->prepare('SELECT quantity FROM product WHERE product_id = ?');
+            $stmt->execute([$order['product_id']]);
+            $productStock = $stmt->fetch(PDO::FETCH_ASSOC);
+        
+            $stmt = $_db->prepare('UPDATE product SET quantity = ? WHERE product_id = ?');
+            $stmt->execute([$productStock['quantity'] + $order['unit'], $order['product_id']]);
+        }
+        
             $count = 0;
             foreach ($results as $o): ?>
                 <div class="item-container">

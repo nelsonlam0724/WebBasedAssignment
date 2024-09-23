@@ -4,7 +4,7 @@ include '../_base.php';
 auth('Member');
 
 $getUserID = $_db->prepare('
-    SELECT ct.*,c.id, c.unit, p.name, p.price, p.product_id, p.status as product_status  
+    SELECT ct.*,c.id, c.unit, p.name, p.price, p.product_id, p.status as product_status ,p.quantity 
     FROM carts AS c
     JOIN product AS p ON c.product_id = p.product_id 
     JOIN category AS ct ON p.category_id = ct.category_id 
@@ -100,7 +100,7 @@ include '../include/sidebar.php'; ?>
 
                         <div class="btn-qty">
                             <div class="qty-btn" onclick="decreaseValue('<?= $count ?>')">-</div>
-                            <input type="text" name="qty[]" class="qty" value="<?= $c['unit'] ?>" id="<?=$count?>" readonly data-price="<?=$c['price']?>" data-product-id="<?= $c['product_id'] ?>">
+                            <input type="text" name="qty[]" class="qty" value="<?= $c['unit'] ?>" id="<?=$count?>" readonly data-price="<?=$c['price']?>" data-product-id="<?= $c['product_id'] ?>" data-previous-value="<?=  $c['unit'] ?>"  data-stock="<?= $c['quantity'] ?>">
                             <div class="qty-btn" onclick="increaseValue('<?= $count ?>')">+</div>
                         </div>
 
@@ -165,7 +165,7 @@ include '../include/sidebar.php'; ?>
 <div  class="pop-up center">
 <div>
 <img style="margin:5px 0px;width:50px;height:50px;" src="../images/warning.png" width="70" height="70">
-<p>This item is unavailable.</p>
+<p id="message"></p>
 <button id="bt">OK</button>
 </div>
 
