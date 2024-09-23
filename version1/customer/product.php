@@ -8,26 +8,37 @@ $search = isset($_GET['search']) ? trim($_GET['search']) : '';
 $category = isset($_GET['category']) ? trim($_GET['category']) : '';
 $page = isset($_GET['page']) ? (int)$_GET['page'] : 1;
 $limit = 10;
+// Fetch available categories for the filter list
+$getCategory = $_db->prepare('SELECT * FROM category WHERE category_status = ?');
+$getCategory->execute(['available']);
+$CategoryResults = $getCategory->fetchAll();
 
-$query = 'SELECT * FROM product WHERE 1=1';
-$params = [];
+$query = 'SELECT p.* FROM product p 
+          JOIN category c ON p.category_id = c.category_id 
+          WHERE c.category_status = ?';
+$params = ['available'];
 
 if ($category) {
-  $query .= ' AND category_id = ?';
+  $query .= ' AND p.category_id = ?';
   $params[] = $category;
 }
 
 if ($search) {
-  $query .= ' AND name LIKE ?';
+  $query .= ' AND p.name LIKE ?';
   $params[] = '%' . $search . '%';
 }
+
+$query .= ' AND p.status = ?';
+$params[] = 'available';
 
 $pager = new SimplePager($query, $params, $limit, $page);
 $getProduct = $pager->result;
 $total_pages = $pager->page_count;
 
-$getCategory = $_db->query('SELECT * FROM category');
-$CategoryResults = $getCategory->fetchAll();
+// Fetch current category name only if it is available
+$getCategoryName = $_db->prepare('SELECT * FROM category WHERE category_id = ? AND category_status = ?');
+$getCategoryName->execute([$category, 'available']);
+$CategoryNameResults = $getCategoryName->fetch();
 ?>
 
 <link rel="stylesheet" href="../css/product.css">
@@ -39,14 +50,7 @@ $CategoryResults = $getCategory->fetchAll();
     </p>
     <div class="filter-container">
       <p class="filter-button">
-        <?php 
-      
-         $getCategoryName = $_db->prepare('SELECT * FROM category WHERE category_id = ?');
-         $getCategoryName->execute([$category]);
-         $CategoryNameResults = $getCategoryName->fetch();
-         
-         echo (empty($CategoryNameResults->category_name)) ? "Filter" : htmlspecialchars($CategoryNameResults->category_name); 
-         ?> <i class='bx bx-filter'></i>
+        <?= (empty($CategoryNameResults->category_name)) ? "Filter" : htmlspecialchars($CategoryNameResults->category_name); ?> <i class='bx bx-filter'></i>
       </p>
       <ul class="filter-list">
         <a href="../customer/product.php">
