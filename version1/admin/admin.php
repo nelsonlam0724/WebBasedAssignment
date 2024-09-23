@@ -4,30 +4,39 @@ include '../_head.php';
 include '../include/sidebarAdmin.php';
 auth('Root', 'Admin');
 
-$member = $_db->query('SELECT * FROM user WHERE role = "Member"')->fetchAll();
-
 $currentYearMonth = date('Y-m');
 $currentYear = date('Y');
 $currentMonth = date('M');
 
-$sales = $_db->prepare('SELECT total FROM orders WHERE DATE_FORMAT(datetime, "%Y-%m") = ?');
-$sales->execute([$currentYearMonth]);
-$salesData = $sales->fetchAll(PDO::FETCH_OBJ);
+// Calculate last month's sales
+$firstDayLastMonth = (new DateTime('first day of last month'))->format('Y-m-d');
+$lastDayLastMonth = (new DateTime('last day of last month'))->format('Y-m-d');
 
+$salesLastMonth = $_db->prepare('SELECT SUM(total) AS total FROM orders WHERE DATE(datetime) BETWEEN ? AND ?');
+$salesLastMonth->execute([$firstDayLastMonth, $lastDayLastMonth]);
+$totalSalesLastMonth = $salesLastMonth->fetchColumn() ?: 0;
+
+// Calculate current month sales
+$salesCurrentMonth = $_db->prepare('SELECT total FROM orders WHERE DATE_FORMAT(datetime, "%Y-%m") = ?');
+$salesCurrentMonth->execute([$currentYearMonth]);
+$salesData = $salesCurrentMonth->fetchAll(PDO::FETCH_OBJ);
+
+$totalSalesCurrentMonth = 0;
+foreach ($salesData as $order) {
+    $totalSalesCurrentMonth += $order->total;
+}
+
+// Calculate total year sales
 $salesYear = $_db->prepare('SELECT total FROM orders WHERE DATE_FORMAT(datetime, "%Y") = ?');
 $salesYear->execute([$currentYear]);
 $salesDataYear = $salesYear->fetchAll(PDO::FETCH_OBJ);
-
-$totalSales = 0;
-foreach ($salesData as $order) {
-    $totalSales += $order->total;
-}
 
 $totalSalesYear = 0;
 foreach ($salesDataYear as $order) {
     $totalSalesYear += $order->total;
 }
 
+// Fetch the top selling products
 $topSalesData = $_db->query('
     SELECT p.name AS product_name, SUM(od.unit) AS total_units, p.price AS product_price
     FROM order_details AS od
@@ -77,7 +86,6 @@ foreach ($dates as $date) {
     $dataPoints[] = ['date' => $dateString, 'total' => $total];
 }
 
-
 $_title = 'Admin Dashboard - ' . htmlspecialchars($_user->name);
 ?>
 
@@ -99,20 +107,19 @@ $_title = 'Admin Dashboard - ' . htmlspecialchars($_user->name);
 
         <div class="dashboard-grid">
             <div class="dashboard-box center-content" id="total-users-box">
-                <h3>Total Users</h3>
-                <p id="total-users"><?= count($member) ?> user</p>
+                <h3>Last Month Sales</h3>
+                <p id="total-sales">RM <?= number_format($totalSalesLastMonth, 2) ?></p>
             </div>
 
             <div class="dashboard-box center-content" id="total-month-sales-box">
-                <h3>Total Month Sales (<?= $currentMonth ?>)</h3>
-                <p id="total-sales">RM <?= number_format($totalSales, 2) ?></p>
+                <h3>Current Month Sales (<?= $currentMonth ?>)</h3>
+                <p id="total-sales">RM <?= number_format($totalSalesCurrentMonth, 2) ?></p>
             </div>
 
             <div class="dashboard-box center-content" id="total-sales-box">
                 <h3>Total Year Sales (<?= $currentYear ?>)</h3>
                 <p id="total-sales">RM <?= number_format($totalSalesYear, 2) ?></p>
             </div>
-
 
             <a href="topProductSalesChart.php">
                 <div class="dashboard-box" id="top-products-box">

@@ -98,7 +98,10 @@ $_title = 'User List';
             <input type="hidden" name="sort_order" value="<?= htmlspecialchars($sort_order) ?>">
             <input type="hidden" name="page" value="1"> <!-- Always start at page 1 for new searches -->
         </form>
-
+      
+        <div class="user-count">
+            <p>Total Users: <?= count($arr) ?></p>
+        </div>
         <!-- Filter and Sorting Options -->
         <div class="filter-sorting">
             <form action="userList.php" method="get">
@@ -132,7 +135,6 @@ $_title = 'User List';
                 </select>
             </form>
         </div>
-
 
         <!-- User Table -->
         <?php if ($users): ?>
