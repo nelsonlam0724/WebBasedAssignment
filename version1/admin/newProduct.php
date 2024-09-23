@@ -7,6 +7,7 @@ auth('Root', 'Admin');
 $name = $price = $quantity = $category_id = $new_category = $desc = $weight = '';
 $photos = [];
 $message = ''; // Success message
+$low_stock_thresold = 1;
 
 if (is_post()) {
     $name = req('name');
@@ -37,6 +38,8 @@ if (is_post()) {
 
     if (!$quantity) {
         $_err['quantity'] = 'Required';
+    } else if ($quantity < $low_stock_thresold) {
+        echo '<div class="low-stock-alert">Warning: Low stock! Quantity is below the minimum threshold.</div>';
     }
 
     if (!$photos) {
