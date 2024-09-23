@@ -10,8 +10,8 @@ auth('Member');
 $information = $_db->prepare('SELECT p.* ,f.* 
                              FROM favorite AS f 
                              JOIN product AS p ON f.product_id = p.product_id
-                             WHERE f.user_id = ?');
-$information->execute([$userID]);
+                             WHERE f.user_id = ? AND p.status= ?');
+$information->execute([$userID,"Available"]);
 $informations = $information->fetchAll(PDO::FETCH_ASSOC);
 
 ?>
