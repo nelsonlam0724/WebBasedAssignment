@@ -23,6 +23,16 @@ $sort_by = isset($_GET['sort_by']) ? trim($_GET['sort_by']) : 'id';
 $page = isset($_GET['page']) ? (int)$_GET['page'] : 1;
 $limit = 5; // Number of records per page
 
+// Count total records without LIMIT
+$countQuery = 'SELECT COUNT(DISTINCT o.id) FROM orders AS o JOIN order_details AS od ON o.id = od.order_id JOIN product AS p ON od.product_id = p.product_id WHERE o.user_id = ? AND o.status != ? AND o.status != ?';
+$countParams = [$user->user_id, 'Pending', ''];
+$countStatement = $_db->prepare($countQuery);
+$countStatement->execute($countParams);
+$total_count = $countStatement->fetchColumn(); // Get total count of orders
+
+// Calculate total pages based on total count
+$total_pages = ceil($total_count / $limit);
+
 // Start constructing the query
 $query = 'SELECT DISTINCT o.* FROM orders AS o JOIN order_details AS od ON o.id = od.order_id JOIN product AS p ON od.product_id = p.product_id WHERE o.user_id = ? AND o.status != ? AND o.status != ?';
 $params = [$user->user_id, 'Pending', ''];
@@ -35,7 +45,7 @@ $query .= ' AND o.status != ? AND o.status != ?';
 $params[] = $pend;
 $params[] = '';
 
-//search product
+// Search product
 if ($search_product) {
     $query .= ' AND (p.name LIKE ?)';
     $params[] = '%' . $search_product . '%';
@@ -55,7 +65,6 @@ $pager = new SimplePager($query, $params, $limit, $page);
 
 // Get results for the current page
 $orders = $pager->result;
-$total_pages = $pager->page_count;
 
 // Fetch distinct statuses for filter options
 $statuses_stm = $_db->query('SELECT DISTINCT status FROM orders');
@@ -119,8 +128,7 @@ $statuses = $statuses_stm->fetchAll(PDO::FETCH_COLUMN);
                 SELECT i.*, p.name
                 FROM order_details AS i
                 JOIN product AS p ON i.product_id = p.product_id
-                WHERE i.order_id = ?
-                ');
+                WHERE i.order_id = ?');
                 $stm->execute([$order->id]);
                 $order_details = $stm->fetchAll();
                 ?>
@@ -205,6 +213,7 @@ $statuses = $statuses_stm->fetchAll(PDO::FETCH_COLUMN);
         <?php if ($page < $total_pages): ?>
             <a href="?page=<?= $page + 1 ?>&sort_by=<?= urlencode($sort_by) ?>&status=<?= urlencode($status_filter) ?>&displ=<?= $page * $limit ?>">Next</a>
         <?php endif; ?>
+
     </div>
 
 </div>

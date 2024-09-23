@@ -8,7 +8,6 @@ body {
 
 h1 {
     text-align: center;
-    margin-bottom: 20px;
 }
 
 .container {
@@ -72,7 +71,10 @@ table {
     border-radius: 8px;
     overflow: hidden;
 }
-
+.user-count {
+    position: fixed;
+    padding: 5px; 
+}
 tr:hover{
     background-color: rgb(221, 221, 221);
 }
