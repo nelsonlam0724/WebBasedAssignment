@@ -47,41 +47,8 @@ if (is_post()) {
 <head>
     <meta charset="UTF-8">
     <title>Reply to Comment</title>
-    <link rel="stylesheet" href="../css/userList.css">
-    <style>
-        body {
-            display: flex;
-            margin: 0;
-        }
-        .container {
-            padding: 20px;
-            flex-grow: 1;
-            background-color: #ffffff; /* Main content background */
-        }
-        h1, h2 {
-            margin: 0 0 10px;
-        }
-        textarea {
-            width: 100%;
-            height: 100px;
-            margin-bottom: 10px;
-            padding: 10px;
-            border: 1px solid #ccc;
-            border-radius: 4px;
-        }
-        .edit-icon {
-            margin-left: 10px;
-            text-decoration: none;
-            color: blue; /* Change color as needed */
-            cursor: pointer;
-        }
-        .edit-icon:hover {
-            text-decoration: underline;
-        }
-        .reply-form {
-            display: none; /* Hide the reply form by default */
-        }
-    </style>
+    <link rel="stylesheet" href="../css/reply.css">
+    
     <script>
         function showReplyForm() {
             document.getElementById('replyForm').style.display = 'block';
@@ -90,13 +57,15 @@ if (is_post()) {
     </script>
 </head>
 <body>
-    <div class="container">
+<div class="container">
         <h1>Comment Reply</h1>
-        <p><strong>Comment ID:</strong> <?= htmlspecialchars($comment->comment_id) ?></p>
-        <p><strong>User Name:</strong> <?= htmlspecialchars($comment->user_name) ?></p>
-        <p><strong>Product ID:</strong> <?= htmlspecialchars($comment->product_id) ?></p>
-        <p><strong>Date:</strong> <?= htmlspecialchars($comment->datetime) ?></p>
-        <p><strong>Comment:</strong> <?= htmlspecialchars($comment->comment) ?></p>
+        <div class="comment-detail">
+            <p><strong>Comment ID:</strong> <?= htmlspecialchars($comment->comment_id) ?></p>
+            <p><strong>User Name:</strong> <?= htmlspecialchars($comment->user_name) ?></p>
+            <p><strong>Product ID:</strong> <?= htmlspecialchars($comment->product_id) ?></p>
+            <p><strong>Date:</strong> <?= htmlspecialchars($comment->datetime) ?></p>
+            <p><strong>Comment:</strong> <?= htmlspecialchars($comment->comment) ?></p>
+        </div>
 
         <h2>Reply to Comment</h2>
 
@@ -106,17 +75,19 @@ if (is_post()) {
                 <span class="edit-icon" onclick="showReplyForm()">✏️ Edit</span>
             </div>
             <form method="POST" id="replyForm" class="reply-form">
-                <textarea id="replyText" name="reply" required placeholder="Enter your reply here..."></textarea>
+                <textarea id="replyText" name="reply" required placeholder="Enter your reply here..."><?= htmlspecialchars($comment->reply) ?></textarea>
                 <button type="submit">Submit Reply</button>
             </form>
         <?php else: ?>
-            <form method="POST">
+            <form method="POST" class="textarea-wrapper">
                 <textarea name="reply" required placeholder="Enter your reply here..."></textarea>
                 <button type="submit">Submit Reply</button>
             </form>
         <?php endif; ?>
 
-        <a href="commentList.php">Back to Comments</a>
+        <div class="back-link">
+            <a href="commentList.php">Back to Comments</a>
+        </div>
     </div>
 </body>
 </html>
