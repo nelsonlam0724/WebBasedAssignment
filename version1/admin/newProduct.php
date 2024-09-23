@@ -2,6 +2,12 @@
 include '../_base.php';
 include '../include/sidebarAdmin.php'; 
 auth('Root', 'Admin');
+
+// Initialize variables
+$name = $price = $quantity = $category_id = $new_category = $desc = $weight = '';
+$photos = [];
+$message = ''; // Success message
+
 if (is_post()) {
     $name = req('name');
     $price = req('price');
@@ -12,7 +18,9 @@ if (is_post()) {
     $desc = req('description');
     $weight = req('weight');
 
-    //Validation
+    // Validation logic
+    $_err = []; // Initialize error array
+    
     if (!$name) {
         $_err['name'] = 'Required';
     } else if (strlen($name) > 100) {
@@ -67,62 +75,70 @@ if (is_post()) {
 
     if (!$_err) {
         if ($new_category) {
-            $new_category_id = generateID('category', 'category_id', 'CT', 4); // Generate new category ID
-            $stm = $_db->prepare('
-            INSERT INTO category (category_id, category_name, category_status)
-            VALUES (?, ?, "Activate")
-            ');
+            // Insert new category
+            $new_category_id = generateID('category', 'category_id', 'CT', 4);
+            $stm = $_db->prepare('INSERT INTO category (category_id, category_name, category_status) VALUES (?, ?, "Activate")');
             $stm->execute([$new_category_id, $new_category]);
-            $category_id = $new_category_id; // Use the newly created category ID
+            $category_id = $new_category_id;
         }
 
+        // Insert product
         $product_id = generateID('product', 'product_id', 'P', 4);
-        $stm = $_db->prepare('
-        INSERT INTO product (product_id, name, price, category_id, quantity, description, weight, status)
-        VALUES (?, ?, ?, ?, ?, ?, ?, "Available")
-        ');
+        $stm = $_db->prepare('INSERT INTO product (product_id, name, price, category_id, quantity, description, weight, status) VALUES (?, ?, ?, ?, ?, ?, ?, "Available")');
         $stm->execute([$product_id, $name, $price, $category_id, $quantity, $desc, $weight]);
 
-        $photos = array_slice($photos, 0, 5); // Limit to 5 images
-
+        // Insert product images
+        $photos = array_slice($photos, 0, 3); // Limit to 3 images
         foreach ($photos as $p) {
             $photo = save_photo_admin($p); // Save each image
             $image_id = generateID('product_image', 'image_id', 'I', 4);
-            $stm = $_db->prepare('
-            INSERT INTO product_image (image_id, product_id, product_photo)
-            VALUES (?, ?, ?)
-            ');
+            $stm = $_db->prepare('INSERT INTO product_image (image_id, product_id, product_photo) VALUES (?, ?, ?)');
             $stm->execute([$image_id, $product_id, $photo]);
         }
 
-        temp('info', 'Record inserted');
-        redirect('productList.php');
+        // Determine which button was clicked
+        if (isset($_POST['add_another'])) {
+            temp('info', 'Product added successfully. You can add another product.');
+            // Clear the form fields after successful insertion for new product input
+            $name = $price = $quantity = $desc = $weight = $category_id = $new_category = '';
+            $photos = [];
+        } else {
+            // Regular form submission, redirect to the product list page
+            temp('info', 'Product added successfully.');
+            redirect('productList.php');
+        }
     }
 }
 
+// HTML form section
 $_title = 'Add New Product';
 include '../_head.php';
 ?>
 
 <link rel="stylesheet" href="../css/product.css">
 <h1>Add New Product</h1>
+
+<?php if ($message): ?>
+    <div class="success-message"><?= $message ?></div>
+<?php endif; ?>
+
 <form method="post" class="form" enctype="multipart/form-data">
 
     <label for="name">Product Name</label><br>
-    <?= html_text('name', 'maxlength="100"') ?>
+    <?= html_text('name', 'maxlength="100" value="'.htmlspecialchars($name).'"') ?>
     <?= err('name') ?>
-    <br>
-    <br>
+    <br><br>
+
     <label for="price">Price</label><br>
-    <?= html_text('price', 'maxlength="100"') ?>
+    <?= html_text('price', 'maxlength="100" value="'.htmlspecialchars($price).'"') ?>
     <?= err('price') ?>
-    <br>
-    <br>
+    <br><br>
+
     <label for="quantity">Quantity</label><br>
-    <?= html_number('quantity', 1, 100, 1, 'class="form-control"') ?>
+    <?= html_number('quantity', 1, 100, 1, 'class="form-control" value="'.htmlspecialchars($quantity).'"') ?>
     <?= err('quantity') ?>
-    <br>
-    <br>
+    <br><br>
+
     <label for="photo">Product Photos</label><br>
     <label class="upload" tabindex="0">
         <?= html_file('photo[]', 'image/*', 'multiple id="photo"') ?>
@@ -130,54 +146,57 @@ include '../_head.php';
         <div id="image-previews" class="preview-container"></div>
     </label>
     <?= err('photo') ?>
-    <br>
-    <br>
+    <br><br>
+
     <label for="description">Description</label><br>
     <?= html_textarea('description', 'placeholder="Enter Description"') ?>
     <?= err('description') ?>
-    <br>
-    <br>
+    <br><br>
+
     <label for="weight">Weight</label><br>
-    <?= html_text('weight', 'maxlength="100"') ?>
+    <?= html_text('weight', 'maxlength="100" value="'.htmlspecialchars($weight).'"') ?>
     <?= err('weight') ?>
-    <br>
-    <br>
+    <br><br>
+
     <label for="category">Category</label><br>
     <select name="category_id">
         <option value="">Select a category</option>
         <?php
         $categories = $_db->query('SELECT category_id, category_name FROM category')->fetchAll();
         foreach ($categories as $category) {
-            echo '<option value="' . $category->category_id . '">' . $category->category_name . '</option>';
+            $selected = $category_id == $category->category_id ? 'selected' : '';
+            echo '<option value="' . $category->category_id . '" ' . $selected . '>' . htmlspecialchars($category->category_name) . '</option>';
         }
         ?>
     </select>
     <?= err('category_id') ?>
-    <br>
-    <br>
+    <br><br>
 
-    <button type="submit" id="submit-button">Submit</button>
+    <button type="submit" name="submit" id="submit-button">Submit</button>
+    <button type="submit" name="add_another" id="add-another-button">Add Another Product</button>
 </form>
 
 <script>
     $(document).ready(function () {
-    $('label.upload input[type=file]').on('change', e => {
-        const files = e.target.files;
-        const previewContainer = $('#image-previews');  
-        const defaultPhoto = $('#default-photo'); 
-    
-        previewContainer.empty(); 
-    
-        if (defaultPhoto.length) {
-            defaultPhoto.remove(); 
-        }
-        Array.from(files).forEach(file => {
-            if (file.type.startsWith('image/')) {
-                const img = $('<img>').addClass('preview-image').attr('src', URL.createObjectURL(file));
-                previewContainer.append(img);
+        $('label.upload input[type=file]').on('change', e => {
+            const files = e.target.files;
+            const previewContainer = $('#image-previews');
+            const defaultPhoto = $('#default-photo');
+
+            previewContainer.empty();
+            if (defaultPhoto.length) {
+                defaultPhoto.remove();
             }
+
+            Array.from(files).forEach(file => {
+                if (file.type.startsWith('image/')) {
+                    const img = $('<img>').addClass('preview-image').attr('src', URL.createObjectURL(file));
+                    previewContainer.append(img);
+                }
+            });
         });
     });
-    
-});
 </script>
+
+<?php
+include '../_foot.php';
