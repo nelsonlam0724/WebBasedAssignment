@@ -43,6 +43,7 @@ $topSalesData = $_db->query('
 
                     <?php foreach ($topSalesData as $top): ?>
                         <?php
+
                         $topProd = $_db->prepare('
                             SELECT product_photo FROM product_image
                             WHERE product_id = ?
@@ -55,7 +56,7 @@ $topSalesData = $_db->query('
                             <?php if ($topPro && !empty($topPro->product_photo)): ?>
                                 <img height="200" src="../uploads/<?= htmlspecialchars($topPro->product_photo) ?>" width="200" />
                             <?php else: ?>
-                                <img height="200" src="../uploads/default.png" width="200" />
+                                <img height="200" src="../images/photo.jpg" width="200" />
                             <?php endif; ?>
                             <h3><?= htmlspecialchars($top->product_name) ?></h3>
                             <p class="price">RM<?= htmlspecialchars($top->product_price) ?></p>

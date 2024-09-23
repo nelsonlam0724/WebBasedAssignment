@@ -109,17 +109,6 @@ include '../_head.php';
                                 <td><?= htmlspecialchars($category->category_name) ?></td>
                                 <td><?= htmlspecialchars($category->category_status) ?></td>
                                 <td class="actions">
-                                    <?php if ($category->category_status === 'Activate'): ?>
-                                        <form method="post" action="deactivateCategory.php" class="inline-form">
-                                            <input type="hidden" name="category_id" value="<?= $category->category_id ?>">
-                                            <button type="submit" onclick="return confirm('Are you sure you want to deactivate this category?');">Deactivate</button>
-                                        </form>
-                                    <?php else: ?>
-                                        <form method="post" action="activateCategory.php" class="inline-form">
-                                            <input type="hidden" name="category_id" value="<?= $category->category_id ?>">
-                                            <button type="submit" onclick="return confirm('Are you sure you want to activate this category?');">Activate</button>
-                                        </form>
-                                    <?php endif; ?>
 
                                     <!-- Product Edit Action -->
                                     <a href="categoryEdit.php?category_id=<?= $category->category_id ?>" class="edit-container">
@@ -138,8 +127,10 @@ include '../_head.php';
             </table>
 
             <div class="action-buttons">
-                <button type="submit" formaction="deactivateCategory.php" id="deactivate-selected" onclick="return confirm('Are you sure you want to deactivate the selected categories?');">Deactivate Selected</button>
-                <button type="submit" formaction="activateCategory.php" id="activate-selected" onclick="return confirm('Are you sure you want to activate the selected categories?');">Activate Selected</button>
+                <div class="action-buttons">
+                <button type="submit" formaction="deactivateCategory.php" id="deactivate-selected" onclick="return confirm('Are you sure you want to deactivate the selected categories?');">Deactivate</button>
+                <button type="submit" formaction="activateCategory.php" id="activate-selected" onclick="return confirm('Are you sure you want to activate the selected categories?');">Activate</button>
+                </div>
             </div>
         </form>
     </div>
