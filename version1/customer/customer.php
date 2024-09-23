@@ -8,9 +8,20 @@ include '../include/sidebar.php';
 
 $getCategory = $_db->query('SELECT * FROM category');
 $CategoryResults = $getCategory->fetchAll();
+
+$topSalesData = $_db->query('
+    SELECT p.name AS product_name, SUM(od.unit) AS total_units, p.price AS product_price, p.product_id AS product_id
+    FROM orders AS o
+    JOIN order_details AS od ON o.id = od.order_id
+    JOIN product AS p ON od.product_id = p.product_id
+    GROUP BY od.product_id
+    ORDER BY total_units DESC
+    LIMIT 10
+')->fetchAll();
 ?>
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -18,6 +29,7 @@ $CategoryResults = $getCategory->fetchAll();
     <link rel="stylesheet" href="../css/customer.css">
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 </head>
+
 <body>
     <div class="container">
         <div class="hero">
@@ -27,75 +39,34 @@ $CategoryResults = $getCategory->fetchAll();
         <div class="best-sellers">
             <h2> Best Sellers</h2>
             <div class="products-container">
-       
+                <div class="products">
 
-                    <div class="products">
+                    <?php foreach ($topSalesData as $top): ?>
+                        <?php
+                        $topProd = $_db->prepare('
+                            SELECT product_photo FROM product_image
+                            WHERE product_id = ?
+                            LIMIT 1
+                        ');
+                        $topProd->execute([$top->product_id]);
+                        $topPro = $topProd->fetch(PDO::FETCH_OBJ);
+                        ?>
                         <div class="product">
-                            <img height="200" src="https://media.istockphoto.com/id/173015527/photo/a-single-red-book-on-a-white-surface.jpg?s=612x612&w=0&k=20&c=AeKmdZvg2_bRY2Yct7odWhZXav8CgDtLMc_5_pjSItY=" width="200" />
-                            <h3>Book</h3>
-                            <p class="price">RM 9.95</p>
+                            <?php if ($topPro && !empty($topPro->product_photo)): ?>
+                                <img height="200" src="../uploads/<?= htmlspecialchars($topPro->product_photo) ?>" width="200" />
+                            <?php else: ?>
+                                <img height="200" src="../uploads/default.png" width="200" />
+                            <?php endif; ?>
+                            <h3><?= htmlspecialchars($top->product_name) ?></h3>
+                            <p class="price">RM<?= htmlspecialchars($top->product_price) ?></p>
                         </div>
+                    <?php endforeach; ?>
 
-                        <div class="product">
-                            <img height="200" src="https://media.istockphoto.com/id/173015527/photo/a-single-red-book-on-a-white-surface.jpg?s=612x612&w=0&k=20&c=AeKmdZvg2_bRY2Yct7odWhZXav8CgDtLMc_5_pjSItY=" width="200" />
-                            <h3>Book</h3>
-                            <p class="price">RM 9.95</p>
-                        </div>
-
-
-                        <div class="product">
-                            <img height="200" src="https://media.istockphoto.com/id/173015527/photo/a-single-red-book-on-a-white-surface.jpg?s=612x612&w=0&k=20&c=AeKmdZvg2_bRY2Yct7odWhZXav8CgDtLMc_5_pjSItY=" width="200" />
-                            <h3>Book</h3>
-                            <p class="price">RM 9.95</p>
-                        </div>
-
-
-                        <div class="product">
-                            <img height="200" src="https://media.istockphoto.com/id/173015527/photo/a-single-red-book-on-a-white-surface.jpg?s=612x612&w=0&k=20&c=AeKmdZvg2_bRY2Yct7odWhZXav8CgDtLMc_5_pjSItY=" width="200" />
-                            <h3>Book</h3>
-                            <p class="price">RM 9.95</p>
-                        </div>
+                    <!-- Repeat the product div for other products -->
+                </div>
 
 
 
-                        <div class="product">
-                            <img height="200" src="https://media.istockphoto.com/id/173015527/photo/a-single-red-book-on-a-white-surface.jpg?s=612x612&w=0&k=20&c=AeKmdZvg2_bRY2Yct7odWhZXav8CgDtLMc_5_pjSItY=" width="200" />
-                            <h3>Book</h3>
-                            <p class="price">RM 9.95</p>
-                        </div>
-
-
-                        <div class="product">
-                            <img height="200" src="https://media.istockphoto.com/id/173015527/photo/a-single-red-book-on-a-white-surface.jpg?s=612x612&w=0&k=20&c=AeKmdZvg2_bRY2Yct7odWhZXav8CgDtLMc_5_pjSItY=" width="200" />
-                            <h3>Book</h3>
-                            <p class="price">RM 9.95</p>
-                        </div>
-
-
-                        <div class="product">
-                            <img height="200" src="https://media.istockphoto.com/id/173015527/photo/a-single-red-book-on-a-white-surface.jpg?s=612x612&w=0&k=20&c=AeKmdZvg2_bRY2Yct7odWhZXav8CgDtLMc_5_pjSItY=" width="200" />
-                            <h3>Book</h3>
-                            <p class="price">RM 9.95</p>
-                        </div>
-
-
-                        <div class="product">
-                            <img height="200" src="https://media.istockphoto.com/id/173015527/photo/a-single-red-book-on-a-white-surface.jpg?s=612x612&w=0&k=20&c=AeKmdZvg2_bRY2Yct7odWhZXav8CgDtLMc_5_pjSItY=" width="200" />
-                            <h3>Book</h3>
-                            <p class="price">RM 9.95</p>
-                        </div>
-
-
-                        <div class="product">
-                            <img height="200" src="https://media.istockphoto.com/id/173015527/photo/a-single-red-book-on-a-white-surface.jpg?s=612x612&w=0&k=20&c=AeKmdZvg2_bRY2Yct7odWhZXav8CgDtLMc_5_pjSItY=" width="200" />
-                            <h3>Book</h3>
-                            <p class="price">RM 9.95</p>
-                        </div>
-                        <!-- Repeat the product div for other products -->
-                    </div>
-           
-
-               
             </div>
         </div>
 
@@ -104,7 +75,7 @@ $CategoryResults = $getCategory->fetchAll();
             <div class="grid">
                 <?php foreach ($CategoryResults as $currentCategory): ?>
                     <a class="grid-item" href="../customer/product.php?category=<?= $currentCategory->category_id ?>">
-                        <img alt="<?= htmlspecialchars($currentCategory->category_name) ?>" height="300" src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTmQs8xbIseku59onHMpZ6bQ3XaeaSjeLgzMQ&s" width="300"/>
+                        <img alt="<?= htmlspecialchars($currentCategory->category_name) ?>" height="300" src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTmQs8xbIseku59onHMpZ6bQ3XaeaSjeLgzMQ&s" width="300" />
                         <div class="overlay"><?= htmlspecialchars($currentCategory->category_name) ?></div>
                     </a>
                 <?php endforeach; ?>
@@ -114,6 +85,7 @@ $CategoryResults = $getCategory->fetchAll();
 
     <?php include '../_foot.php'; ?>
 
-   
+
 </body>
+
 </html>
