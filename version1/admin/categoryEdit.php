@@ -62,8 +62,8 @@ if (is_post()) {
             <th>Status:</th>
             <td>
                 <select name="status" id="status">
-                    <option value="Activate" <?= $category->category_status == 'Activate' ? 'selected' : '' ?>>Activate</option>
-                    <option value="Deactivate" <?= $category->category_status == 'Deactivate' ? 'selected' : '' ?>>Deactivate</option>
+                    <option value="Available" <?= $category->category_status == 'Available' ? 'selected' : '' ?>>Available</option>
+                    <option value="Unavailable" <?= $category->category_status == 'Unavailable' ? 'selected' : '' ?>>Unavailable</option>
                 </select>
                 <?= isset($_err['status']) ? "<span class='error'>" . htmlspecialchars($_err['status']) . "</span>" : '' ?>
             </td>

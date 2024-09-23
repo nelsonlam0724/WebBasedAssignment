@@ -3,6 +3,7 @@ include '../_base.php';
 require_once '../lib/SimplePager.php';
 include '../include/sidebarAdmin.php'; 
 auth('Root', 'Admin'); 
+
 $search_query = isset($_GET['search']) ? trim($_GET['search']) : '';
 $page = isset($_GET['page']) ? (int)$_GET['page'] : 1;
 $sort_by = isset($_GET['sort_by']) ? $_GET['sort_by'] : 'product_id'; // Default sort by id
@@ -10,9 +11,10 @@ $sort_order = isset($_GET['sort_order']) ? $_GET['sort_order'] : 'ASC'; // Defau
 $category_filter = isset($_GET['category']) ? $_GET['category'] : ''; // Category filter
 $status_filter = isset($_GET['status']) ? $_GET['status'] : '';
 $limit = 5;
+$min_stock = 1; // Minimum stock threshold
 
-// Select product with category name using LEFT JOIN
-$sql = 'SELECT p.*, c.category_name, c.category_status FROM product p
+// Select product with category name and check for low stock using LEFT JOIN
+$sql = 'SELECT p.* FROM product p
 LEFT JOIN category c ON p.category_id = c.category_id WHERE 1=1';
 $params = [];
 
@@ -117,7 +119,7 @@ include '../_head.php';
                             <th><input type="checkbox" id="select-all"></th>
                             <th>Product ID</th>
                             <th>Product Name</th>
-                            <th>Category</th>
+                            <th>Quantity</th> <!-- Added Quantity column -->
                             <th>Status</th>
                             <th>Actions</th>
                         </tr>
@@ -130,8 +132,11 @@ include '../_head.php';
                                 </td>
                                 <td><?= htmlspecialchars($p->product_id) ?></td>
                                 <td><?= htmlspecialchars($p->name) ?></td>
-                                <td>
-                                    <?= htmlspecialchars($p->category_name) ?>
+                                <td class="<?= $p->quantity <= $min_stock ? 'low-stock' : '' ?>">
+                                    <?= htmlspecialchars($p->quantity) ?>
+                                    <?php if ($p->quantity <= $min_stock): ?>
+                                        <span class="low-stock-alert">Low Stock</span>
+                                    <?php endif; ?>
                                 </td>
                                 <td><?= htmlspecialchars($p->status) ?></td>
                                 <td class="actions">
@@ -148,10 +153,8 @@ include '../_head.php';
 
                 </table>
                 <div class="action-buttons">
-                    <div class="action-buttons">
-                        <button type="submit" formaction="deactivateProduct.php" id="deactivate-selected" onclick="return confirm('Are you sure you want to deactivate the selected products?');">Deactivate</button>
-                        <button type="submit" formaction="activateProduct.php" id="activate-selected" onclick="return confirm('Are you sure you want to activate the selected products?');">Activate</button>
-                    </div>
+                    <button type="submit" formaction="deactivateProduct.php" id="deactivate-selected" onclick="return confirm('Are you sure you want to deactivate the selected products?');">Deactivate</button>
+                    <button type="submit" formaction="activateProduct.php" id="activate-selected" onclick="return confirm('Are you sure you want to activate the selected products?');">Activate</button>
                 </div>
 
                 <div class="pagination-container">
@@ -169,7 +172,7 @@ include '../_head.php';
                         <?php endif; ?>
                     <?php endfor; ?>
 
-                    <!-- Next Button -->
+                    <<!-- Next Button -->
                     <?php if ($page < $total_pages): ?>
                         <a href="?search=<?= urlencode($search_query) ?>&page=<?= $page + 1 ?>&sort_by=<?= urlencode($sort_by) ?>&sort_order=<?= urlencode($sort_order) ?>&category=<?= urlencode($category_filter) ?>&status=<?= urlencode($status_filter) ?>" class="pagination-button">Next</a>
                     <?php endif; ?>

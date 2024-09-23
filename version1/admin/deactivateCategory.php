@@ -10,7 +10,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['category_ids'])) {
         $placeholders = implode(',', array_fill(0, count($category_ids), '?'));
 
         // Prepare the SQL query to deactivate only active categories
-        $sql = "UPDATE category SET category_status = 'Deactivate' WHERE category_id IN ($placeholders) AND category_status != 'Deactivate'";
+        $sql = "UPDATE category SET category_status = 'Unavailable' WHERE category_id IN ($placeholders) AND category_status != 'Unavailable'";
         $stm = $_db->prepare($sql);
 
         if ($stm->execute($category_ids)) {
