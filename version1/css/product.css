@@ -613,3 +613,11 @@ form.inline-form button#activate-category-button {
 form.inline-form button#activate-category-button:hover {
     background-color: #04741a;
 }
+
+.low-stock {
+    background-color: #f8d7da; /* Highlight low stock rows in light red */
+}
+.low-stock-alert {
+    color: #dc3545; /* Red color for the low stock alert */
+    font-weight: bold;
+}
