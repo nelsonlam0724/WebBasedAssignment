@@ -60,32 +60,9 @@ foreach ($orders as $data) {
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Top Sales</title>
     <link rel="stylesheet" href="../css/orderList.css"> <!-- Link the external CSS -->
+    <link rel="stylesheet" href="../css/topProductSalesChart.css"> <!-- Link the external CSS -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <style>
-        body {
-            margin-left: 200px;
-        }
-
-        .charts {
-            display: flex;
-            justify-content: space-around;
-            margin: 20px 0;
-        }
-
-        .chart-container {
-            width: 80%;
-            height: 400px;
-            margin: 20px;
-        }
-
-        h1 {
-            text-align: center;
-        }
-
-        h3 {
-            text-align: center;
-        }
-    </style>
+    
 </head>
 
 <body>
