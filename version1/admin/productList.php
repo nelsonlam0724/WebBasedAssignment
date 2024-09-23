@@ -113,7 +113,7 @@ include '../_head.php';
         <!-- Product Table with Checkboxes -->
         <form method="post" action="deactivateProduct.php" onsubmit="return checkSelection(this);">
             <?php if ($product): ?>
-                <table>
+                <table class="table">
                     <thead>
                         <tr>
                             <th><input type="checkbox" id="select-all"></th>
@@ -125,13 +125,27 @@ include '../_head.php';
                         </tr>
                     </thead>
                     <tbody>
-                        <?php foreach ($product as $p): ?>
+                        <?php foreach ($product as $p): 
+                                    $getProductImg = $_db->prepare('SELECT product_photo FROM product_image WHERE product_id = ?');
+                                    $getProductImg->execute([$p->product_id]);
+                                    $productImg = $getProductImg->fetch(PDO::FETCH_OBJ);
+                                    $productPhoto = $productImg ? $productImg->product_photo : '../images/photo.jpg';
+                            ?>
                             <tr>
                                 <td>
                                     <input type="checkbox" name="product_ids[]" value="<?= $p->product_id ?>" class="product-checkbox">
                                 </td>
                                 <td><?= htmlspecialchars($p->product_id) ?></td>
-                                <td><?= htmlspecialchars($p->name) ?></td>
+                                <td>
+                                    <div class="hover-container">
+                                        <?= htmlspecialchars($p->name) ?>
+                                        <div class="hover-popup">
+                                            <?php foreach ($productImg as $image): ?>
+                                                <img src="../uploads/<?= htmlspecialchars($image) ?>" alt="Product Image" class="popup-image">
+                                            <?php endforeach; ?>
+                                        </div>
+                                    </div>
+                                </td>
                                 <td class="<?= $p->quantity <= $min_stock ? 'low-stock' : '' ?>">
                                     <?= htmlspecialchars($p->quantity) ?>
                                     <?php if ($p->quantity <= $min_stock): ?>
@@ -172,7 +186,7 @@ include '../_head.php';
                         <?php endif; ?>
                     <?php endfor; ?>
 
-                    <<!-- Next Button -->
+                    <!-- Next Button -->
                     <?php if ($page < $total_pages): ?>
                         <a href="?search=<?= urlencode($search_query) ?>&page=<?= $page + 1 ?>&sort_by=<?= urlencode($sort_by) ?>&sort_order=<?= urlencode($sort_order) ?>&category=<?= urlencode($category_filter) ?>&status=<?= urlencode($status_filter) ?>" class="pagination-button">Next</a>
                     <?php endif; ?>
