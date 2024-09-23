@@ -58,8 +58,8 @@
     width: 1000px; 
     overflow-x: auto; 
     display: grid; 
-    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); 
-    gap: 20px; 
+    grid-template-columns: repeat(auto-fill, minmax(200px, 10fr)); 
+    gap: 55px; 
     transition: transform 0.5s ease;
 }
 
