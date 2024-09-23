@@ -4,10 +4,12 @@ include '../_base.php';
 auth('Member');
 
 $getUserID = $_db->prepare('
-    SELECT c.id, c.unit, p.name, p.price, p.product_id, p.status as product_status  
+    SELECT ct.*,c.id, c.unit, p.name, p.price, p.product_id, p.status as product_status  
     FROM carts AS c
     JOIN product AS p ON c.product_id = p.product_id 
+    JOIN category AS ct ON p.category_id = ct.category_id 
     WHERE c.user_id = ? 
+    ORDER BY c.id DESC
 ');
 
 $getUserID->execute([$_SESSION['user']->user_id]);
@@ -107,8 +109,18 @@ include '../include/sidebar.php'; ?>
                         </div>
 
                         <div class="custom-checkbox">
+                            <?php  
+                            $checkAvailable = 'false';
+                               if($c['product_status'] === 'Unavailable'){
+                                $checkAvailable = 'true';
+                               }               
+                               if($c['category_status'] === 'Deactivate'){
+                                  $checkAvailable = 'true';
+                               }
+
+                            ?>
                             <input id="check_<?=$c['product_id']?>" class="check" type="checkbox" name="selectItems[]" value="<?=$c['product_id']?>" 
-                                   data-unavailable="<?= ($c['product_status'] === 'Unavailable') ? 'true' : 'false' ?>" />
+                                   data-unavailable="<?=  $checkAvailable//($c['product_status'] === 'Unavailable') ? 'true' : 'false' ?>" />
                         </div>
 
                     </div>
@@ -149,36 +161,14 @@ include '../include/sidebar.php'; ?>
 
 </div>
 
-<script>
-document.addEventListener('DOMContentLoaded', function() {
-    const checkboxes = document.querySelectorAll('.check');
-    const checkoutBtn = document.getElementById('checkout-btn');
+<div  class="pop-up center">
+<div>
+<img style="margin:5px 0px;width:50px;height:50px;" src="../images/warning.png" width="70" height="70">
+<p>This item is unavailable.</p>
+<button id="bt">OK</button>
+</div>
 
-    checkboxes.forEach(checkbox => {
-        checkbox.addEventListener('change', function() {
-            const isUnavailable = this.dataset.unavailable === 'true';
-            if (isUnavailable && this.checked) {
-                // Show an alert or a message using the temp function
-                alert('This item is unavailable.'); // Temporary alert
-                this.checked = false; // Uncheck the box
-                checkAvailability(); // Check availability
-            } else {
-                checkAvailability(); // Check availability
-            }
-        });
-    });
-
-    function checkAvailability() {
-        let hasUnavailable = false;
-        checkboxes.forEach(checkbox => {
-            if (checkbox.checked && checkbox.dataset.unavailable === 'true') {
-                hasUnavailable = true;
-            }
-        });
-        checkoutBtn.disabled = hasUnavailable;
-    }
-});
-</script>
+</div>
 
 <script src="../js/product.js"></script>
 <script src="../js/cart.js"></script>

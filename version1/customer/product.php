@@ -10,7 +10,7 @@ $page = isset($_GET['page']) ? (int)$_GET['page'] : 1;
 $limit = 10;
 // Fetch available categories for the filter list
 $getCategory = $_db->prepare('SELECT * FROM category WHERE category_status = ?');
-$getCategory->execute(['available']);
+$getCategory->execute(['activate']);
 $CategoryResults = $getCategory->fetchAll();
 
 $query = 'SELECT p.* FROM product p 
@@ -37,7 +37,7 @@ $total_pages = $pager->page_count;
 
 // Fetch current category name only if it is available
 $getCategoryName = $_db->prepare('SELECT * FROM category WHERE category_id = ? AND category_status = ?');
-$getCategoryName->execute([$category, 'available']);
+$getCategoryName->execute([$category, 'activate']);
 $CategoryNameResults = $getCategoryName->fetch();
 ?>
 

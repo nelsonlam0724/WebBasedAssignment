@@ -1,10 +1,16 @@
 $(document).ready(function() {
+
+    $('#bt').click(function() {
+        $('.pop-up').removeClass('jump');
+    });
+
     const checkboxes = $('input[name="selectItems[]"]');
     const quantityInputs = $('.qty');
     const subtotalElement = $('#subtotal');
     const taxElement = $('#tax');
     const totalElement = $('#total');
     const checkoutButton = $('#checkout-btn');
+    const $checkboxesUnavailable = $('.check');
 
     function calculateTotalPrice() {
         let subtotal = 0;
@@ -24,10 +30,28 @@ $(document).ready(function() {
         taxElement.text('RM ' + tax.toFixed(2));
         totalElement.text('RM ' + total.toFixed(2));
 
-        checkoutButton.prop('disabled', subtotal === 0);
+        checkoutButton.prop('disabled', subtotal === 0 || checkAvailability());
     }
 
-    checkboxes.change(calculateTotalPrice);
+    function checkAvailability() {
+        let hasUnavailable = false;
+        $checkboxesUnavailable.each(function() {
+            if ($(this).is(':checked') && $(this).data('unavailable') === true) {
+                hasUnavailable = true;
+            }
+        });
+        return hasUnavailable;
+    }
+
+    checkboxes.change(function() {
+        const isUnavailable = $(this).data('unavailable') === true;
+        if (isUnavailable && $(this).is(':checked')) {
+            $('.pop-up').addClass('jump');
+            $(this).prop('checked', false); 
+        }
+        calculateTotalPrice(); 
+    });
+
     quantityInputs.on('input', calculateTotalPrice);
 
     function increaseValue(inputId) {
@@ -46,7 +70,6 @@ $(document).ready(function() {
         calculateTotalPrice();
     }
 
-   
     window.increaseValue = increaseValue;
     window.decreaseValue = decreaseValue;
 });
