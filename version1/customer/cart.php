@@ -100,7 +100,7 @@ include '../include/sidebar.php'; ?>
 
                         <div class="btn-qty">
                             <div class="qty-btn" onclick="decreaseValue('<?= $count ?>')">-</div>
-                            <input type="text" name="qty[]" class="qty" value="<?= $c['unit'] ?>" id="<?=$count?>" readonly data-price="<?=$c['price']?>">
+                            <input type="text" name="qty[]" class="qty" value="<?= $c['unit'] ?>" id="<?=$count?>" readonly data-price="<?=$c['price']?>" data-product-id="<?= $c['product_id'] ?>">
                             <div class="qty-btn" onclick="increaseValue('<?= $count ?>')">+</div>
                         </div>
 
@@ -120,7 +120,8 @@ include '../include/sidebar.php'; ?>
 
                             ?>
                             <input id="check_<?=$c['product_id']?>" class="check" type="checkbox" name="selectItems[]" value="<?=$c['product_id']?>" 
-                                   data-unavailable="<?=  $checkAvailable//($c['product_status'] === 'Unavailable') ? 'true' : 'false' ?>" />
+                                   data-unavailable="<?=  $checkAvailable//($c['product_status'] === 'Unavailable') ? 'true' : 'false' ?>" 
+                                   />
                         </div>
 
                     </div>
