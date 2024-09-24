@@ -239,7 +239,7 @@ h1 {
 }
 .grid {
     display: grid;
-    grid-template-columns: repeat(4, 0.2fr); /* Make columns smaller */
+    grid-template-columns: repeat(4, 1fr); /* Make columns smaller */
     gap: 20px;
 }
 
