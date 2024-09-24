@@ -10,13 +10,13 @@ $page = isset($_GET['page']) ? (int)$_GET['page'] : 1;
 $limit = 10;
 // Fetch available categories for the filter list
 $getCategory = $_db->prepare('SELECT * FROM category WHERE category_status = ?');
-$getCategory->execute(['activate']);
+$getCategory->execute(['Available']);
 $CategoryResults = $getCategory->fetchAll();
 
 $query = 'SELECT p.* FROM product p 
           JOIN category c ON p.category_id = c.category_id 
           WHERE c.category_status = ?';
-$params = ['activate'];
+$params = ['Available'];
 
 if ($category) {
   $query .= ' AND p.category_id = ?';
