@@ -91,7 +91,7 @@ if (is_post()) {
         $stm->execute([$product_id, $name, $price, $category_id, $quantity, $desc, $weight]);
 
         // Insert product images
-        $photos = array_slice($photos, 0, 3); // Limit to 3 images
+        $photos = array_slice($photos, 0, 5); // Limit to 3 images
         foreach ($photos as $p) {
             $photo = save_photo_admin($p); // Save each image
             $image_id = generateID('product_image', 'image_id', 'I', 4);
@@ -117,7 +117,7 @@ if (is_post()) {
 $_title = 'Add New Product';
 include '../_head.php';
 ?>
-
+<script src="../js/preview.js"></script>
 <link rel="stylesheet" href="../css/product.css">
 <h1>Add New Product</h1>
 
@@ -138,7 +138,7 @@ include '../_head.php';
     <br><br>
 
     <label for="quantity">Quantity</label><br>
-    <?= html_number('quantity', 1, 100, 1, 'class="form-control" value="'.htmlspecialchars($quantity).'"') ?>
+    <?= html_number('quantity', 1,'', 1, 'class="form-control" value="'.htmlspecialchars($quantity).'"') ?>
     <?= err('quantity') ?>
     <br><br>
 
@@ -178,28 +178,6 @@ include '../_head.php';
     <button type="submit" name="submit" id="submit-button">Submit</button>
     <button type="submit" name="add_another" id="add-another-button">Add Another Product</button>
 </form>
-
-<script>
-    $(document).ready(function () {
-        $('label.upload input[type=file]').on('change', e => {
-            const files = e.target.files;
-            const previewContainer = $('#image-previews');
-            const defaultPhoto = $('#default-photo');
-
-            previewContainer.empty();
-            if (defaultPhoto.length) {
-                defaultPhoto.remove();
-            }
-
-            Array.from(files).forEach(file => {
-                if (file.type.startsWith('image/')) {
-                    const img = $('<img>').addClass('preview-image').attr('src', URL.createObjectURL(file));
-                    previewContainer.append(img);
-                }
-            });
-        });
-    });
-</script>
 
 <?php
 include '../_foot.php';

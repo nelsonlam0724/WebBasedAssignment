@@ -15,7 +15,7 @@ document.addEventListener('DOMContentLoaded', function() {
             defaultPhoto.style.display = 'block'; // Show default photo if no images selected
         }
 
-        const limit = 3; // Maximum number of images allowed
+        const limit = 5; // Maximum number of images allowed
         const validFiles = Array.from(files).slice(0, limit); // Limit to 3 files
 
         validFiles.forEach(file => {
@@ -35,7 +35,7 @@ document.addEventListener('DOMContentLoaded', function() {
         });
 
         if (files.length > limit) {
-            alert('You can only upload up to 3 images.');
+            alert('You can only upload up to 5 images.');
         }
     });
 });

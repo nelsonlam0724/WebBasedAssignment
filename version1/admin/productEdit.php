@@ -9,7 +9,6 @@ auth('Root', 'Admin');
 $_err = [];
 $product_id = req('product_id');
 
-
 if (!$product_id) {
     temp('info', 'Product ID Not Found');
     redirect('productList.php');
@@ -61,9 +60,16 @@ if (is_post()) {
                 if (in_array($file_type, ['image/jpeg', 'image/png'])) {
                     if ($_FILES['photo']['size'][$image_id] <= 1 * 1024 * 1024) {
                         $photo_path = save_photo_admin($tmp_name);  // Function to save the image
-                        // Update the specific image
-                        $stm = $_db->prepare('UPDATE product_image SET product_photo = ? WHERE image_id = ?');
-                        $stm->execute([$photo_path, $image_id]);
+
+                        // Check if there is an existing image ID
+                        if (isset($existing_image_ids[$image_id]) && !empty($existing_image_ids[$image_id])) {
+                            $stm = $_db->prepare('UPDATE product_image SET product_photo = ? WHERE image_id = ?');
+                            $stm->execute([$photo_path, $existing_image_ids[$image_id]]);
+                        } else {
+                            $image_id = generateID('product_image', 'image_id', 'I', 4);
+                            $stm = $_db->prepare('INSERT INTO product_image (image_id, product_id, product_photo) VALUES (?, ?, ?)');
+                            $stm->execute([$image_id, $product_id, $photo_path]);
+                        }
                     } else {
                         $_err['photo'] = 'Files must be 1MB or smaller';
                     }
@@ -74,28 +80,10 @@ if (is_post()) {
         }
     }
 
-
     if (empty($_err)) {
         // Update product details
         $stm = $_db->prepare('UPDATE product SET name = ?, price = ?, category_id = ?, quantity = ?, weight = ?, description = ?, status = ? WHERE product_id = ?');
         $stm->execute([$new_name, $new_price, $new_category, $new_quantity, $new_weight, $new_description, $new_status, $product_id]);
-
-        if (!empty($existing_image_ids)) {
-            foreach ($existing_image_ids as $index => $image_id) {
-                // Check if a new file has been uploaded for this image
-                if (isset($new_product_photos['tmp_name'][$index]) && !empty($new_product_photos['tmp_name'][$index])) {
-                    $file = $new_product_photos['tmp_name'][$index];
-                    if (file_exists($file)) {
-                        $photo_path = save_photo_admin($file);
-                        
-                        // Update the specific image with the new photo
-                        $stm = $_db->prepare('UPDATE product_image SET product_photo = ? WHERE image_id = ?');
-                        $stm->execute([$photo_path, $image_id]);
-                    }
-                }
-            }
-        }
-        
 
         temp('info', 'Product Details Updated');
         redirect('productList.php');
@@ -177,22 +165,32 @@ if (is_post()) {
             <th>Product Photos:</th>
             <td>
                 <div id="product-photos">
-                    <?php foreach ($images as $index => $img): ?>
-                        <div class="image-wrapper">
-                        <label class="upload" tabindex="0">
-                            <img src="../uploads/<?= htmlspecialchars($img->product_photo) ?>" alt="Product Photo" class="product-photo-preview">
-                            <input type="hidden" name="existing_image_ids[<?= $index ?>]" value="<?= htmlspecialchars($img->image_id) ?>">
-                            <input type="file" name="photo[<?= $index ?>]" id="photo-<?= $index ?>" accept="image/*">
-                        </label>
-                        </div>
-                    <?php endforeach; ?>
+                    <div class="image-wrapper">
+                        <?php
+                        // Display existing images
+                        foreach ($images as $index => $img): ?>
+                            <label class="upload" tabindex="0">
+                                <img src="../uploads/<?= htmlspecialchars($img->product_photo) ?>" alt="Product Photo" class="product-photo-preview">
+                                <input type="hidden" name="existing_image_ids[<?= $index ?>]" value="<?= htmlspecialchars($img->image_id) ?>">
+                                <input type="file" name="photo[<?= $index ?>]" id="photo-<?= $index ?>" accept="image/*">
+                            </label>
+                        <?php endforeach; ?>
+
+                        <?php
+                        // Add empty upload fields if fewer than 5 images
+                        $max_images = 5;
+                        $remaining_images = $max_images - count($images);
+                        for ($i = 0; $i < $remaining_images; $i++): ?>
+                            <label class="upload" tabindex="0">
+                                <img src="../images/photo.jpg" alt="Default Image" class="product-photo-preview"> <!-- Path to your default image -->
+                                <input type="file" name="photo[<?= count($images) + $i ?>]" id="photo-<?= count($images) + $i ?>" accept="image/*">
+                            </label>
+                        <?php endfor; ?>
+                    </div>
                 </div>
             </td>
         </tr>
-
-
     </table>
     <button type="submit" id="submit-button" style="display: none;">Update Product</button>
 </form>
-
 <script src="../js/productEdit.js"></script>
