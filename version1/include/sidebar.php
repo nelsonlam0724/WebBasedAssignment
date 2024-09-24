@@ -13,6 +13,7 @@
             <a class="als" href="product.php"><i class='fas fa-address-book'></i> Product</a>
             <a class="als" href="information.php"> <i class="fas fa-shopping-bag"></i> My Purchase</a>
             <a class="als" href="orders.php"><i class="fas fa-box"></i> My Order</a>
+            <a class="als" href="commentHistory.php"><i class='far fa-comment-alt'></i> Your Comment</a>
            
         </div>
     </div>
