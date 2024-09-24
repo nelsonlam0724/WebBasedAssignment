@@ -294,6 +294,18 @@ button#add-new:hover, button#back-to-menu:hover {
     display: none;
 }
 
+.image-container {
+    display: inline-block;
+    margin: 10px;
+    position: relative;
+}
+
+.preview-image {
+    width: 130px;
+    height: 130px;
+    object-fit: cover;
+}
+
 /* Product Card Styles */
 .items {
     padding: 50px;

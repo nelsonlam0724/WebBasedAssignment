@@ -62,3 +62,5 @@ document.addEventListener('DOMContentLoaded', function () {
 });
 
 document.getElementById('submit-button').style.display = 'none'; // Hide the submit button by default
+
+
