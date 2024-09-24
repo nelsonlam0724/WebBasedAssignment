@@ -14,7 +14,8 @@
             <a class="als" href="information.php"> <i class="fas fa-shopping-bag"></i> My Purchase</a>
             <a class="als" href="orders.php"><i class="fas fa-box"></i> My Order</a>
             <a class="als" href="commentHistory.php"><i class='far fa-comment-alt'></i> Your Comment</a>
-           
+            <a class="als" href="liveChat.php"><i class="fas fa-comments"></i> Live Chat</a>
+
         </div>
     </div>
 </div>
