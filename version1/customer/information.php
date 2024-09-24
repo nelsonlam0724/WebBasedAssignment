@@ -68,7 +68,7 @@ $results = $getPending->fetchAll();
                             <h2><?= $count + 1 ?>.Order ID : <?= $o->id ?></h2>
                             <p class="pp">Total amount : RM <?= $o->total ?></p>
                             <p class="pp">Date order : <?= $o->datetime ?></p>
-                            <a href="details.php?ship_id=<?= $o->ship_id ?>&order_id=<?= $o->id ?>"><button class="check-button">Check</button></a>
+                            <a href="details.php?ship_id=<?= $o->ship_id ?>&order_id=<?= $o->id ?>&check=0"><button class="check-button">Check</button></a>
                         </div>
                     </div>
 
@@ -78,7 +78,7 @@ $results = $getPending->fetchAll();
          
          <?php
                   if($results==NULL){
-                    echo "No orders yet";
+                    echo '<p style="font-size:25px;">No Orders Yet</p>';
                   }
 
   ?>
@@ -114,7 +114,7 @@ $results = $getPending->fetchAll();
                         <div class="product-description">Status : <?= $o->ship_status ?> </div>
                         <div class="product-description">Company : <?= $o->company_name ?> </div>
                         <div class="product-description" style="color:rgb(77, 130, 24)">Ship Method : <?= $o->ship_method ?> </div>
-                        <button class="rate-button" onclick="view_detail('<%= ship[0] %>', '<%= ship[5] %>')">View detail</button>
+                        <a href="details.php?ship_id=<?= $o->ship_id ?>&order_id=<?= $o->id ?>&check=1"><button class="rate-button" onclick="view_detail('<%= ship[0] %>', '<%= ship[5] %>')">View detail</button></a>
                     </div>
 
                 </div>
@@ -123,7 +123,7 @@ $results = $getPending->fetchAll();
 
 <?php
                   if($shipResults==NULL){
-                    echo "No Orders Yet";
+                    echo '<p style="font-size:25px;">No Orders Yet</p>';
                   }
 
   ?>
@@ -175,7 +175,7 @@ $results = $getPending->fetchAll();
             <?php endforeach; ?>
             <?php
                   if($results==NULL){
-                    echo "No product to rate";
+                    echo '<p style="font-size:25px;">No product to rate</p>';
                   }
 
   ?>
@@ -187,7 +187,9 @@ $results = $getPending->fetchAll();
 </body>
 <script>
 
-
+  function back() {
+    window.history.back();
+  }
 </script>
 
 </html>

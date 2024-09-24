@@ -64,13 +64,6 @@ $comment = $getComment->fetchAll();
 
 
 
-
-
-
-
-
-
-
   </div>
   <div class="review-field">
     <h3>Reviews</h3>

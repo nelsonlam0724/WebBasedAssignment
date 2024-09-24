@@ -9,7 +9,7 @@ $user = $_SESSION['user'];
 
 $order_id = get('order_id');
 $ship_id = get('ship_id');
-
+$check = get('check');
 
 $getItems = $_db->prepare('
     SELECT o.* , p.name , p.product_id
@@ -153,6 +153,7 @@ $_SESSION['order_id'] = $order_id;
             </tfoot>
         </table>
 
+        <?php  if($check==0){  ?>
         <div class="payment-button">
     <form action="payment.php" method="get">
         <input type="hidden" name="order_id" value="<?= $order_id ?>">
@@ -160,6 +161,7 @@ $_SESSION['order_id'] = $order_id;
         <button type="submit">Pay Now (RM <?= number_format($totalpay, 2, '.', '') ?>)</button>
     </form>
 </div>
+<?php  }  ?>
 
 
 
