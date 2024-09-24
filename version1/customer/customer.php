@@ -18,6 +18,17 @@ $topSalesData = $_db->query('
     ORDER BY total_units DESC
     LIMIT 10
 ')->fetchAll();
+
+try {
+    $wallet_stmt = $_db->prepare('
+        INSERT INTO wallet (wallet_id, PIN, user_id) 
+        VALUES (?, ?, ?)
+    ');
+    $wallet_stmt->execute([$wallet_id, "123456", $_SESSION['user']->user_id]);
+} catch (PDOException $e) {
+   //no time do le 
+}
+
 ?>
 <!DOCTYPE html>
 <html lang="en">

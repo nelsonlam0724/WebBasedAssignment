@@ -36,9 +36,7 @@ if (is_post()) {
     }
 
     if (!$_err) {
-        
-
-
+       
      if($validResult===false){      
         $_err['valid_card']="Invalid card details. Please check and try again.";
        
@@ -62,7 +60,7 @@ if (is_post()) {
 ?>
 
 
-
+<h3 style="color:red"><?= err('valid_card')   ?></h3>
 <form id="card-form" method="post" class="hidden">
     <div class="form-group">
         <label for="name">Name on Card <span style="color:red;"><?= err('name')  ?></span></label>
@@ -70,7 +68,7 @@ if (is_post()) {
     </div>
     <div class="form-group">
         <label for="card">Card Number <span style="color:red;"><?= err('card')  ?></span></label>
-        <?= html_text('card', 'placeholder="E.g 0000-0000-0000-0000"')  ?>
+        <?= html_text('card', 'placeholder=" 16 digits "')  ?>
     </div>
     <div class="form-row">
         <div class="form-group">
@@ -87,7 +85,10 @@ if (is_post()) {
             <button>Pay →</button>
         </div>
         <div class="button">
-            <div>Later </div>
+        <a href="../customer/customer.php" style="display: inline-block; padding: 10px 20px; background-color:black; color: white; text-align: center; text-decoration: none; border-radius: 5px; font-size: 16px;">
+  <div>Later</div>
+</a>
+
         </div>
     </div>
 </form>

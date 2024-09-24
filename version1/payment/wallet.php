@@ -47,5 +47,11 @@ if (is_post()) {
         <div class="button">
             <button>Pay →</button>
         </div>
+        <div class="button">
+        <a href="../customer/customer.php" style="display: inline-block; padding: 10px 20px; background-color:black; color: white; text-align: center; text-decoration: none; border-radius: 5px; font-size: 16px;">
+  <div>Later</div>
+</a>
+
+        </div>
     </div>
 </form>
