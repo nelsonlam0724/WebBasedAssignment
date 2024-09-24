@@ -66,7 +66,7 @@ $total_pages = ceil($total_comments / $comments_per_page);
                             <td><?= htmlspecialchars($comment->product_id) ?></td>
                             <td><?= htmlspecialchars($comment->datetime) ?></td>
                             <td>
-                                <a href="reply.php?comment_id=<?= urlencode($comment->comment_id) ?>">
+                                <a href="reply.php?comment_id=<?= urlencode($comment->comment_id) ?>&page=<?= urldecode($page) ?>&search=<?= urlencode($search_query) ?>">
                                     <button class="reply-button">Reply</button>
                                 </a>
                             </td>

@@ -4,15 +4,20 @@ include '../_head.php';
 include '../include/sidebarAdmin.php';
 auth('Root', 'Admin');
 
-// Check if ID is provided in the URL
-if (!isset($_GET['user_id'])) {
-    redirect('userList.php');
-}
 
 $user_id = $_GET['user_id'];
-
-$page = isset($_GET['page']) ? (int)$_GET['page'] : 1;
 $search_query = isset($_GET['search']) ? trim($_GET['search']) : '';
+$role_filter = isset($_GET['role']) ? trim($_GET['role']) : '';
+$status_filter = isset($_GET['status']) ? trim($_GET['status']) : '';
+$sort_by = isset($_GET['sort_by']) ? trim($_GET['sort_by']) : 'user_id';
+$sort_order = isset($_GET['sort_order']) ? trim($_GET['sort_order']) : 'ASC';
+$page = isset($_GET['page']) ? (int)$_GET['page'] : 1;
+
+// Check if ID is provided in the URL
+if (!isset($_GET['user_id'])) {
+    redirect('userList.php?page='. $page .'&search=' . urlencode($search_query) . '&role=' . urlencode($role_filter) . '&status=' . urlencode($status_filter) . '&sort_by=' . urlencode($sort_by) . '&sort_order=' . urlencode($sort_order));
+
+}
 
 // Fetch the user's details
 $stm = $_db->prepare('SELECT * FROM user WHERE user_id = ?');
@@ -146,7 +151,7 @@ if (is_post()) {
                 $stm->execute([$address_id, $user_id, $new_street, $new_city, $new_state, $new_postal_code, $new_country]);
             }
             temp('info', 'User updated successfully');
-            redirect('userList.php');
+            redirect('userList.php?page='. $page .'&search=' . urlencode($search_query) . '&role=' . urlencode($role_filter) . '&status=' . urlencode($status_filter) . '&sort_by=' . urlencode($sort_by) . '&sort_order=' . urlencode($sort_order));
         }
     }
 }
@@ -287,7 +292,9 @@ $_title = 'Edit User';
         </div>
     </form>
     <div class="action-buttons">
-        <a href="userList.php?page=<?= $page ?>&search=<?= urlencode($search_query) ?>">
+    <a href="userList.php?page=<?= $page ?>&search=<?= urlencode($search_query) ?>
+                                    &sort_by=<?= urlencode($sort_by) ?>&sort_order=<?= urlencode($sort_order) ?>
+                                    &status=<?= urlencode($status_filter) ?>&role=<?= urlencode($role_filter) ?>">
             <button>Back to User List</button>
         </a>
     </div>

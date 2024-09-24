@@ -1,6 +1,11 @@
 <?php
 include '../_base.php';
 auth('Root', 'Admin');
+$search_query = isset($_GET['search']) ? trim($_GET['search']) : '';
+$page = isset($_GET['page']) ? (int)$_GET['page'] : 1;
+$sort_by = isset($_GET['sort_by']) ? $_GET['sort_by'] : 'category_id'; // Default sort by id
+$sort_order = isset($_GET['sort_order']) ? $_GET['sort_order'] : 'ASC'; // Default sort order ascending
+$status_filter = isset($_GET['status']) ? $_GET['status'] : ''; // Status filter
 if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['category_ids'])) {
     $category_ids = $_POST['category_ids'];
 
@@ -24,11 +29,11 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['category_ids'])) {
             temp('info', 'Failed to activate the category(s).');
         }
 
-        redirect('categoryList.php');
+        redirect('categoryList.php?page=' . $page . '&sort_by=' . urlencode($sort_by) . '&sort_order=' . urlencode($sort_order) . '&status=' . urlencode($status_filter) . '&search=' . htmlspecialchars($search_query));
         exit;
     } else {
         temp('info', 'No categories were selected for activation.');
-        redirect('categoryList.php');
+        redirect('categoryList.php?page=' . $page . '&sort_by=' . urlencode($sort_by) . '&sort_order=' . urlencode($sort_order) . '&status=' . urlencode($status_filter) . '&search=' . htmlspecialchars($search_query));
         exit;
     }
 }

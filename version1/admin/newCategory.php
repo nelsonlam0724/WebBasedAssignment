@@ -2,6 +2,11 @@
 include '../_base.php';
 include '../include/sidebarAdmin.php';
 auth('Root', 'Admin');
+$search_query = isset($_GET['search']) ? trim($_GET['search']) : '';
+$page = isset($_GET['page']) ? (int)$_GET['page'] : 1;
+$sort_by = isset($_GET['sort_by']) ? $_GET['sort_by'] : 'category_id'; // Default sort by id
+$sort_order = isset($_GET['sort_order']) ? $_GET['sort_order'] : 'ASC'; // Default sort order ascending
+$status_filter = isset($_GET['status']) ? $_GET['status'] : ''; // Status filter
 if (is_post()) {
     $new_category = req('category_name');
 
@@ -31,7 +36,7 @@ if (is_post()) {
         $stm->execute([$new_category_id, $new_category]);
 
         temp('info', 'New category added successfully');
-        redirect('categoryList.php');
+        redirect('categoryList.php?page=' . $page . '&sort_by=' . urlencode($sort_by) . '&sort_order=' . urlencode($sort_order) . '&status=' . urlencode($status_filter) . '&search=' . htmlspecialchars($search_query));
     }
 }
 

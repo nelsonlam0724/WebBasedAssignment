@@ -7,7 +7,12 @@ auth('Root', 'Admin'); // Allow both Root and Admin to access
 // Determine the logged-in user's role
 $current_role = $_user->role;
 $current_user_id = $_user->user_id;
-
+$search_query = isset($_GET['search']) ? trim($_GET['search']) : '';
+$role_filter = isset($_GET['role']) ? trim($_GET['role']) : '';
+$status_filter = isset($_GET['status']) ? trim($_GET['status']) : '';
+$sort_by = isset($_GET['sort_by']) ? trim($_GET['sort_by']) : 'user_id';
+$sort_order = isset($_GET['sort_order']) ? trim($_GET['sort_order']) : 'ASC';
+$page = isset($_GET['page']) ? (int)$_GET['page'] : 1;
 // Handle form submission
 if (is_post()) {
     $name = req('name');
@@ -209,9 +214,9 @@ $_title = 'Register User';
                 <?php else: ?>
                     <input type="hidden" name="role" value="Member">
                 <?php endif; ?>
-                
+
                 <label class="upload">
-                    <?= html_file('photo', 'image/* ','hidden') ?>
+                    <?= html_file('photo', 'image/* ', 'hidden') ?>
                     <img src="../images/photo.jpg" alt="Profile Photo">
                 </label>
                 <?= err('photo') ?>
@@ -247,7 +252,10 @@ $_title = 'Register User';
         </section>
     </form>
     <div class="action-buttons">
-        <a href="userList.php"><button>Back to User List</button></a>
+        <a href="userList.php?page=<?= urldecode($page) ?>&search=<?= urlencode($search_query) ?>
+                                    &sort_by=<?= urlencode($sort_by) ?>&sort_order=<?= urlencode($sort_order) ?>
+                                    &status=<?= urlencode($status_filter) ?>&role=<?= urlencode($role_filter) ?>">
+            <button>Back to User List</button>
     </div>
 </body>
 

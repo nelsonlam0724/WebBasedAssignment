@@ -6,7 +6,8 @@ auth('Root', 'Admin');
 
 // Get the comment ID from the query parameter
 $comment_id = isset($_GET['comment_id']) ? $_GET['comment_id'] : '';
-
+$search_query = isset($_GET['search']) ? $_GET['search'] : '';
+$page = isset($_GET['page']) ? (int)$_GET['page'] : 1;
 // Fetch comment details along with the user name
 $query = "
     SELECT c.*, u.name AS user_name 
@@ -20,7 +21,7 @@ $stmt->execute();
 $comment = $stmt->fetch();
 
 if (!$comment) {
-    die('Comment not found.');
+    redirect('commentList.php?page=' . $page);
 }
 
 // Handle reply submission
@@ -32,7 +33,7 @@ if (is_post()) {
     $update_stmt = $_db->prepare($update_query);
     $update_stmt->bindParam(':reply', $reply, PDO::PARAM_STR);
     $update_stmt->bindParam(':comment_id', $comment_id, PDO::PARAM_STR);
-    
+
     if ($update_stmt->execute()) {
         echo "<script>alert('Reply submitted successfully.');</script>";
         echo "<script>window.location.href = 'commentList.php';</script>";
@@ -44,11 +45,12 @@ if (is_post()) {
 ?>
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <title>Reply to Comment</title>
     <link rel="stylesheet" href="../css/reply.css">
-    
+
     <script>
         function showReplyForm() {
             document.getElementById('replyForm').style.display = 'block';
@@ -56,8 +58,9 @@ if (is_post()) {
         }
     </script>
 </head>
+
 <body>
-<div class="container">
+    <div class="container">
         <h1>Comment Reply</h1>
         <div class="comment-detail">
             <p><strong>Comment ID:</strong> <?= htmlspecialchars($comment->comment_id) ?></p>
@@ -86,8 +89,9 @@ if (is_post()) {
         <?php endif; ?>
 
         <div class="back-link">
-            <a href="commentList.php">Back to Comments</a>
+            <a href="commentList.php?page=<?= $page ?>&search=<?= urldecode($search_query) ?>">Back to Comments</a>
         </div>
     </div>
 </body>
+
 </html>

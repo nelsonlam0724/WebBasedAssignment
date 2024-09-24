@@ -5,13 +5,19 @@ include '../_head.php';
 include '../include/sidebarAdmin.php';
 
 auth('Root', 'Admin');
+$search_query = isset($_GET['search']) ? trim($_GET['search']) : '';
+$page = isset($_GET['page']) ? (int)$_GET['page'] : 1;
+$sort_by = isset($_GET['sort_by']) ? $_GET['sort_by'] : 'product_id'; // Default sort by id
+$sort_order = isset($_GET['sort_order']) ? $_GET['sort_order'] : 'ASC'; // Default sort order ascending
+$category_filter = isset($_GET['category']) ? $_GET['category'] : ''; // Category filter
+$status_filter = isset($_GET['status']) ? $_GET['status'] : '';
 
 $_err = [];
 $product_id = req('product_id');
-
+$page = isset($_GET['page']) ? (int)$_GET['page'] : 1;
 if (!$product_id) {
     temp('info', 'Product ID Not Found');
-    redirect('productList.php');
+    redirect('productList.php?page='. $page .'&search=' . urlencode($search_query) . '&category=' . urlencode($category_filter) . '&sort_by=' . urlencode($sort_by) . '&sort_order=' . urlencode($sort_order));
 }
 
 $stm = $_db->prepare(
@@ -25,7 +31,7 @@ $stm->execute([$product_id]);
 $product = $stm->fetch(PDO::FETCH_OBJ);
 
 if (!$product) {
-    redirect('productList.php');
+    redirect('productList.php?page='. $page .'&search=' . urlencode($search_query) . '&category=' . urlencode($category_filter) . '&sort_by=' . urlencode($sort_by) . '&sort_order=' . urlencode($sort_order));
 }
 
 $stm = $_db->prepare('SELECT image_id, product_photo FROM product_image WHERE product_id = ?');
@@ -86,13 +92,15 @@ if (is_post()) {
         $stm->execute([$new_name, $new_price, $new_category, $new_quantity, $new_weight, $new_description, $new_status, $product_id]);
 
         temp('info', 'Product Details Updated');
-        redirect('productList.php');
+        redirect('productList.php?page='. $page .'&search=' . urlencode($search_query) . '&category=' . urlencode($category_filter) . '&sort_by=' . urlencode($sort_by) . '&sort_order=' . urlencode($sort_order));
     }
 }
 ?>
 <script src="../js/profile.js"></script>
 <link rel="stylesheet" href="../css/product.css">
-<a href="productList.php"><button type="button">⬅️ Back to Product List</button></a>
+<a href="productList.php?page=<?= $page ?>&sort_by=<?= urlencode($sort_by) ?>
+                                    &sort_order=<?= urlencode($sort_order) ?>
+                                    &category=<?= urldecode($category_filter) ?>&search=<?= htmlspecialchars($search_query) ?>"><button type="button">⬅️ Back to Product List</button></a>
 <h1>Product Details</h1>
 
 <form method="post" enctype="multipart/form-data" class="form" id="product-form">

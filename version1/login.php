@@ -208,7 +208,3 @@ $_title = "Login";
 </body>
 
 </html>
-<!-- Footer -->
-<?php
-include '_foot.php';
-?>

@@ -3,10 +3,14 @@ include '../_base.php';
 include '../_head.php';
 include '../include/sidebarAdmin.php'; 
 auth('Root', 'Admin');
-
+$search_query = isset($_GET['search']) ? trim($_GET['search']) : '';
+$status_filter = isset($_GET['status']) ? trim($_GET['status']) : '';
+$sort_by = isset($_GET['sort_by']) ? trim($_GET['sort_by']) : 'id';
+$sort_order = isset($_GET['sort_order']) ? trim($_GET['sort_order']) : 'ASC';
+$page = isset($_GET['page']) ? (int)$_GET['page'] : 1;
 // Check if ID is provided in the URL
 if (!isset($_GET['user_id'])) {
-    redirect('userList.php');
+    redirect('orderList.php?page='.$page.'&sort_by='. urlencode($sort_by).'&sort_order='.urlencode($sort_order).'&status='.urlencode($status_filter).'&search='.urldecode($search_query));
 }
 
 $user_id = $_GET['user_id'];
@@ -90,7 +94,7 @@ if ($current_role == 'Admin' && ($user->role == 'Root' || $user->role == 'Admin'
         <?php endif; ?>
     </div>
     <div class="action-buttons">
-        <a href="orderList.php"><button>Back To Order List</button></a>
+    <a href="orderList.php?page=<?= $page ?>&sort_by=<?= urlencode($sort_by) ?>&sort_order=<?= urlencode($sort_order) ?>&status=<?= urlencode($status_filter) ?>&search=<?= urldecode($search_query) ?>"><button>Back To Order List</button></a>
     </div>
 </body>
 

@@ -1,6 +1,6 @@
 <?php
 include '_base.php';
-
+include '_head.php';
 // Check if there is a remember me token to clear
 if (isset($_COOKIE['remember_token'])) {
     // Clear the token in the database

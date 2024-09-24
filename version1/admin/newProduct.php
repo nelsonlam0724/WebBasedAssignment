@@ -2,7 +2,12 @@
 include '../_base.php';
 include '../include/sidebarAdmin.php'; 
 auth('Root', 'Admin');
-
+$search_query = isset($_GET['search']) ? trim($_GET['search']) : '';
+$page = isset($_GET['page']) ? (int)$_GET['page'] : 1;
+$sort_by = isset($_GET['sort_by']) ? $_GET['sort_by'] : 'product_id'; // Default sort by id
+$sort_order = isset($_GET['sort_order']) ? $_GET['sort_order'] : 'ASC'; // Default sort order ascending
+$category_filter = isset($_GET['category']) ? $_GET['category'] : ''; // Category filter
+$status_filter = isset($_GET['status']) ? $_GET['status'] : '';
 // Initialize variables
 $name = $price = $quantity = $category_id = $new_category = $desc = $weight = '';
 $photos = [];
@@ -108,7 +113,8 @@ if (is_post()) {
         } else {
             // Regular form submission, redirect to the product list page
             temp('info', 'Product added successfully.');
-            redirect('productList.php');
+            redirect('productList.php?page='. $page .'&search=' . urlencode($search_query) . '&category=' . urlencode($category_filter) . '&sort_by=' . urlencode($sort_by) . '&sort_order=' . urlencode($sort_order));
+
         }
     }
 }
@@ -119,6 +125,7 @@ include '../_head.php';
 ?>
 <script src="../js/preview.js"></script>
 <link rel="stylesheet" href="../css/product.css">
+<a href="productList.php?page=<?= $page ?>&sort_by=<?= urlencode($sort_by) ?>&sort_order=<?= urlencode($sort_order) ?>&category=<?= urldecode($category_filter) ?>&search=<?= htmlspecialchars($search_query) ?>"><button type="button">⬅️ Back to Product List</button></a>
 <h1>Add New Product</h1>
 
 <?php if ($message): ?>

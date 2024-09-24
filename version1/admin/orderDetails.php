@@ -5,6 +5,11 @@ include '../include/sidebarAdmin.php';
 $order_ID = req('order_ID');
 $user_ID = req('user_ID');
 auth('Root', 'Admin');
+$search_query = isset($_GET['search']) ? trim($_GET['search']) : '';
+$status_filter = isset($_GET['status']) ? trim($_GET['status']) : '';
+$sort_by = isset($_GET['sort_by']) ? trim($_GET['sort_by']) : 'id';
+$sort_order = isset($_GET['sort_order']) ? trim($_GET['sort_order']) : 'ASC';
+$page = isset($_GET['page']) ? (int)$_GET['page'] : 1;
 $stm = $_db->prepare('
     SELECT * FROM `orders`
     WHERE id = ? AND user_id = ?
@@ -106,5 +111,5 @@ $_title = 'Order Details';
 </table>
 
 <div class="action-buttons">
-    <a href="orderList.php"><button>Back To Order List</button></a>
+    <a href="orderList.php?page=<?= $page ?>&sort_by=<?= urlencode($sort_by) ?>&sort_order=<?= urlencode($sort_order) ?>&status=<?= urlencode($status_filter) ?>&search=<?= urldecode($search_query) ?>"><button>Back To Order List</button></a>
 </div>

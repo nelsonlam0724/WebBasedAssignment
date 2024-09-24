@@ -3,6 +3,7 @@ include '../_base.php';
 require_once '../lib/SimplePager.php';
 include '../include/sidebarAdmin.php';
 auth('Root', 'Admin');
+
 $search_query = isset($_GET['search']) ? trim($_GET['search']) : '';
 $page = isset($_GET['page']) ? (int)$_GET['page'] : 1;
 $sort_by = isset($_GET['sort_by']) ? $_GET['sort_by'] : 'category_id'; // Default sort by id
@@ -10,7 +11,7 @@ $sort_order = isset($_GET['sort_order']) ? $_GET['sort_order'] : 'ASC'; // Defau
 $status_filter = isset($_GET['status']) ? $_GET['status'] : ''; // Status filter
 $limit = 5;
 
-// Select categories with status filter
+// Prepare SQL query with filters
 $sql = 'SELECT * FROM category WHERE 1=1';
 $params = [];
 
@@ -20,15 +21,30 @@ if ($search_query) {
 }
 
 if ($status_filter) {
-    $sql .= ' AND category_status LIKE ?';
+    $sql .= ' AND category_status = ?'; // Changed to '=' for exact match
     $params[] = $status_filter;
 }
 
 $sql .= " ORDER BY $sort_by $sort_order";
 
+// Count total records for pagination
+$total_sql = 'SELECT COUNT(*) FROM category WHERE 1=1';
+if ($search_query) {
+    $total_sql .= ' AND category_name LIKE ?';
+}
+if ($status_filter) {
+    $total_sql .= ' AND category_status = ?'; // Changed to '=' for exact match
+}
+
+// Prepare and execute total count query
+$total_stmt = $_db->prepare($total_sql);
+$total_stmt->execute($params);
+$total_count = $total_stmt->fetchColumn();
+$total_pages = ceil($total_count / $limit);
+
+// Initialize pager with the main query
 $pager = new SimplePager($sql, $params, $limit, $page);
 $categories = $pager->result;
-$total_pages = $pager->page_count;
 
 // Fetch all unique statuses from the category table
 $status_stm = $_db->query('SELECT DISTINCT category_status FROM category');
@@ -86,8 +102,7 @@ include '../_head.php';
     </div>
 
     <div class="table-wrapper">
-        <!-- Category Table with Checkboxes -->
-        <form method="post" action="deactivateCategory.php" onsubmit="return checkSelection(this);">
+        <form method="post" action="deactivateCategory.php?page=<?= $page ?>&sort_by=<?= urlencode($sort_by) ?>&sort_order=<?= urlencode($sort_order) ?>&status=<?= urlencode($status_filter) ?>&search=<?= htmlspecialchars($search_query) ?>" onsubmit="return checkSelection(this);">
             <table class="table">
                 <thead>
                     <tr>
@@ -109,12 +124,11 @@ include '../_head.php';
                                 <td><?= htmlspecialchars($category->category_name) ?></td>
                                 <td><?= htmlspecialchars($category->category_status) ?></td>
                                 <td class="actions">
-
-                                    <!-- Product Edit Action -->
-                                    <a href="categoryEdit.php?category_id=<?= $category->category_id ?>" class="edit-container">
+                                    <a href="categoryEdit.php?category_id=<?= $category->category_id ?>&page=<?= $page ?>&sort_by=<?= urlencode($sort_by) ?>&sort_order=<?= urlencode($sort_order) ?>&status=<?= urlencode($status_filter) ?>&search=<?= htmlspecialchars($search_query) ?>" class="edit-container">
                                         <button type="button" class="edit-button">
                                             <i class="fas fa-edit"></i>
                                         </button>
+                                    </a>
                                 </td>
                             </tr>
                         <?php endforeach; ?>
@@ -127,59 +141,79 @@ include '../_head.php';
             </table>
 
             <div class="action-buttons">
-                <div class="action-buttons">
-                <button type="submit" formaction="deactivateCategory.php" id="deactivate-selected" onclick="return confirm('Are you sure you want to deactivate the selected categories?');">Deactivate</button>
-                <button type="submit" formaction="activateCategory.php" id="activate-selected" onclick="return confirm('Are you sure you want to activate the selected categories?');">Activate</button>
-                </div>
+                <button type="submit" formaction="deactivateCategory.php?page=<?= $page ?>&sort_by=<?= urlencode($sort_by) ?>&sort_order=<?= urlencode($sort_order) ?>&status=<?= urlencode($status_filter) ?>&search=<?= htmlspecialchars($search_query) ?>" id="deactivate-selected" onclick="return confirm('Are you sure you want to deactivate the selected categories?');">Deactivate</button>
+                <button type="submit" formaction="activateCategory.php?page=<?= $page ?>&sort_by=<?= urlencode($sort_by) ?>&sort_order=<?= urlencode($sort_order) ?>&status=<?= urlencode($status_filter) ?>&search=<?= htmlspecialchars($search_query) ?>" id="activate-selected" onclick="return confirm('Are you sure you want to activate the selected categories?');">Activate</button>
+            </div>
+
+            <!-- Pagination Links -->
+            <div class="pagination">
+                <?php if ($page > 1): ?>
+                    <a href="?page=1&sort_by=<?= urlencode($sort_by) ?>&sort_order=<?= urlencode($sort_order) ?>&status=<?= urlencode($status_filter) ?>&search=<?= htmlspecialchars($search_query) ?>">First</a>
+                <?php endif; ?>
+
+                <?php if ($page > 1): ?>
+                    <a href="?page=<?= $page - 1 ?>&sort_by=<?= urlencode($sort_by) ?>&sort_order=<?= urlencode($sort_order) ?>&status=<?= urlencode($status_filter) ?>&search=<?= htmlspecialchars($search_query) ?>">Previous</a>
+                <?php endif; ?>
+
+                <?php
+                $page_range = 2;
+                $start_page = max(1, $page - $page_range);
+                $end_page = min($total_pages, $page + $page_range);
+
+                if ($start_page > 1): ?>
+                    <a href="?page=1&sort_by=<?= urlencode($sort_by) ?>&sort_order=<?= urlencode($sort_order) ?>&status=<?= urlencode($status_filter) ?>&search=<?= htmlspecialchars($search_query) ?>">1</a>
+                    <?php if ($start_page > 2): ?>
+                        <span>...</span>
+                    <?php endif; ?>
+                <?php endif; ?>
+
+                <?php for ($i = $start_page; $i <= $end_page; $i++): ?>
+                    <a href="?page=<?= $i ?>&sort_by=<?= urlencode($sort_by) ?>&sort_order=<?= urlencode($sort_order) ?>&status=<?= urlencode($status_filter) ?>&search=<?= htmlspecialchars($search_query) ?>" class="<?= $i == $page ? 'current-page' : '' ?>">
+                        <?= $i ?>
+                    </a>
+                <?php endfor; ?>
+
+                <?php if ($end_page < $total_pages): ?>
+                    <?php if ($end_page < $total_pages - 1): ?>
+                        <span>...</span>
+                    <?php endif; ?>
+                    <a href="?page=<?= $total_pages ?>&sort_by=<?= urlencode($sort_by) ?>&sort_order=<?= urlencode($sort_order) ?>&status=<?= urlencode($status_filter) ?>&search=<?= htmlspecialchars($search_query) ?>">
+                        <?= $total_pages ?>
+                    </a>
+                <?php endif; ?>
+
+                <?php if ($page < $total_pages): ?>
+                    <a href="?page=<?= $page + 1 ?>&sort_by=<?= urlencode($sort_by) ?>&sort_order=<?= urlencode($sort_order) ?>&status=<?= urlencode($status_filter) ?>&search=<?= htmlspecialchars($search_query) ?>">Next</a>
+                <?php endif; ?>
+
+                <?php if ($page < $total_pages): ?>
+                    <a href="?page=<?= $total_pages ?>&sort_by=<?= urlencode($sort_by) ?>&sort_order=<?= urlencode($sort_order) ?>&status=<?= urlencode($status_filter) ?>&search=<?= htmlspecialchars($search_query) ?>">Last</a>
+                <?php endif; ?>
             </div>
         </form>
-    </div>
-
-    <div class="pagination-container">
-        <!-- Previous Button -->
-        <?php if ($page > 1): ?>
-            <a href="?search=<?= urlencode($search_query) ?>&page=<?= $page - 1 ?>&sort_by=<?= urlencode($sort_by) ?>&sort_order=<?= urlencode($sort_order) ?>&status=<?= urlencode($status_filter) ?>" class="pagination-button">Previous</a>
-        <?php endif; ?>
-
-        <!-- Page Numbers -->
-        <?php for ($i = 1; $i <= $total_pages; $i++): ?>
-            <?php if ($i == $page): ?>
-                <span class="current-page"><?= $i ?></span>
-            <?php else: ?>
-                <a href="?search=<?= urlencode($search_query) ?>&page=<?= $i ?>&sort_by=<?= urlencode($sort_by) ?>&sort_order=<?= urlencode($sort_order) ?>&status=<?= urlencode($status_filter) ?>" class="pagination-button"><?= $i ?></a>
-            <?php endif; ?>
-        <?php endfor; ?>
-
-        <!-- Next Button -->
-        <?php if ($page < $total_pages): ?>
-            <a href="?search=<?= urlencode($search_query) ?>&page=<?= $page + 1 ?>&sort_by=<?= urlencode($sort_by) ?>&sort_order=<?= urlencode($sort_order) ?>&status=<?= urlencode($status_filter) ?>" class="pagination-button">Next</a>
-        <?php endif; ?>
-    </div>
-
-    <!-- "Add New Category" Button -->
-    <div class="action-buttons">
-        <a href="newCategory.php"><button type="button" id="add-new">Add New Category</button></a>
-        <a href="admin.php"><button type="button" id="back-to-menu">Back To Menu</button></a>
+        <!-- "Add New Category" Button -->
+        <div class="action-buttons">
+            <a href="newCategory.php"><button type="button" id="add-new">Add New Category</button></a>
+            <a href="admin.php"><button type="button" id="back-to-menu">Back To Menu</button></a>
+        </div>
     </div>
 </div>
 
 <script>
+    // JavaScript to handle select all functionality
     document.getElementById('select-all').addEventListener('change', function() {
-        var checkboxes = document.querySelectorAll('.category-checkbox');
-        for (var checkbox of checkboxes) {
+        const checkboxes = document.querySelectorAll('.category-checkbox');
+        checkboxes.forEach(checkbox => {
             checkbox.checked = this.checked;
-        }
+        });
     });
 
     function checkSelection(form) {
-        var checkboxes = document.querySelectorAll('.category-checkbox');
-        var anyChecked = Array.from(checkboxes).some(checkbox => checkbox.checked);
-
-        if (!anyChecked) {
-            alert('Please select at least one category to deactivate.');
-            return false; // Prevent form submission
+        const selected = Array.from(form.querySelectorAll('input[name="category_ids[]"]:checked'));
+        if (selected.length === 0) {
+            alert('Please select at least one category.');
+            return false;
         }
-
-        return true; // Allow form submission
+        return true;
     }
 </script>

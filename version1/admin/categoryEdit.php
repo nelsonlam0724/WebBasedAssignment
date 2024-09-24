@@ -4,12 +4,17 @@ $_title = 'Category Details';
 include '../_head.php';
 include '../include/sidebarAdmin.php';
 auth('Root', 'Admin');
+$search_query = isset($_GET['search']) ? trim($_GET['search']) : '';
+$page = isset($_GET['page']) ? (int)$_GET['page'] : 1;
+$sort_by = isset($_GET['sort_by']) ? $_GET['sort_by'] : 'category_id'; // Default sort by id
+$sort_order = isset($_GET['sort_order']) ? $_GET['sort_order'] : 'ASC'; // Default sort order ascending
+$status_filter = isset($_GET['status']) ? $_GET['status'] : ''; // Status filter
 $_err = [];
 $category_id = req('category_id');
 
 if (!$category_id) {
     temp('info', 'Category ID Not Found');
-    redirect('categoryList.php');
+    redirect('categoryList.php?page=' . $page . '&sort_by=' . urlencode($sort_by) . '&sort_order=' . urlencode($sort_order) . '&status=' . urlencode($status_filter) . '&search=' . htmlspecialchars($search_query));
 }
 
 $stm = $_db->prepare('SELECT * FROM category WHERE category_id = ?');
@@ -17,7 +22,7 @@ $stm->execute([$category_id]);
 $category = $stm->fetch(PDO::FETCH_OBJ);
 
 if (!$category) {
-    redirect('categoryList.php');
+    redirect('categoryList.php?page=' . $page . '&sort_by=' . urlencode($sort_by) . '&sort_order=' . urlencode($sort_order) . '&status=' . urlencode($status_filter) . '&search=' . htmlspecialchars($search_query));
 }
 
 if (is_post()) {
@@ -35,14 +40,13 @@ if (is_post()) {
         $stm->execute([$new_name, $new_status, $category_id]);
 
         temp('info', 'Category Details Updated');
-        redirect('categoryList.php');
+        redirect('categoryList.php?page=' . $page . '&sort_by=' . urlencode($sort_by) . '&sort_order=' . urlencode($sort_order) . '&status=' . urlencode($status_filter) . '&search=' . htmlspecialchars($search_query));
     }
 }
 ?>
 
 <link rel="stylesheet" href="../css/product.css">
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
-<a href="categoryList.php"><button type="button">⬅️ Back to Category List</button></a>
+<a href="categoryList.php?page=<?= $page ?>&sort_by=<?= urlencode($sort_by) ?>&sort_order=<?= urlencode($sort_order) ?>&status=<?= urlencode($status_filter) ?>&search=<?= htmlspecialchars($search_query) ?>"><button type="button">⬅️ Back to Category List</button></a>
 <h1>Category Details</h1>
 
 <form method="post" class="form" id="category-form">
@@ -74,5 +78,3 @@ if (is_post()) {
 
 <script src="../js/productEdit.js"></script>
 
-<?php
-include '../_foot.php';
