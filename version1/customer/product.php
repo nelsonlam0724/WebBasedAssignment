@@ -42,6 +42,7 @@ $CategoryNameResults = $getCategoryName->fetch();
 ?>
 
 <link rel="stylesheet" href="../css/product.css">
+<title>Product</title>
 <div class="items">
   <div class="line1">
     <p><?= $pager->item_count ?> product</p>

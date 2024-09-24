@@ -43,7 +43,7 @@ if (is_post()) {
     exit();
 }
 ?>
-<title>Items</title>
+<title>Carts</title>
 
 <link rel="stylesheet" href="../css/cart.css">
 </head>

@@ -69,6 +69,7 @@ if (is_post()) {
 
 </style>
 <link rel="stylesheet" href="../css/comment.css">
+<title>Comment</title>
 </head>
 
 <body>
