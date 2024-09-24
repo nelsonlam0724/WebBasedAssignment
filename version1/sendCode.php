@@ -3,7 +3,17 @@ include '_base.php';
 
 if (is_post()) {
     $email = req('email');
-    
+
+    // Check if the email already exists in the database
+    $stmt = $_db->prepare('SELECT COUNT(*) FROM user WHERE email = ?');
+    $stmt->execute([$email]);
+    $email_exists = $stmt->fetchColumn();
+
+    if ($email_exists) {
+        temp('info', 'You already have an account associated with this email.');
+        redirect();
+    }
+
     // Generate a random 6-digit verification code
     $verification_code = rand(100000, 999999);
 
@@ -24,7 +34,7 @@ if (is_post()) {
     $m->Subject = 'Email Verification Request';
     $m->Body = "
         <p>Here is your verification code: <strong>$verification_code</strong></p>
-        <p>This code will expire in 1 minutes.</p>
+        <p>This code will expire in 1 minute.</p>
     ";
 
     try {
@@ -38,6 +48,7 @@ if (is_post()) {
     $_SESSION['email'] = $email; // Store the email in session
     redirect('emailVerify.php');
 }
+
 
 $_title = 'Request Email Verification';
 include '_head.php';

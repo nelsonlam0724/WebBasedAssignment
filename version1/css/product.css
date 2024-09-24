@@ -561,45 +561,35 @@ button#add-new:hover, button#back-to-menu:hover {
     color: rgb(11, 11, 165);
 }
 
-/* Pagination Container */
-.pagination-container {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    margin: 20px 0;
+.pagination {
+    text-align: center;
+    margin-top: 30px;
+    margin-bottom: 30px;
 }
 
-/* Pagination Button Styles */
-.pagination-button {
-    background-color: #f0f0f0; /* Light grey background */
-    color: #333; /* Dark text color */
-    border: 1px solid #ddd; /* Light border */
+.pagination a {
+    padding: 10px 15px;
+    margin: 0 5px;
+    border: 1px solid #ddd;
     border-radius: 4px;
-    padding: 8px 16px;
+    background-color: #f9f9f9;
+    color: #007bff;
     text-decoration: none;
-    margin: 0 5px;
-    font-size: 16px;
 }
 
-.pagination-button:hover {
-    background-color: #ddd; /* Darker grey on hover */
+.pagination a:hover {
+    background-color: #007bff;
+    color: white;
 }
 
-.current-page {
-    background-color: #87CEEB; /* Sky blue background */
-    color: #fff;
-    border: 1px solid #87CEEB; /* Matching border */
-    padding: 8px 16px;
+.pagination .current-page {
     margin: 0 5px;
-    font-size: 16px;
+    border: 1px solid #007bff;
+    background-color: #007bff;
+    color: #ffffff;
     border-radius: 4px;
-    transition: background-color 0.3s ease;
 }
 
-.current-page:hover {
-    background-color: #2196F3;
-    color: black;
-}
 
 .search-form {
     display: flex;

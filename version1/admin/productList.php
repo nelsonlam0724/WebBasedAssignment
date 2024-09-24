@@ -1,8 +1,8 @@
 <?php
 include '../_base.php';
 require_once '../lib/SimplePager.php';
-include '../include/sidebarAdmin.php'; 
-auth('Root', 'Admin'); 
+include '../include/sidebarAdmin.php';
+auth('Root', 'Admin');
 
 $search_query = isset($_GET['search']) ? trim($_GET['search']) : '';
 $page = isset($_GET['page']) ? (int)$_GET['page'] : 1;
@@ -125,12 +125,12 @@ include '../_head.php';
                         </tr>
                     </thead>
                     <tbody>
-                        <?php foreach ($product as $p): 
-                                    $getProductImg = $_db->prepare('SELECT product_photo FROM product_image WHERE product_id = ?');
-                                    $getProductImg->execute([$p->product_id]);
-                                    $productImg = $getProductImg->fetch(PDO::FETCH_OBJ);
-                                    $productPhoto = $productImg ? $productImg->product_photo : '../images/photo.jpg';
-                            ?>
+                        <?php foreach ($product as $p):
+                            $getProductImg = $_db->prepare('SELECT product_photo FROM product_image WHERE product_id = ?');
+                            $getProductImg->execute([$p->product_id]);
+                            $productImg = $getProductImg->fetch(PDO::FETCH_OBJ);
+                            $productPhoto = $productImg ? $productImg->product_photo : '../images/photo.jpg';
+                        ?>
                             <tr>
                                 <td>
                                     <input type="checkbox" name="product_ids[]" value="<?= $p->product_id ?>" class="product-checkbox">
@@ -171,26 +171,57 @@ include '../_head.php';
                     <button type="submit" formaction="activateProduct.php" id="activate-selected" onclick="return confirm('Are you sure you want to activate the selected products?');">Activate</button>
                 </div>
 
-                <div class="pagination-container">
-                    <!-- Previous Button -->
-                    <?php if ($page > 1): ?>
-                        <a href="?search=<?= urlencode($search_query) ?>&page=<?= $page - 1 ?>&sort_by=<?= urlencode($sort_by) ?>&sort_order=<?= urlencode($sort_order) ?>&category=<?= urlencode($category_filter) ?>&status=<?= urlencode($status_filter) ?>" class="pagination-button">Previous</a>
-                    <?php endif; ?>
+                 <!-- Pagination Links -->
+            <div class="pagination">
+                <!-- First Page Link -->
+                <?php if ($page > 1): ?>
+                    <a href="?page=1&sort_by=<?= urlencode($sort_by) ?>&sort_order=<?= urlencode($sort_order) ?>&status=<?= urlencode($status_filter) ?>">First</a>
+                <?php endif; ?>
 
-                    <!-- Page Numbers -->
-                    <?php for ($i = 1; $i <= $total_pages; $i++): ?>
-                        <?php if ($i == $page): ?>
-                            <span class="current-page"><?= $i ?></span>
-                        <?php else: ?>
-                            <a href="?search=<?= urlencode($search_query) ?>&page=<?= $i ?>&sort_by=<?= urlencode($sort_by) ?>&sort_order=<?= urlencode($sort_order) ?>&category=<?= urlencode($category_filter) ?>&status=<?= urlencode($status_filter) ?>" class="pagination-button"><?= $i ?></a>
-                        <?php endif; ?>
-                    <?php endfor; ?>
+                <!-- Previous Page Link -->
+                <?php if ($page > 1): ?>
+                    <a href="?page=<?= $page - 1 ?>&sort_by=<?= urlencode($sort_by) ?>&sort_order=<?= urlencode($sort_order) ?>&status=<?= urlencode($status_filter) ?>">Previous</a>
+                <?php endif; ?>
 
-                    <!-- Next Button -->
-                    <?php if ($page < $total_pages): ?>
-                        <a href="?search=<?= urlencode($search_query) ?>&page=<?= $page + 1 ?>&sort_by=<?= urlencode($sort_by) ?>&sort_order=<?= urlencode($sort_order) ?>&category=<?= urlencode($category_filter) ?>&status=<?= urlencode($status_filter) ?>" class="pagination-button">Next</a>
+                <!-- Page Numbers -->
+                <?php
+                $page_range = 2; // Number of pages to show before and after the current page
+                $start_page = max(1, $page - $page_range);
+                $end_page = min($total_pages, $page + $page_range);
+
+                if ($start_page > 1): ?>
+                    <a href="?page=1&sort_by=<?= urlencode($sort_by) ?>&sort_order=<?= urlencode($sort_order) ?>&status=<?= urlencode($status_filter) ?>">1</a>
+                    <?php if ($start_page > 2): ?>
+                        <span>...</span>
                     <?php endif; ?>
-                </div>
+                <?php endif; ?>
+
+                <?php for ($i = $start_page; $i <= $end_page; $i++): ?>
+                    <a href="?page=<?= $i ?>&sort_by=<?= urlencode($sort_by) ?>&sort_order=<?= urlencode($sort_order) ?>&status=<?= urlencode($status_filter) ?>" class="<?= $i == $page ? 'current-page' : '' ?>">
+                        <?= $i ?>
+                    </a>
+                <?php endfor; ?>
+
+                <?php if ($end_page < $total_pages): ?>
+                    <?php if ($end_page < $total_pages - 1): ?>
+                        <span>...</span>
+                    <?php endif; ?>
+                    <a href="?page=<?= $total_pages ?>&sort_by=<?= urlencode($sort_by) ?>&sort_order=<?= urlencode($sort_order) ?>&status=<?= urlencode($status_filter) ?>">
+                        <?= $total_pages ?>
+                    </a>
+                <?php endif; ?>
+
+                <!-- Next Page Link -->
+                <?php if ($page < $total_pages): ?>
+                    <a href="?page=<?= $page + 1 ?>&sort_by=<?= urlencode($sort_by) ?>&sort_order=<?= urlencode($sort_order) ?>&status=<?= urlencode($status_filter) ?>">Next</a>
+                <?php endif; ?>
+
+                <!-- Last Page Link -->
+                <?php if ($page < $total_pages): ?>
+                    <a href="?page=<?= $total_pages ?>&sort_by=<?= urlencode($sort_by) ?>&sort_order=<?= urlencode($sort_order) ?>&status=<?= urlencode($status_filter) ?>">Last</a>
+                <?php endif; ?>
+            </div>
+
             <?php else: ?>
                 <p class="no-results">No active products available for deactivation.</p>
             <?php endif; ?>

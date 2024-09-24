@@ -90,7 +90,7 @@ if (is_post()) {
     }
 }
 ?>
-
+<script src="../js/profile.js"></script>
 <link rel="stylesheet" href="../css/product.css">
 <a href="productList.php"><button type="button">⬅️ Back to Product List</button></a>
 <h1>Product Details</h1>
