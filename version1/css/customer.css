@@ -292,37 +292,46 @@ h1 {
 .about-us {
     background-color: #fff;
     padding: 50px 0;
-    text-align: center;
 }
 
 .about-container {
     display: flex;
-    align-items: center;
-    justify-content: center;
-    max-width: 1200px; /* 控制內容最大寬度 */
+    max-width: 1200px;
     margin: 0 auto;
-    gap: 30px; /* 控制圖片和描述之間的距離 */
-    padding: 0 15px; /* 和 .best-sellers 相同的內邊距 */
+    align-items: center;
+    justify-content: space-between;
+    gap: 30px;
 }
 
 .about-image img {
     width: 100%;
-    max-width: 600px;
+    max-width: 550px;
     border-radius: 10px;
 }
 
 .about-desc {
-    max-width: 600px;
+    max-width: 550px;
+    text-align: left;
 }
 
 .about-desc h2 {
-    font-size: 24px; /* 和 .best-sellers 的標題保持一致 */
-    color: #4a4a4a;
+    font-size: 36px;
     margin-bottom: 20px;
+    color: #333;
 }
 
 .about-desc p {
-    font-size: 16px; 
-    color: #4a4a4a;
-    line-height: 1.6;
+    font-size: 18px;
+    color: #666;
+    line-height: 1.8;
+}
+
+.contact-btn {
+    display: inline-block;
+    padding: 12px 20px;
+    background-color: #007BFF;
+    color: #fff;
+    text-decoration: none;
+    border-radius: 5px;
+    margin-top: 20px;
 }

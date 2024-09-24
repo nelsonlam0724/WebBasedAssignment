@@ -112,6 +112,8 @@ $topSalesData = $_db->query('
             </div>
         </div>
 
+        <hr>
+
         <div class="about-us">
             <div class="about-container">
                 <div class="about-image">
@@ -129,7 +131,7 @@ $topSalesData = $_db->query('
             </div>
         </div>
 
-        
+        <hr>
 
         <div class="box1">
             <h1> Category</h1>
