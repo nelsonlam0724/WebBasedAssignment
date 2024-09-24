@@ -88,7 +88,7 @@ include '../_head.php';
     <div class="table-wrapper">
         <!-- Category Table with Checkboxes -->
         <form method="post" action="deactivateCategory.php" onsubmit="return checkSelection(this);">
-            <table>
+            <table class="table">
                 <thead>
                     <tr>
                         <th><input type="checkbox" id="select-all"></th>
