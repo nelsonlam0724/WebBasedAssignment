@@ -7,8 +7,8 @@ if (is_post()) {
 
     // Validate email
     if ($email == '' || !is_email($email) || !is_exists($email, 'user', 'email')) {
-        temp('info', 'Invalid email address.');
-        redirect('/');
+        temp('info', 'This email address havent register as our website member.');
+        redirect();
     }
 
     // Generate a random 6-digit verification code
