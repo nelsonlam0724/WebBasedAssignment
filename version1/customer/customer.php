@@ -163,12 +163,15 @@ $topSalesData = $_db->query('
         <div class="box1">
             <h1> Category</h1>
             <div class="grid">
-                <?php foreach ($CategoryResults as $currentCategory): ?>
+                <?php 
+                $category_Img = ['writing instrumental.jpg','paper.jpeg','file.jpeg','art supplies.jpeg','office Supplies.jpeg','Study Aids.jpeg','decorative.jpg','correction.jpeg'];
+                $imgCount = 0;
+                foreach ($CategoryResults as $currentCategory): ?>
                     <a class="grid-item" href="../customer/product.php?category=<?= $currentCategory->category_id ?>">
-                        <img alt="<?= htmlspecialchars($currentCategory->category_name) ?>" height="300" src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTmQs8xbIseku59onHMpZ6bQ3XaeaSjeLgzMQ&s" width="300" />
+                        <img alt="<?= htmlspecialchars($currentCategory->category_name) ?>" height="300" src="../images/<?= $category_Img[ $imgCount ]  ?>" width="300" />
                         <div class="overlay"><?= htmlspecialchars($currentCategory->category_name) ?></div>
                     </a>
-                <?php endforeach; ?>
+                <?php  $imgCount++; endforeach; ?>
             </div>
         </div>
     </div>
