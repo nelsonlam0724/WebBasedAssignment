@@ -20,7 +20,7 @@ if (is_post()) {
         FROM `orders` AS o
         JOIN `shippers` AS s ON o.ship_id = s.ship_id
         WHERE o.id = ?
-       AND o.user_id = ?
+        AND o.user_id = ?
     ');
     $stm->execute([$order_ID, $user->user_id]);
     $check = $stm->fetch();
