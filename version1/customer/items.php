@@ -103,7 +103,9 @@ $comment = $getComment->fetchAll();
           <?php if (!empty($c->reply)) { ?>
             <div class="admin-reply">
               <span class="reply-header">Admin Reply:</span>
-              <strong><div class="reply-content"><?= htmlspecialchars($c->reply) ?></div></strong>
+              <strong>
+                <div class="reply-content"><?= htmlspecialchars($c->reply) ?></div>
+              </strong>
             </div>
           <?php } ?>
         </div>
@@ -125,20 +127,8 @@ $comment = $getComment->fetchAll();
 <script src="../js/product.js"></script>
 <script>
   const arr = <?php echo json_encode($imageProduct); ?>;
-  let i = 0;
-  const $image = $('#images');
-  const $demo = $('#demo');
-  const updateImage = () => {
-    $image.prop('src', '../uploads/' + arr[i]);
-    $demo.text('Image ' + (i + 1) + ' of ' + arr.length);
-  };
-  updateImage();
-  $('[data-select]').on('click', e => {
-    const towards = e.target.getAttribute('data-select');
-    i = (towards === 'left') ? (i === 0 ? arr.length - 1 : i - 1) : (i === arr.length - 1 ? 0 : i + 1);
-    updateImage();
-  });
 </script>
+<script src="../js/updateImage.js"></script>
 </body>
 
 
