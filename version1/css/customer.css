@@ -282,3 +282,47 @@ h1 {
     padding: 20px 50px;
     background-color: #fff8f8;
 }
+
+
+
+
+
+
+
+.about-us {
+    background-color: #fff;
+    padding: 50px 0;
+    text-align: center;
+}
+
+.about-container {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    max-width: 1200px; /* 控制內容最大寬度 */
+    margin: 0 auto;
+    gap: 30px; /* 控制圖片和描述之間的距離 */
+    padding: 0 15px; /* 和 .best-sellers 相同的內邊距 */
+}
+
+.about-image img {
+    width: 100%;
+    max-width: 600px;
+    border-radius: 10px;
+}
+
+.about-desc {
+    max-width: 600px;
+}
+
+.about-desc h2 {
+    font-size: 24px; /* 和 .best-sellers 的標題保持一致 */
+    color: #4a4a4a;
+    margin-bottom: 20px;
+}
+
+.about-desc p {
+    font-size: 16px; 
+    color: #4a4a4a;
+    line-height: 1.6;
+}
