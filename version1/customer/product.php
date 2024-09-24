@@ -15,7 +15,7 @@ $CategoryResults = $getCategory->fetchAll();
 
 $query = 'SELECT p.* FROM product p 
           JOIN category c ON p.category_id = c.category_id 
-          WHERE c.category_status = ?';
+          WHERE c.category_status = ? AND p.quantity > 0';
 $params = ['Available'];
 
 if ($category) {
@@ -37,7 +37,7 @@ $total_pages = $pager->page_count;
 
 // Fetch current category name only if it is available
 $getCategoryName = $_db->prepare('SELECT * FROM category WHERE category_id = ? AND category_status = ?');
-$getCategoryName->execute([$category, 'activate']);
+$getCategoryName->execute([$category, 'Available']);
 $CategoryNameResults = $getCategoryName->fetch();
 ?>
 

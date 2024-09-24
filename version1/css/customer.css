@@ -147,10 +147,48 @@ display:flex;
 }
 
 
+
 .product {
+    position: relative;
+    padding: 10px;
+    border: 1px solid #ccc;
     width: 200px;
-    margin: 20px;
     text-align: center;
+}
+
+.popup {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    display: none;
+    background-color: rgba(0, 0, 0, 0.8);
+    color: white;
+    padding: 10px;
+    border-radius: 5px;
+    z-index: 1;
+}
+
+.like-button {
+    background-color: #ff4b4b;
+    border: none;
+    color: white;
+    padding: 8px 12px;
+    font-size: 14px;
+    cursor: pointer;
+    border-radius: 4px;
+}
+
+.product:hover .popup {
+    display: block;
+}
+
+.product img {
+    transition: transform 0.3s ease;
+}
+
+.product:hover img {
+    transform: scale(1.1);
 }
 
 .scroll-button {
@@ -243,4 +281,106 @@ h1 {
     margin: 0 auto;
     padding: 20px 50px;
     background-color: #fff8f8;
+}
+
+
+
+
+
+
+
+.about-us {
+    background-color: #fff;
+    padding: 50px 0;
+}
+
+.about-container {
+    display: flex;
+    max-width: 1200px;
+    margin: 0 auto;
+    align-items: center;
+    justify-content: space-between;
+    gap: 30px;
+}
+
+.about-image img {
+    width: 100%;
+    max-width: 550px;
+    border-radius: 10px;
+}
+
+.about-desc {
+    max-width: 550px;
+    text-align: left;
+}
+
+.about-desc h2 {
+    font-size: 36px;
+    margin-bottom: 20px;
+    color: #333;
+}
+
+.about-desc p {
+    font-size: 18px;
+    color: #666;
+    line-height: 1.8;
+}
+
+.contact-btn {
+    display: inline-block;
+    padding: 12px 20px;
+    background-color: #007BFF;
+    color: #fff;
+    text-decoration: none;
+    border-radius: 5px;
+    margin-top: 20px;
+}
+
+
+
+
+
+/* FAQ Section */
+.faq-section {
+    background-color: #f9f9f9;
+    padding: 50px 0;
+    text-align: center;
+}
+
+.faq-section h2 {
+    font-size: 28px;
+    color: #4a4a4a;
+    margin-bottom: 30px;
+}
+
+.faq-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    text-align: left;
+}
+
+.faq-item {
+    margin-bottom: 20px;
+    padding: 20px;
+    background-color: #fff;
+    border-radius: 10px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.faq-question {
+    font-size: 20px;
+    margin-bottom: 10px;
+    color: #333;
+}
+
+.faq-answer {
+    font-size: 16px;
+    color: #666;
+    line-height: 1.6;
+}
+
+/* Optional FAQ Hover Effect */
+.faq-item:hover {
+    background-color: #f1f1f1;
+    transition: background-color 0.3s ease;
 }
