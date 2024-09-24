@@ -78,32 +78,34 @@ $topSalesData = $_db->query('
         <div class="best-sellers">
             <h2> Best Sellers</h2>
             <div class="products-container">
-                <div class="products">
+            <div class="products">
+    <?php foreach ($topSalesData as $top): ?>
+        <?php
+        $topProd = $_db->prepare('
+            SELECT product_photo FROM product_image
+            WHERE product_id = ?
+            LIMIT 1
+        ');
+        $topProd->execute([$top->product_id]);
+        $topPro = $topProd->fetch(PDO::FETCH_OBJ);
+        ?>
+        <div class="product">
+            <?php if ($topPro && !empty($topPro->product_photo)): ?>
+                <img height="200" src="../uploads/<?= htmlspecialchars($topPro->product_photo) ?>" width="200" />
+            <?php else: ?>
+                <img height="200" src="../images/photo.jpg" width="200" />
+            <?php endif; ?>
+            <h3><?= htmlspecialchars($top->product_name) ?></h3>
+            <p class="price">RM<?= htmlspecialchars($top->product_price) ?></p>
+            
+           
+            <div class="popup">
+                <a href="items.php?id=<?= $top->product_id  ?>"><button class="like-button">view</button></a>
+            </div>
+        </div>
+    <?php endforeach; ?>
+</div>
 
-                    <?php foreach ($topSalesData as $top): ?>
-                        <?php
-
-                        $topProd = $_db->prepare('
-                            SELECT product_photo FROM product_image
-                            WHERE product_id = ?
-                            LIMIT 1
-                        ');
-                        $topProd->execute([$top->product_id]);
-                        $topPro = $topProd->fetch(PDO::FETCH_OBJ);
-                        ?>
-                        <div class="product">
-                            <?php if ($topPro && !empty($topPro->product_photo)): ?>
-                                <img height="200" src="../uploads/<?= htmlspecialchars($topPro->product_photo) ?>" width="200" />
-                            <?php else: ?>
-                                <img height="200" src="../images/photo.jpg" width="200" />
-                            <?php endif; ?>
-                            <h3><?= htmlspecialchars($top->product_name) ?></h3>
-                            <p class="price">RM<?= htmlspecialchars($top->product_price) ?></p>
-                        </div>
-                    <?php endforeach; ?>
-
-                    <!-- Repeat the product div for other products -->
-                </div>
 
 
 

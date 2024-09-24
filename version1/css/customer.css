@@ -147,10 +147,48 @@ display:flex;
 }
 
 
+
 .product {
+    position: relative;
+    padding: 10px;
+    border: 1px solid #ccc;
     width: 200px;
-    margin: 20px;
     text-align: center;
+}
+
+.popup {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    display: none;
+    background-color: rgba(0, 0, 0, 0.8);
+    color: white;
+    padding: 10px;
+    border-radius: 5px;
+    z-index: 1;
+}
+
+.like-button {
+    background-color: #ff4b4b;
+    border: none;
+    color: white;
+    padding: 8px 12px;
+    font-size: 14px;
+    cursor: pointer;
+    border-radius: 4px;
+}
+
+.product:hover .popup {
+    display: block;
+}
+
+.product img {
+    transition: transform 0.3s ease;
+}
+
+.product:hover img {
+    transform: scale(1.1);
 }
 
 .scroll-button {

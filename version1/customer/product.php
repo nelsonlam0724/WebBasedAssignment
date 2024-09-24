@@ -15,7 +15,7 @@ $CategoryResults = $getCategory->fetchAll();
 
 $query = 'SELECT p.* FROM product p 
           JOIN category c ON p.category_id = c.category_id 
-          WHERE c.category_status = ?';
+          WHERE c.category_status = ? AND p.quantity > 0';
 $params = ['Available'];
 
 if ($category) {
