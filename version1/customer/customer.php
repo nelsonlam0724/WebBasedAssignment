@@ -133,6 +133,30 @@ $topSalesData = $_db->query('
 
         <hr>
 
+        <div class="faq-section">
+            <h2>Frequently Asked Questions</h2>
+            <div class="faq-container">
+                <div class="faq-item">
+                    <h3 class="faq-question">What is QianHo Stationary?</h3>
+                    <p class="faq-answer">QianHo Stationary is a leading supplier of office and school supplies, offering a wide range of products to meet your needs.</p>
+                </div>
+                <div class="faq-item">
+                    <h3 class="faq-question">How can I place an order?</h3>
+                    <p class="faq-answer">You can place an order through our website by browsing our products and adding them to your cart. Once you're ready, proceed to checkout.</p>
+                </div>
+                <div class="faq-item">
+                    <h3 class="faq-question">What are the delivery options?</h3>
+                    <p class="faq-answer">We offer standard and express delivery options. You can select the one that suits you during checkout.</p>
+                </div>
+                <div class="faq-item">
+                    <h3 class="faq-question">Do you offer customer support?</h3>
+                    <p class="faq-answer">Yes, we provide 24/7 customer support through phone, email, and live chat to assist with any inquiries.</p>
+                </div>
+            </div>
+            <hr>
+        </div>
+
+
         <div class="box1">
             <h1> Category</h1>
             <div class="grid">
