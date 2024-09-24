@@ -144,7 +144,7 @@ $results = $getPending->fetchAll();
                WHERE o.status = ? AND o.user_id = ? AND od.commment_status = ? AND s.status = ?
                ');
 
-            $getPaid->execute(["Paid", $userID, "Pending", "Arrive"]);
+            $getPaid->execute(["Paid", $userID, "Pending", "Delivered"]);
             $results = $getPaid->fetchAll();
 
             ?>

@@ -19,6 +19,16 @@ if (is_post()) {
     ');
     $stm->execute([$status, $order_ID, $user_ID]);
 
+    ////////////////////////////////////////////sq add
+    $stm = $_db->prepare('
+    UPDATE `orders` o
+    JOIN `shippers` s ON o.ship_id = s.ship_id
+    SET   s.status = ?
+    WHERE o.id = ? AND o.user_id = ?
+');
+    $stm->execute([$status, $order_ID, $user_ID]);
+     //////////////////////////////////////////////////////
+
     $stm = $_db->prepare('
         SELECT i.*,p.name
         FROM `order_details` AS i,product AS p
