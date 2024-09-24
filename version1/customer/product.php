@@ -37,7 +37,7 @@ $total_pages = $pager->page_count;
 
 // Fetch current category name only if it is available
 $getCategoryName = $_db->prepare('SELECT * FROM category WHERE category_id = ? AND category_status = ?');
-$getCategoryName->execute([$category, 'activate']);
+$getCategoryName->execute([$category, 'Available']);
 $CategoryNameResults = $getCategoryName->fetch();
 ?>
 
