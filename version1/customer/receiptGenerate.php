@@ -56,15 +56,17 @@ $recordResult = $getPayRecord->fetch();
             </div>
     <h1>Online Payment Receipt</h1>
   <div class="receipt-info">
-    <div >
-    <p style="display:flex;gap:15px"><strong>Order Id : </strong><span style="color:grey"> <?=  $_SESSION['order_id'] ?></span></p>
-    <p style="display:flex;gap:15px"><strong>Date/Time : </strong><span style="color:grey">Paid at <?=  $recordResult->datetime ?></span></p>
-    <p style="display:flex;gap:15px"><strong>Payment Method : </strong><span style="color:grey"><?= $recordResult->method ?></span></p>
-    <p style="display:flex;gap:15px"><strong>Delivery name  : </strong><span style="color:grey"> <?= $resultss->company_name ?> </span></p>
+    <div>
+    <p><strong>Order Id : </strong><span style="color:grey"> <?=  $_SESSION['order_id'] ?></span></p>
+    <p><strong>Date/Time : </strong><span style="color:grey">Paid at <?=  $recordResult->datetime ?></span></p>
+    <p><strong>Payment Method : </strong><span style="color:grey"><?= $recordResult->method ?></span></p>
+    <p><strong>Delivery name  : </strong><span style="color:grey"> <?= $resultss->company_name ?> </span></p>
     </div>
-    <p style="display:flex;gap:15px"><strong>Destination :</strong>  <span style="color:grey;width:300px"><?= $resultss->address ?></span> </p>
+    <p><strong>Destination :</strong>  <span style="color:grey;"><?= $resultss->address ?></span> </p>
+    <p><strong>Name:</strong>  <span style="color:grey;"><?= $_SESSION['user']->name?></span> </p>
+    <p><strong>Contact Number :</strong>  <span style="color:grey;"><?=  $_SESSION['user']->contact_num ?></span> </p>
   </div>
- 
+ <br><br><br><br><br><br>
   
   <div class="order-list">
     <h2>Order List</h2>

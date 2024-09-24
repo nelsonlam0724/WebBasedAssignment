@@ -43,6 +43,31 @@ if (is_post()) {
         ');
         $stm->execute(['Cancelled', $order_ID, $user->user_id]);
 
+        ////////////////////////////////////ADD STOCK//////////////////////////////////////////////////
+        $add = $_db->prepare('
+            SELECT o.* , p.name , p.product_id
+            FROM order_details AS o 
+           JOIN product AS p ON o.product_id = p.product_id
+           WHERE o.order_id = ?
+');
+
+        $items_order = [];
+        $add->execute([$order_ID]);
+        $addStock = $add->fetchAll(PDO::FETCH_ASSOC);
+
+        foreach ($addStock as $o) {
+            $items_order[$o['product_id']] = $o['unit'];
+        }
+
+        foreach ($items_order as $product_id => $unit) {
+            $stmt = $_db->prepare('SELECT quantity FROM product WHERE product_id = ?');
+            $stmt->execute([$product_id]);
+            $productStock = $stmt->fetch();
+            $stmt = $_db->prepare('UPDATE product SET quantity = ? WHERE product_id = ?');
+            $stmt->execute([$productStock->quantity + $unit, $product_id]);
+        }
+
+        /////////////////////////////////////////////////////////////////////////////////////////////////////
 
 
         $m = get_mail();

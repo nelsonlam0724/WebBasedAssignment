@@ -66,7 +66,7 @@ include '../include/sidebar.php'; ?>
             <div class="cart-list">
 
                 <div class="cart-header">
-                    <h5>Product</h5>
+                    <h5 style="width:200px;">Product</h5>
                     <h5>Quantity</h5>
                     <h5>Price</h5>
                     <div></div>
@@ -93,7 +93,7 @@ include '../include/sidebar.php'; ?>
 
                             <img src="../uploads/<?=$productPhoto?>" width="90" height="90" alt="Product Image">
 
-                            <div class="product-name" style="width:20px;">
+                            <div class="product-name" style="width:200px;">
                                 <h4><?= $c['name'] ?></h4>
                             </div>
                         </div>

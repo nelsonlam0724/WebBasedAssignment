@@ -23,6 +23,7 @@ $comment = $getComment->fetchAll();
     <div class="cons">
         <div style="padding:20px;background-color:black;color:white;">Comment History</div>
         <?php
+        $count=0;
         include '../include/sidebar.php';
         foreach ($comment as $c):
 
@@ -72,7 +73,12 @@ $comment = $getComment->fetchAll();
 
             </div>
             <br>
-        <?php endforeach ?>
+        <?php $count++;endforeach ;
+            if($count==0){
+                echo "<h3>Record Not Found</h3>";
+            }
+        ?>
+         
     </div>
 </body>
 <script src="../js/product.js"></script>
