@@ -16,10 +16,11 @@ if (is_post()) {
 
 
     $stm = $_db->prepare('
-        SELECT status
-        FROM `orders` 
-        WHERE id = ?
-        AND user_id = ?
+        SELECT o.status , s.status AS ship_status
+        FROM `orders` AS o
+        JOIN `shippers` AS s ON o.ship_id = s.ship_id
+        WHERE o.id = ?
+       AND o.user_id = ?
     ');
     $stm->execute([$order_ID, $user->user_id]);
     $check = $stm->fetch();
@@ -28,11 +29,14 @@ if (is_post()) {
     echo $user->user_id;
     echo $product_ID;
 
-    if ($check->status == 'Delivered') {
+    if ($check->ship_status == 'Delivered') {
         temp('info', 'Delivered Item cannot be cancelled!');
         redirect('../customer/orders.php');
     } else if ($check->status == 'Cancelled') {
         temp('info', 'Cancelled Item cannot be cancelled again!');
+        redirect('../customer/orders.php');
+    } else if ($check->ship_status == 'Arrive') {
+        temp('info', 'Arrived Item cannot be cancelled again!');
         redirect('../customer/orders.php');
     } else {
 
