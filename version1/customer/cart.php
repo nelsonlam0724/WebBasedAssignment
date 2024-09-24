@@ -8,7 +8,7 @@ $getUserID = $_db->prepare('
     FROM carts AS c
     JOIN product AS p ON c.product_id = p.product_id 
     JOIN category AS ct ON p.category_id = ct.category_id 
-    WHERE c.user_id = ? 
+    WHERE c.user_id = ? AND c.unit > 0
     ORDER BY c.id DESC
 ');
 
