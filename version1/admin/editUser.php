@@ -287,7 +287,9 @@ $_title = 'Edit User';
         </div>
     </form>
     <div class="action-buttons">
-        <a href="userList.php"><button type="button">Back to List</button></a>
+        <a href="userList.php?page=<?= $page ?>&search=<?= urlencode($search_query) ?>">
+            <button>Back to User List</button>
+        </a>
     </div>
 </body>
 

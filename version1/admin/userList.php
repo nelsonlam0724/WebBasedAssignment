@@ -190,7 +190,7 @@ $_title = 'User List';
                             <?php if ($user->status == 'Banned'): ?>
                                 <td class="active">
                                     <form action="activeUser.php?user_id=<?= $user->user_id ?>&search=<?= urlencode($search_query) ?>
-                                    &page=<?= $page - 1 ?>&sort_by=<?= urlencode($sort_by) ?>&sort_order=<?= urlencode($sort_order) ?>
+                                    &page=<?= $page ?>&sort_by=<?= urlencode($sort_by) ?>&sort_order=<?= urlencode($sort_order) ?>
                                     &status=<?= urlencode($status_filter) ?>&role=<?= urlencode($role_filter) ?>" method="post" style="display:inline;">
                                         <input type="hidden" name="id" value="<?= $user->user_id ?>">
                                         <button type="submit" onclick="return confirm('Are you sure you want to active this user?');">Active</button>
@@ -200,7 +200,7 @@ $_title = 'User List';
                             <?php if ($user->status == 'Active'): ?>
                                 <td class="deactivate">
                                     <form action="bannedUser.php?user_id=<?= $user->user_id ?>&search=<?= urlencode($search_query) ?>
-                                    &page=<?= $page - 1 ?>&sort_by=<?= urlencode($sort_by) ?>&sort_order=<?= urlencode($sort_order) ?>
+                                    &page=<?= $page ?>&sort_by=<?= urlencode($sort_by) ?>&sort_order=<?= urlencode($sort_order) ?>
                                     &status=<?= urlencode($status_filter) ?>&role=<?= urlencode($role_filter) ?>" method="post" style="display:inline;">
                                         <input type="hidden" name="id" value="<?= $user->user_id ?>">
                                         <button type="submit" onclick="return confirm('Are you sure you want to banned this user?');">Banned</button>
@@ -226,7 +226,7 @@ $_title = 'User List';
 
                 <!-- Page Numbers -->
                 <?php
-                $page_range = 1; // Number of pages to show before and after the current page
+                $page_range = 2; // Number of pages to show before and after the current page
                 $start_page = max(1, $page - $page_range);
                 $end_page = min($total_pages, $page + $page_range);
 
