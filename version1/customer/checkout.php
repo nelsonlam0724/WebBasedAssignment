@@ -6,6 +6,17 @@ auth('Member');
 $cartSelect =  $_SESSION['cartSelection'];
 $total = 0;
 
+try {
+    $wallet_id=generateID('wallet', 'wallet_id', 'W', 4);
+    $wallet_stmt = $_db->prepare('
+        INSERT INTO wallet (wallet_id, PIN, user_id) 
+        VALUES (?, ?, ?)
+    ');
+    $wallet_stmt->execute([$wallet_id, "123456", $_SESSION['user']->user_id]);
+} catch (PDOException $e) {
+   //no time do le 
+}
+
 $productIds = array_keys($cartSelect);
 $products = [];
 
