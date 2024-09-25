@@ -19,12 +19,7 @@ const chatBox = document.getElementById('chat-box');
                         chatBox.appendChild(div);
                     });
                     chatBox.scrollTop = chatBox.scrollHeight;
-                },
-                error: function(jqXHR, textStatus, errorThrown) {
-                    console.error("Error fetching messages: ", textStatus, errorThrown);
-                    console.log("Response: ", jqXHR.responseText);
-                    displayMessage('Error fetching messages.');
-                }                
+                },             
             });
         }
 
