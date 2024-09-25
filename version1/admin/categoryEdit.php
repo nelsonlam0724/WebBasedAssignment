@@ -76,5 +76,5 @@ if (is_post()) {
     <button type="submit" id="submit-button" style="display: none;">Update Category</button>
 </form>
 
-<script src="../js/productEdit.js"></script>
+<script src="../js/categoryEdit.js"></script>
 
