@@ -143,30 +143,39 @@ function get_mail() {
 
     return $m;
 }
-// Crop, resize and save photo
+
 function save_photo($file) {
-    // Check if $file is an object or array
-    if (is_object($file)) {
+    // If $file is a string (file path)
+    if (is_string($file)) {
+        $file_tmp_name = $file;
+        $file_type = mime_content_type($file);
+        $file_size = filesize($file);
+    }
+    // If $file is an object (like $_FILES['photo'])
+    elseif (is_object($file)) {
         $file_tmp_name = $file->tmp_name;
         $file_type = $file->type;
         $file_size = $file->size;
-    } elseif (is_array($file)) {
+    }
+    // If $file is an array (like $_FILES['photo'])
+    elseif (is_array($file)) {
         $file_tmp_name = $file['tmp_name'];
         $file_type = $file['type'];
         $file_size = $file['size'];
     } else {
         throw new InvalidArgumentException('Invalid file input');
     }
-    
+
     $photo = uniqid() . '.jpg';
     require_once 'lib/SimpleImage.php';
     $img = new SimpleImage();
     $img->fromFile($file_tmp_name)
         ->thumbnail(200, 200)
-        ->toFile("`uploads`/$photo", 'image/jpeg');
+        ->toFile("uploads/$photo", 'image/jpeg');
     
     return $photo;
 }
+
 
 function save_photo_admin($file) {
     // If $file is a string (file path)
