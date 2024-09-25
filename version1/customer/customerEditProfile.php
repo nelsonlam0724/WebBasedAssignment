@@ -1,7 +1,8 @@
 <?php
 include '../_base.php';
 include '../_head.php';
-
+include '../include/header.php';
+include '../include/sidebar.php';
 auth('Member');
 $stm = $_db->prepare('SELECT * FROM address WHERE user_id = ?');
 $stm->execute([$_user->user_id]);
@@ -148,12 +149,13 @@ $_title = 'Edit Profile';
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="../css/profile.css">
+    <link rel="stylesheet" href="../css/profileCustomerEdit.css">
     <script src="../js/profile.js"></script>
     <title><?= htmlspecialchars($_title) ?></title>
 </head>
 
 <body>
+    <br><br><br><br><br>
     <h1><?= htmlspecialchars($_title) ?></h1>
 
     <div class="form">
@@ -249,8 +251,8 @@ $_title = 'Edit Profile';
                     </div>
                 </div>
             </div>
-
-            <button type="submit">Save Changes</button>
+        <div class="submit_button"><button type="submit">Save Changes</button></div>
+            
         </form>
     </div>
     <div class="action-buttons">

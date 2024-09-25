@@ -1,7 +1,8 @@
 <?php
 include '../_base.php';
 include '../_head.php';
-
+include '../include/header.php';
+include '../include/sidebar.php';
 auth('Member');
 
 if (is_post()) {
@@ -22,19 +23,18 @@ $_title = 'Deactivate Account';
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="../css/profile.css">
+    <link rel="stylesheet" href="../css/profileCustomerEdit.css">
     <title><?= htmlspecialchars($_title) ?></title>
 </head>
 
 <body>
-
+    <br><br><br><br><br><br><br><br><br><br><br><br><br>
     <h1><?= htmlspecialchars($_title) ?></h1>
 
     <form method="post" class="form">
-        <div class="form-container">
             <p>Are you sure you want to deactivate your account? This action cannot be undone,
                 and you will not be able to log in again unless an administrator reactivates your account within 24 hours.</p>
-        </div>
+                <br>
         <button type="submit" class="btn-deactivate">Yes, Deactivate My Account</button>
     </form>
 

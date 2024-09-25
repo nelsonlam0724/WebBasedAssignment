@@ -30,12 +30,12 @@ if (is_post()) {
     if ($email == '') {
         $_err['email'] = 'Required';
     } else if (!is_email($email)) {
-        $_err['email'] = 'Invalid email';
+        $_err['email'] ='<p style="color:white">'. 'Invalid email'.'</p>';
     }
 
     // Validate: password
     if ($password == '') {
-        $_err['password'] = 'Required';
+        $_err['password'] ='<p style="color:white">'. 'Required'.'</p>';
     }
     // Login user
     if (!$_err) {

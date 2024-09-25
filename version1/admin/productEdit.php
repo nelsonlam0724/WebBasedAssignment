@@ -17,7 +17,7 @@ $product_id = req('product_id');
 $page = isset($_GET['page']) ? (int)$_GET['page'] : 1;
 if (!$product_id) {
     temp('info', 'Product ID Not Found');
-    redirect('productList.php?page='. $page .'&search=' . urlencode($search_query) . '&category=' . urlencode($category_filter) . '&sort_by=' . urlencode($sort_by) . '&sort_order=' . urlencode($sort_order));
+    redirect('productList.php?page=' . $page . '&search=' . urlencode($search_query) . '&category=' . urlencode($category_filter) . '&sort_by=' . urlencode($sort_by) . '&sort_order=' . urlencode($sort_order));
 }
 
 $stm = $_db->prepare(
@@ -31,7 +31,7 @@ $stm->execute([$product_id]);
 $product = $stm->fetch(PDO::FETCH_OBJ);
 
 if (!$product) {
-    redirect('productList.php?page='. $page .'&search=' . urlencode($search_query) . '&category=' . urlencode($category_filter) . '&sort_by=' . urlencode($sort_by) . '&sort_order=' . urlencode($sort_order));
+    redirect('productList.php?page=' . $page . '&search=' . urlencode($search_query) . '&category=' . urlencode($category_filter) . '&sort_by=' . urlencode($sort_by) . '&sort_order=' . urlencode($sort_order));
 }
 
 $stm = $_db->prepare('SELECT image_id, product_photo FROM product_image WHERE product_id = ?');
@@ -86,13 +86,25 @@ if (is_post()) {
         }
     }
 
+    // Deleting selected images
+    if (isset($_POST['delete_image_ids'])) {
+        foreach ($_POST['delete_image_ids'] as $delete_image_id) {
+            $stm = $_db->prepare('DELETE FROM product_image WHERE image_id = ?');
+            $stm->execute([$delete_image_id]);
+        }
+        temp('info', 'Selected Product Photos Deleted Successfully');
+        redirect();
+    }
+
+
+
     if (empty($_err)) {
         // Update product details
         $stm = $_db->prepare('UPDATE product SET name = ?, price = ?, category_id = ?, quantity = ?, weight = ?, description = ?, status = ? WHERE product_id = ?');
         $stm->execute([$new_name, $new_price, $new_category, $new_quantity, $new_weight, $new_description, $new_status, $product_id]);
 
         temp('info', 'Product Details Updated');
-        redirect('productList.php?page='. $page .'&search=' . urlencode($search_query) . '&category=' . urlencode($category_filter) . '&sort_by=' . urlencode($sort_by) . '&sort_order=' . urlencode($sort_order));
+        redirect('productList.php?page=' . $page . '&search=' . urlencode($search_query) . '&category=' . urlencode($category_filter) . '&sort_by=' . urlencode($sort_by) . '&sort_order=' . urlencode($sort_order));
     }
 }
 ?>
@@ -174,23 +186,24 @@ if (is_post()) {
             <td>
                 <div id="product-photos">
                     <div class="image-wrapper">
-                        <?php
-                        // Display existing images
-                        foreach ($images as $index => $img): ?>
-                            <label class="upload" tabindex="0">
-                                <img src="../uploads/<?= htmlspecialchars($img->product_photo) ?>" alt="Product Photo" class="product-photo-preview">
-                                <input type="hidden" name="existing_image_ids[<?= $index ?>]" value="<?= htmlspecialchars($img->image_id) ?>">
-                                <input type="file" name="photo[<?= $index ?>]" id="photo-<?= $index ?>" accept="image/*">
-                            </label>
+                        <?php foreach ($images as $img): ?>
+                            <div class="image-item">
+                                <label class="upload" tabindex="0">
+                                    <img src="../uploads/<?= htmlspecialchars($img->product_photo) ?>" alt="Product Photo" class="product-photo-preview">
+                                    <input type="hidden" name="existing_image_ids[]" value="<?= htmlspecialchars($img->image_id) ?>">
+                                    <input type="file" name="photo[]" accept="image/*">
+                                </label>
+                                <label>
+                                    <input type="checkbox" name="delete_image_ids[]" value="<?= htmlspecialchars($img->image_id) ?>"> Delete
+                                </label>
+                            </div>
                         <?php endforeach; ?>
-
                         <?php
-                        // Add empty upload fields if fewer than 5 images
                         $max_images = 5;
                         $remaining_images = $max_images - count($images);
                         for ($i = 0; $i < $remaining_images; $i++): ?>
                             <label class="upload" tabindex="0">
-                                <img src="../images/photo.jpg" alt="Default Image" class="product-photo-preview"> <!-- Path to your default image -->
+                                <img src="../images/photo.jpg" alt="Default Image" class="product-photo-preview">
                                 <input type="file" name="photo[<?= count($images) + $i ?>]" id="photo-<?= count($images) + $i ?>" accept="image/*">
                             </label>
                         <?php endfor; ?>
@@ -198,6 +211,8 @@ if (is_post()) {
                 </div>
             </td>
         </tr>
+
+
     </table>
     <button type="submit" id="submit-button" style="display: none;">Update Product</button>
 </form>

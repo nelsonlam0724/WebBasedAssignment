@@ -1,0 +1,150 @@
+body {
+    font-family: Arial, sans-serif;
+    background-color: #f7f7f7;
+}
+
+h1 {
+    color: #333;
+    text-align: center;
+    font-size: 2rem;
+}
+
+.form {
+    margin: auto;
+    padding: 20px;
+    background-color: #f9f9f9;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    width: 875px;
+}
+
+.form-container {
+    display: grid;
+    grid-template-columns: 1fr 2fr 1fr;
+    gap: 10px;
+}
+
+.form-left, .form-middle, .form-right {
+    padding: 10px;
+    border: 1px solid #ddd;
+}
+
+label {
+    display: block;
+    margin-bottom: 5px;
+    color: #555;
+}
+
+input[type="email"],input[type="text"], input[type="password"], input[type="date"],input[type="contact_num"], select {
+    width: 250px;
+    padding: 8px;
+    margin-bottom: 15px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    box-sizing: border-box;
+}
+
+.submit_button button[type="submit"]{
+    margin-top: 10px;
+    margin-bottom: 5px;
+}
+
+button[type="submit"], button[type="reset"] {
+    width: 100%;
+    padding: 10px;
+    background-color: #5cb85c;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 1rem;
+}
+
+button[type="reset"] {
+    background-color: #d9534f;
+    margin-top: 10px;
+}
+
+button:hover {
+    opacity: 0.9;
+}
+
+a button {
+    background-color: #0275d8;
+    margin-top: 20px;
+    padding: 10px;
+    width: 100%;
+    border-radius: 5px;
+    font-size: 1rem;
+}
+
+a button:hover {
+    opacity: 0.9;
+}
+
+.upload {
+    display: block;
+    text-align: center;
+    margin-bottom: 15px;
+}
+
+.upload img {
+    border: 1px solid #333;
+    width: 150px;
+    height: 150px;
+    border-radius: 50%;
+    object-fit: cover;
+    margin-top: 10px;
+    cursor: pointer;
+}
+
+.error {
+    color: red;
+    font-size: 0.875rem;
+}
+
+.form-container button {
+    background-color: #007bff;
+    color: white;
+    border: none;
+    padding: 5px;
+    text-align: center;
+    display: inline-block;
+    font-size: 14px;
+    margin: 2px 1px;
+    cursor: pointer;
+    border-radius: 4px;
+}
+
+.form-container button:hover {
+    background-color: #0056b3;
+}
+
+.actions button {
+    background-color: #28a745;
+}
+
+.actions button:hover {
+    background-color: #218838;
+}
+
+
+.action-buttons {
+    text-align: center;
+    margin: 5px 0;
+}
+
+.action-buttons a button {
+    background-color: #007bff;
+    color: white;
+    border: none;
+    padding: 10px;
+    text-align: center;
+    display: inline-block;
+    font-size: 14px;
+    margin: 2px 1px;
+    cursor: pointer;
+    border-radius: 4px;
+    width: 200px;
+    margin: 5px;
+}
