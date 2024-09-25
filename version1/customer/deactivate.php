@@ -1,8 +1,6 @@
 <?php
 include '../_base.php';
 include '../_head.php';
-include '../include/header.php';
-include '../include/sidebar.php';
 auth('Member');
 
 if (is_post()) {
@@ -28,6 +26,8 @@ $_title = 'Deactivate Account';
 </head>
 
 <body>
+<?php include '../include/header.php';
+    include '../include/sidebar.php';  ?>
     <br><br><br><br><br><br><br><br><br><br><br><br><br>
     <h1><?= htmlspecialchars($_title) ?></h1>
 
