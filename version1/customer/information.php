@@ -141,7 +141,7 @@ $results = $getPending->fetchAll();
                JOIN orders AS o ON od.order_id = o.id
                JOIN product AS p ON od.product_id = p.product_id
                JOIN shippers AS s ON o.ship_id = s.ship_id
-               WHERE  o.user_id = ? AND od.commment_status = ? AND s.status = ?
+               WHERE  o.user_id = ? AND od.comment_status = ? AND s.status = ?
                ');
 
             $getPaid->execute([$userID, "Pending", "Delivered"]);
