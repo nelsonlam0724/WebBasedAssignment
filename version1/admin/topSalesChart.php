@@ -42,17 +42,17 @@ if ($start_date && $end_date) {
         }
     } else if ($end_date) {
         $end = new DateTime($end_date);
-        $start = (new DateTime())->modify('-1 month'); 
+        $start = (new DateTime())->modify('-1 month');
         $totalDays = $end->diff($start)->days;
 
         if ($totalDays <= 7) {
-            $period = 'day'; 
+            $period = 'day';
         } else {
             $period = 'week';
         }
     }
 } else {
-    $period = 'year'; 
+    $period = 'year';
 }
 
 
@@ -135,7 +135,8 @@ if ($period === 'day') {
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="../js/orders.js"></script>
-    <link rel="stylesheet" href="../css/orderList.css"> <!-- Link the external CSS -->
+    <link rel="stylesheet" href="../css/orderList.css">
+    <link rel="stylesheet" href="../css/topProductSalesChart.css">
     <title>Summary Report</title>
 </head>
 
@@ -154,14 +155,16 @@ if ($period === 'day') {
             </form>
         </div>
 
-        <div class="container">
-            <h1>Sales Chart</h1>
+        <div class="charts">
+            <div class="chart-container">
+                <h3>Total Sales Chart</h3>
+                <canvas id="barChart"></canvas>
+            </div>
 
-            <h2>Bar Chart</h2>
-            <canvas id="barChart"></canvas>
-
-            <h2>Pie Chart</h2>
-            <canvas id="pieChart"></canvas>
+            <div class="chart-container">
+                <h3>Total Sales Chart</h3>
+                <canvas id="pieChart"></canvas>
+            </div>
         </div>
 
         <br>
