@@ -32,6 +32,9 @@ if (is_post()) {
     if ($check->ship_status == 'Delivered') {
         temp('info', 'Delivered Item cannot be cancelled!');
         redirect('../customer/orders.php');
+    }else if ($check->status == 'Delivered') {
+        temp('info', 'Delivered Item cannot be cancelled!');
+        redirect('../customer/orders.php');
     } else if ($check->status == 'Cancelled') {
         temp('info', 'Cancelled Item cannot be cancelled again!');
         redirect('../customer/orders.php');
