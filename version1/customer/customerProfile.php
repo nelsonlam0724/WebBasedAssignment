@@ -1,7 +1,8 @@
 <?php
 include '../_base.php';
 include '../_head.php';
-
+include '../include/header.php';
+include '../include/sidebar.php';
 auth('Member');
 // Initialize error array
 $_err = [];
@@ -149,10 +150,11 @@ $_title = 'Member Profile';
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <script src="../js/profile.js"></script>
         <title><?= htmlspecialchars($_title) ?></title>
-        <link rel="stylesheet" href="../css/adminProfile.css">
+        <link rel="stylesheet" href="../css/profileCustomer.css">
     </head>
 
 <body>
+    <br><br><br><br><br>
     <div class="container">
         <h1><?= htmlspecialchars($_title) ?></h1>
 
