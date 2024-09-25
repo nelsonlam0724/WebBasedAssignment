@@ -66,7 +66,7 @@ $recordResult = $getPayRecord->fetch();
     <p><strong>Name:</strong>  <span style="color:grey;"><?= $_SESSION['user']->name?></span> </p>
     <p><strong>Contact Number :</strong>  <span style="color:grey;"><?=  $_SESSION['user']->contact_num ?></span> </p>
   </div>
- <br><br><br><br><br><br>
+
   
   <div class="order-list">
     <h2>Order List</h2>
