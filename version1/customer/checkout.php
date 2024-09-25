@@ -99,7 +99,7 @@ if (is_post()) {
         $stm->execute([$orderid, $_SESSION['user']->user_id, $shipid, "Pending", $count, $total]);
 
         $stm = $_db->prepare('
-        INSERT INTO order_details (order_id, product_id, price, unit, subtotal, commment_status)
+        INSERT INTO order_details (order_id, product_id, price, unit, subtotal, comment_status)
         VALUES (?, ?, (SELECT price FROM product WHERE product_id = ?), ?, price * unit, ?)
     ');
         foreach ($cartSelect as $product_id => $unit) {
