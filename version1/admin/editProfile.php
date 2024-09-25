@@ -46,13 +46,9 @@ if (is_post()) {
         if ($confirm !== $password) {
             $_err['confirm'] = 'Passwords do not match';
         }
-        // If no errors, hash the new password
-        if (empty($_err['password']) && empty($_err['confirm'])) {
-            $hashed_password = password_hash($password, PASSWORD_DEFAULT);
-        }
     } else {
         // No new password provided, retain the current password
-        $hashed_password = $_user->password; // Assuming you store the hashed password in session
+        $password = $_user->password; // Assuming you store the hashed password in session
     }
 
     // Validation: name
@@ -119,8 +115,8 @@ if (is_post()) {
         }
 
         // Update query with photo
-        $stm = $_db->prepare('UPDATE user SET email = ?, name = ?,contact_num = ? , password = ?, birthday = ?, gender = ?, photo = ? WHERE user_id = ?');
-        $stm->execute([$email, $name, $contact_num, $hashed_password, $birthday, $gender, $photo_name, $_user->user_id]);
+        $stm = $_db->prepare('UPDATE user SET email = ?, name = ?,contact_num = ? , password = SHA(?), birthday = ?, gender = ?, photo = ? WHERE user_id = ?');
+        $stm->execute([$email, $name, $contact_num, $password, $birthday, $gender, $photo_name, $_user->user_id]);
         // Update session data
         $_SESSION['user'] = (object) array_merge((array)$_SESSION['user'], [
             'email' => $email,
@@ -130,6 +126,7 @@ if (is_post()) {
             'gender' => $gender,
             'photo' => $photo_name, // Update session with the new or existing photo
         ]);
+        
 
         temp('info', 'Profile updated successfully');
         redirect('profile.php');

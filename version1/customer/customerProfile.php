@@ -1,8 +1,7 @@
 <?php
 include '../_base.php';
 include '../_head.php';
-include '../include/header.php';
-include '../include/sidebar.php';
+
 auth('Member');
 // Initialize error array
 $_err = [];
@@ -54,9 +53,9 @@ if (is_post()) {
                 $_err['password'] = 'Between 5-100 characters';
                 temp('info', 'Between 5-100 characters.');
             } else {
-                $hashed_password = password_hash($value, PASSWORD_DEFAULT);
-                $stm = $_db->prepare('UPDATE user SET password = ? WHERE user_id = ?');
-                $stm->execute([$hashed_password, $_user->user_id]);
+
+                $stm = $_db->prepare('UPDATE user SET password = SHA(?) WHERE user_id = ?');
+                $stm->execute([$value, $_user->user_id]);
             }
             break;
 
@@ -154,6 +153,8 @@ $_title = 'Member Profile';
     </head>
 
 <body>
+<?php include '../include/header.php';
+    include '../include/sidebar.php';  ?>
     <br><br><br><br><br>
     <div class="container">
         <h1><?= htmlspecialchars($_title) ?></h1>

@@ -117,21 +117,57 @@ if (is_post()) {
         $_err['photo'] = 'Maximum 1MB';
     }
 
+    // Validate street
+    if (empty($street)) {
+        $_err['street'] = 'Street address is required.';
+    } elseif (strlen($street) < 5) {
+        $_err['street'] = 'Street address must be at least 5 characters long.';
+    }
+
+    // Validate city
+    if (empty($city)) {
+        $_err['city'] = 'City is required.';
+    } elseif (!preg_match("/^[a-zA-Z\s]+$/", $city)) {
+        $_err['city'] = 'City can only contain letters and spaces.';
+    }
+
+    // Validate state
+    if (empty($state)) {
+        $_err['state'] = 'State is required.';
+    } elseif (!preg_match("/^[a-zA-Z\s]+$/", $state)) {
+        $_err['state'] = 'State can only contain letters and spaces.';
+    }
+
+    // Validate postal code
+    if (empty($postal_code)) {
+        $_err['postal_code'] = 'Postal code is required.';
+    } elseif (!preg_match("/^\d{5}(-\d{4})?$/", $postal_code)) {
+        $_err['postal_code'] = 'Postal code must be in the format 12345 or 12345-6789.';
+    }
+
+    // Validate country
+    if (empty($country)) {
+        $_err['country'] = 'Country is required.';
+    } elseif (!preg_match("/^[a-zA-Z\s]+$/", $country)) {
+        $_err['country'] = 'Country can only contain letters and spaces.';
+    }
+
     // DB operation
     if (!$_err) {
         $photo = save_photo_admin($f);
         $user_id = generateID('user', 'user_id', 'U', 4);
         $stm = $_db->prepare('
             INSERT INTO user (user_id, email, password, contact_num, name, gender, birthday, photo, role, status)
-            VALUES (?, ?, SHA1(?), ?, ?, ?, ?, ?, ?, "Active")
+            VALUES (?, ?, SHA(?), ?, ?, ?, ?, ?, ?, "Active")
         ');
         $stm->execute([$user_id, $email, $password, $contact_num, $name, $gender, $birthday, $photo, $role]);
+        // Generate address ID
         $address_id = generateID('address', 'address_id', 'A', 4);
+
         // Insert into address table if any address field is provided
-        if ($street || $city || $state || $postal_code || $country) {
-            $stmt = $_db->prepare('INSERT INTO address (address_id, user_id, street, city, state, postal_code, country) VALUES (?, ?, ?, ?, ?, ?, ?)');
-            $stmt->execute([$address_id, $user_id, $street, $city, $state, $postal_code, $country]);
-        }
+        $stm = $_db->prepare('INSERT INTO address (address_id, street, city, state, postal_code, country, user_id) VALUES (?, ?, ?, ?, ?, ?, ?)');
+        $stm->execute([$address_id, $street, $city, $state, $postal_code, $country, $user_id]);
+
 
         temp('info', 'Record inserted');
         redirect();

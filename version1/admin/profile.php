@@ -55,9 +55,8 @@ if (is_post()) {
                 $_err['password'] = 'Between 5-100 characters';
                 temp('info', 'Between 5-100 characters.');
             } else {
-                $hashed_password = password_hash($value, PASSWORD_DEFAULT);
-                $stm = $_db->prepare('UPDATE user SET password = ? WHERE user_id = ?');
-                $stm->execute([$hashed_password, $_user->user_id]);
+                $stm = $_db->prepare('UPDATE user SET password = SHA(?) WHERE user_id = ?');
+                $stm->execute([$value, $_user->user_id]);
             }
             break;
 

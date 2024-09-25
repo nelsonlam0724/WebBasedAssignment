@@ -1,8 +1,7 @@
 <?php
 include '../_base.php';
 include '../_head.php';
-include '../include/header.php';
-include '../include/sidebar.php';
+
 auth('Member');
 $stm = $_db->prepare('SELECT * FROM address WHERE user_id = ?');
 $stm->execute([$_user->user_id]);
@@ -43,22 +42,13 @@ if (is_post()) {
         }
     }
 
-    // Validation: password and confirm
     if (!empty($password)) {
-        // If password is provided, validate it
+        // Validate new password
         if (strlen($password) < 5 || strlen($password) > 100) {
             $_err['password'] = 'Between 5-100 characters';
-        }
-        if ($confirm !== $password) {
+        } else if ($confirm !== $password) {
             $_err['confirm'] = 'Passwords do not match';
         }
-        // If no errors, hash the new password
-        if (empty($_err['password']) && empty($_err['confirm'])) {
-            $hashed_password = password_hash($password, PASSWORD_DEFAULT);
-        }
-    } else {
-        // No new password provided, retain the current password
-        $hashed_password = $_user->password; // Assuming you store the hashed password in session
     }
 
     // Validation: name
@@ -117,14 +107,53 @@ if (is_post()) {
         $photo_name = $_user->photo;
     }
 
+    // Validate street
+    if (empty($street)) {
+        $_err['street'] = 'Street address is required.';
+    } elseif (strlen($street) < 5) {
+        $_err['street'] = 'Street address must be at least 5 characters long.';
+    }
+
+    // Validate city
+    if (empty($city)) {
+        $_err['city'] = 'City is required.';
+    } elseif (!preg_match("/^[a-zA-Z\s]+$/", $city)) {
+        $_err['city'] = 'City can only contain letters and spaces.';
+    }
+
+    // Validate state
+    if (empty($state)) {
+        $_err['state'] = 'State is required.';
+    } elseif (!preg_match("/^[a-zA-Z\s]+$/", $state)) {
+        $_err['state'] = 'State can only contain letters and spaces.';
+    }
+
+    // Validate postal code
+    if (empty($postal_code)) {
+        $_err['postal_code'] = 'Postal code is required.';
+    } elseif (!preg_match("/^\d{5}(-\d{4})?$/", $postal_code)) {
+        $_err['postal_code'] = 'Postal code must be in the format 12345 or 12345-6789.';
+    }
+
+    // Validate country
+    if (empty($country)) {
+        $_err['country'] = 'Country is required.';
+    } elseif (!preg_match("/^[a-zA-Z\s]+$/", $country)) {
+        $_err['country'] = 'Country can only contain letters and spaces.';
+    }
+
     if (empty($_err)) {
         // If a new photo was uploaded, save it and update $photo_name
         if (!empty($photo['name']) && $photo['error'] === UPLOAD_ERR_OK) {
             $photo_name = save_photo_admin($photo);
         }
-        // Update query with photo
-        $stm = $_db->prepare('UPDATE user SET email = ?, name = ?,contact_num = ? , password = ?, birthday = ?, gender = ?, photo = ? WHERE user_id = ?');
-        $stm->execute([$email, $name, $contact_num, $hashed_password, $birthday, $gender, $photo_name, $_user->user_id]);
+
+        // Update user information
+        $stm = $_db->prepare('UPDATE user SET email = ?, name = ?, contact_num = ?, password = SHA(?) , birthday = ?, gender = ?, photo = ? WHERE user_id = ?');
+        $stm->execute([$email, $name, $contact_num, $password, $birthday, $gender, $photo_name, $_user->user_id]);
+        // Update address details
+        $stm = $_db->prepare('UPDATE address SET street = ?, city = ?, state = ?, postal_code = ?, country = ? WHERE user_id = ?');
+        $stm->execute([$street, $city, $state, $postal_code, $country, $_user->user_id]);
         // Update session data
         $_SESSION['user'] = (object) array_merge((array)$_SESSION['user'], [
             'email' => $email,
@@ -132,11 +161,10 @@ if (is_post()) {
             'contact_num' => $contact_num,
             'birthday' => $birthday,
             'gender' => $gender,
-            'photo' => $photo_name, // Update session with the new or existing photo
+            'photo' => $photo_name,
         ]);
-
         temp('info', 'Profile updated successfully');
-        redirect('customer.php');
+        redirect('customerEditProfile.php');
     }
 }
 
@@ -155,6 +183,8 @@ $_title = 'Edit Profile';
 </head>
 
 <body>
+    <?php include '../include/header.php';
+    include '../include/sidebar.php';  ?>
     <br><br><br><br><br>
     <h1><?= htmlspecialchars($_title) ?></h1>
 
@@ -188,7 +218,7 @@ $_title = 'Edit Profile';
 
                     <div class="form-group">
                         <label for="contact_num">Phone Number:</label>
-                        <input type="contact_num" name="contact_num" id="contact_num" value="<?= htmlspecialchars($_user->contact_num) ?>" maxlength="12" >
+                        <input type="contact_num" name="contact_num" id="contact_num" value="<?= htmlspecialchars($_user->contact_num) ?>" maxlength="12">
                         <?= isset($_err['contact_num']) ? "<span class='error'>{$_err['contact_num']}</span>" : '' ?>
                     </div>
 
@@ -251,8 +281,8 @@ $_title = 'Edit Profile';
                     </div>
                 </div>
             </div>
-        <div class="submit_button"><button type="submit">Save Changes</button></div>
-            
+            <div class="submit_button"><button type="submit">Save Changes</button></div>
+
         </form>
     </div>
     <div class="action-buttons">

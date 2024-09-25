@@ -56,7 +56,7 @@ if (is_post()) {
         $stm->execute([$commentid,$_SESSION['user']->user_id, $id, $commentText, $rating, $photoName]);
 
         $updateStatus = $_db->prepare('
-        UPDATE `order_details` SET commment_status = ? WHERE product_id = ? AND order_id = ?
+        UPDATE `order_details` SET comment_status = ? WHERE product_id = ? AND order_id = ?
         ');
 
         $updateStatus->execute(["Rated",$id,$ordedsID]);

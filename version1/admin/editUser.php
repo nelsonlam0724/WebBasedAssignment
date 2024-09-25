@@ -15,8 +15,7 @@ $page = isset($_GET['page']) ? (int)$_GET['page'] : 1;
 
 // Check if ID is provided in the URL
 if (!isset($_GET['user_id'])) {
-    redirect('userList.php?page='. $page .'&search=' . urlencode($search_query) . '&role=' . urlencode($role_filter) . '&status=' . urlencode($status_filter) . '&sort_by=' . urlencode($sort_by) . '&sort_order=' . urlencode($sort_order));
-
+    redirect('userList.php?page=' . $page . '&search=' . urlencode($search_query) . '&role=' . urlencode($role_filter) . '&status=' . urlencode($status_filter) . '&sort_by=' . urlencode($sort_by) . '&sort_order=' . urlencode($sort_order));
 }
 
 // Fetch the user's details
@@ -57,6 +56,41 @@ if (is_post()) {
     $new_state = req('state');
     $new_postal_code = req('postal_code');
     $new_country = req('country');
+    // Validate street
+    if (empty($new_street)) {
+        $_err['street'] = 'Street address is required.';
+    } elseif (strlen($new_street) < 5) {
+        $_err['street'] = 'Street address must be at least 5 characters long.';
+    }
+
+    // Validate city
+    if (empty($new_city)) {
+        $_err['city'] = 'City is required.';
+    } elseif (!preg_match("/^[a-zA-Z\s]+$/", $new_city)) {
+        $_err['city'] = 'City can only contain letters and spaces.';
+    }
+
+    // Validate state
+    if (empty($new_state)) {
+        $_err['state'] = 'State is required.';
+    } elseif (!preg_match("/^[a-zA-Z\s]+$/", $new_state)) {
+        $_err['state'] = 'State can only contain letters and spaces.';
+    }
+
+    // Validate postal code
+    if (empty($new_postal_code)) {
+        $_err['postal_code'] = 'Postal code is required.';
+    } elseif (!preg_match("/^\d{5}(-\d{4})?$/", $new_postal_code)) {
+        $_err['postal_code'] = 'Postal code must be in the format 12345 or 12345-6789.';
+    }
+
+    // Validate country
+    if (empty($new_country)) {
+        $_err['country'] = 'Country is required.';
+    } elseif (!preg_match("/^[a-zA-Z\s]+$/", $new_country)) {
+        $_err['country'] = 'Country can only contain letters and spaces.';
+    }
+
 
     // Validation: email
     if (!$new_email) {
@@ -106,15 +140,8 @@ if (is_post()) {
             $_err['password'] = 'Passwords do not match';
         } else if (strlen($password) < 5 || strlen($password) > 100) {
             $_err['password'] = 'Password must be between 5 and 100 characters';
-        } else {
-            // Hash new password
-            $hashed_password = password_hash($password, PASSWORD_DEFAULT);
         }
-    } else {
-        // Retain the current password
-        $hashed_password = $user->password;
     }
-
     // Photo handling
     if ($new_photo['error'] === UPLOAD_ERR_OK) {
         $allowed_types = ['image/jpeg', 'image/png'];
@@ -139,19 +166,14 @@ if (is_post()) {
             temp('info', 'You cannot banned yourself.');
             redirect();
         } else {
-            $stm = $_db->prepare('UPDATE user SET email = ?, name = ?, contact_num = ? , password = ?, role = ?, gender = ?, birthday = ?, photo = ?, status = ? WHERE user_id = ?');
-            $stm->execute([$new_email, $new_name, $new_contact_num, $hashed_password, $new_role, $new_gender, $new_birthday, $photo_name, $new_status, $user_id]);
+            $stm = $_db->prepare('UPDATE user SET email = ?, name = ?, contact_num = ? , password = SHA(?), role = ?, gender = ?, birthday = ?, photo = ?, status = ? WHERE user_id = ?');
+            $stm->execute([$new_email, $new_name, $new_contact_num, $password, $new_role, $new_gender, $new_birthday, $photo_name, $new_status, $user_id]);
             // Update address details
-            if ($address) {
-                $stm = $_db->prepare('UPDATE address SET street = ?, city = ?, state = ?, postal_code = ?, country = ? WHERE user_id = ?');
-                $stm->execute([$new_street, $new_city, $new_state, $new_postal_code, $new_country, $user_id]);
-            } else {
-                $address_id = generateID('address', 'address_id', 'A', 4);
-                $stm = $_db->prepare('INSERT INTO address (address_id ,user_id, street, city, state, postal_code, country) VALUES (?, ?, ?, ?, ?, ?, ?)');
-                $stm->execute([$address_id, $user_id, $new_street, $new_city, $new_state, $new_postal_code, $new_country]);
-            }
+            $stm = $_db->prepare('UPDATE address SET street = ?, city = ?, state = ?, postal_code = ?, country = ? WHERE user_id = ?');
+            $stm->execute([$new_street, $new_city, $new_state, $new_postal_code, $new_country, $user_id]);
+
             temp('info', 'User updated successfully');
-            redirect('userList.php?page='. $page .'&search=' . urlencode($search_query) . '&role=' . urlencode($role_filter) . '&status=' . urlencode($status_filter) . '&sort_by=' . urlencode($sort_by) . '&sort_order=' . urlencode($sort_order));
+            redirect('userList.php?page=' . $page . '&search=' . urlencode($search_query) . '&role=' . urlencode($role_filter) . '&status=' . urlencode($status_filter) . '&sort_by=' . urlencode($sort_by) . '&sort_order=' . urlencode($sort_order));
         }
     }
 }
@@ -292,7 +314,7 @@ $_title = 'Edit User';
         </div>
     </form>
     <div class="action-buttons">
-    <a href="userList.php?page=<?= $page ?>&search=<?= urlencode($search_query) ?>
+        <a href="userList.php?page=<?= $page ?>&search=<?= urlencode($search_query) ?>
                                     &sort_by=<?= urlencode($sort_by) ?>&sort_order=<?= urlencode($sort_order) ?>
                                     &status=<?= urlencode($status_filter) ?>&role=<?= urlencode($role_filter) ?>">
             <button>Back to User List</button>
