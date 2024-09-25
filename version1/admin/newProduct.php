@@ -125,7 +125,7 @@ include '../_head.php';
 ?>
 <script src="../js/preview.js"></script>
 <link rel="stylesheet" href="../css/product.css">
-<a href="productList.php?page=<?= $page ?>&sort_by=<?= urlencode($sort_by) ?>&sort_order=<?= urlencode($sort_order) ?>&category=<?= urldecode($category_filter) ?>&search=<?= htmlspecialchars($search_query) ?>"><button type="button">⬅️ Back to Product List</button></a>
+<a href="productList.php?page=<?= $page ?>&sort_by=<?= urlencode($sort_by) ?>&sort_order=<?= urlencode($sort_order) ?>&category=<?= urldecode($category_filter) ?>&search=<?= htmlspecialchars($search_query) ?>"style="margin-left:60px;"><button type="button">⬅️ Back to Product List</button></a>
 <h1>Add New Product</h1>
 
 <?php if ($message): ?>

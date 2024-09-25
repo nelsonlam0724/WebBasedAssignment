@@ -46,7 +46,7 @@ if (is_post()) {
 ?>
 
 <link rel="stylesheet" href="../css/product.css">
-<a href="categoryList.php?page=<?= $page ?>&sort_by=<?= urlencode($sort_by) ?>&sort_order=<?= urlencode($sort_order) ?>&status=<?= urlencode($status_filter) ?>&search=<?= htmlspecialchars($search_query) ?>"><button type="button">⬅️ Back to Category List</button></a>
+<a href="categoryList.php?page=<?= $page ?>&sort_by=<?= urlencode($sort_by) ?>&sort_order=<?= urlencode($sort_order) ?>&status=<?= urlencode($status_filter) ?>&search=<?= htmlspecialchars($search_query) ?>"style="margin-left:60px;"><button type="button">⬅️ Back to Category List</button></a>
 <h1>Category Details</h1>
 
 <form method="post" class="form" id="category-form">

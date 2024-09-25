@@ -43,7 +43,7 @@ if (is_post()) {
 $_title = 'Add New Category';
 include '../_head.php';
 ?>
-
+<a href="categoryList.php?page=<?= $page ?>&sort_by=<?= urldecode($sort_by)?>&sort_order=<?= urldecode($sort_order)?>&status=<?= urldecode($status_filter) ?>&search=<?= urldecode($search_query)?>"style="margin-left:60px;"><button type="button">⬅️ Back to Category List</button></a>
 <link rel="stylesheet" href="../css/product.css">
 <h1>Add New Category</h1>
 <form method="post" class="form">

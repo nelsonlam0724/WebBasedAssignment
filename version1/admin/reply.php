@@ -21,7 +21,7 @@ $stmt->execute();
 $comment = $stmt->fetch();
 
 if (!$comment) {
-    redirect('commentList.php?page=' . $page);
+    redirect('commentList.php?page=' . $page . '&search=' . urldecode($search_query));
 }
 
 // Handle reply submission

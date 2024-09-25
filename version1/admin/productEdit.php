@@ -112,7 +112,7 @@ if (is_post()) {
 <link rel="stylesheet" href="../css/product.css">
 <a href="productList.php?page=<?= $page ?>&sort_by=<?= urlencode($sort_by) ?>
                                     &sort_order=<?= urlencode($sort_order) ?>
-                                    &category=<?= urldecode($category_filter) ?>&search=<?= htmlspecialchars($search_query) ?>"><button type="button">⬅️ Back to Product List</button></a>
+                                    &category=<?= urldecode($category_filter) ?>&search=<?= htmlspecialchars($search_query) ?>" style="margin-left:60px;"><button type="button">⬅️ Back to Product List</button></a>
 <h1>Product Details</h1>
 
 <form method="post" enctype="multipart/form-data" class="form" id="product-form">
