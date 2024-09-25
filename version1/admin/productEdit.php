@@ -91,11 +91,11 @@ if (is_post()) {
         foreach ($_POST['delete_image_ids'] as $delete_image_id) {
             $stm = $_db->prepare('DELETE FROM product_image WHERE image_id = ?');
             $stm->execute([$delete_image_id]);
-
-            temp('info', 'Product Photo Deleted Successfully');
-            redirect();
         }
+        temp('info', 'Selected Product Photos Deleted Successfully');
+        redirect();
     }
+
 
 
     if (empty($_err)) {
@@ -185,7 +185,6 @@ if (is_post()) {
             <th>Product Photos:</th>
             <td>
                 <div id="product-photos">
-                    <button id="delete-photo-button" style="display: none;">Delete Photo</button>
                     <div class="image-wrapper">
                         <?php foreach ($images as $img): ?>
                             <div class="image-item">
@@ -212,6 +211,7 @@ if (is_post()) {
                 </div>
             </td>
         </tr>
+
 
     </table>
     <button type="submit" id="submit-button" style="display: none;">Update Product</button>
