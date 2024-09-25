@@ -87,23 +87,30 @@ if (is_post()) {
                 $stm->execute([$email]);
             }
 
-            // Check frequent login/logouts
-            if ($u->last_login_event_time) {
-                $last_event_time = new DateTime($u->last_login_event_time);
-                $diff_minutes = $current_time->diff($last_event_time)->s;
+// Get current time
+$current_time = new DateTime();
 
-                if ($diff_minutes < 1 && $u->login_count >= 3) {
-                    temp('info', 'Frequent login attempts detected. Please wait '.$diff_minutes. ' before trying again.');
-                    redirect();
-                } else if ($diff_minutes >= 1) {
-                    $stm = $_db->prepare('
-                        UPDATE user
-                        SET login_count = 0
-                        WHERE email = ?
-                    ');
-                    $stm->execute([$email]);
-                }
-            }
+// Check frequent login/logouts
+if ($u->last_login_event_time) {
+    $last_event_time = new DateTime($u->last_login_event_time);
+    // Calculate the difference in minutes
+    $diff_minutes = $current_time->diff($last_event_time)->i; // 'i' gets the difference in minutes
+
+    if ($diff_minutes < 3 && $u->login_count >= 3) {
+        // If login attempts are too frequent within a 3-minute window
+        $remaining_time = 3 - $diff_minutes; // Time left to wait before trying again
+        temp('info', 'Frequent login attempts detected. Please wait '.$remaining_time. ' minutes before trying again.');
+        redirect(); // Stop further login processing
+    } else if ($diff_minutes >= 3) {
+        // Reset login count after 3 minutes have passed
+        $stm = $_db->prepare('
+            UPDATE user
+            SET login_count = 0
+            WHERE email = ?
+        ');
+        $stm->execute([$email]);
+    }
+}
 
             // Check if password matches
             if (sha1($password) === $u->password) {
