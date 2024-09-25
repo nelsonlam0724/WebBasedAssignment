@@ -7,9 +7,7 @@ $user = $_SESSION['user'];
 
 
 if (is_post()) {
-    $email = $user->email;
-    $subject = 'Order';
-    $body = 'Order Canceled successfully! Your refund will be process in 3~5 working days.';
+   
 
     $order_ID = $_POST['order_ID'];
     $product_ID = $_POST['product_ID'];
@@ -72,7 +70,9 @@ if (is_post()) {
         }
 
         /////////////////////////////////////////////////////////////////////////////////////////////////////
-
+        $email = $user->email;
+        $subject = 'Order';
+        $body = 'Order Canceled successfully! Your refund will be process in 3~5 working days.';
 
         $m = get_mail();
         $m->addAddress($email);
